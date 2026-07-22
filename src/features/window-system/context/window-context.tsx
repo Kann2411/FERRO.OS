@@ -69,6 +69,12 @@ export function WindowProvider({ children }: { children: ReactNode }) {
     setActiveWindowId(id);
   }, []);
 
+  const updateWindowPosition = useCallback((id: string, position: { x: number; y: number }) => {
+    setWindows((currentWindows) =>
+      currentWindows.map((window) => (window.id === id ? { ...window, x: position.x, y: position.y } : window))
+    );
+  }, []);
+
   const value = useMemo<WindowContextValue>(
     () => ({
       windows,
@@ -77,8 +83,9 @@ export function WindowProvider({ children }: { children: ReactNode }) {
       closeWindow,
       focusWindow,
       bringToFront,
+      updateWindowPosition,
     }),
-    [activeWindowId, bringToFront, closeWindow, focusWindow, openWindow, windows]
+    [activeWindowId, bringToFront, closeWindow, focusWindow, openWindow, updateWindowPosition, windows]
   );
 
   return <WindowContext.Provider value={value}>{children}</WindowContext.Provider>;

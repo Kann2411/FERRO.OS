@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import { useWindowContext } from "@/features/window-system/context/window-context";
 import type { WindowInstance } from "@/features/window-system/types";
 import { getViewportSafePosition } from "@/features/window-system/utils";
 
@@ -13,6 +14,7 @@ interface WindowShellProps {
 }
 
 export function WindowShell({ window, onClose, onFocus, onBringToFront }: WindowShellProps) {
+  const { updateWindowPosition } = useWindowContext();
   const [dragOffset, setDragOffset] = useState<{ x: number; y: number } | null>(null);
   const [position, setPosition] = useState({ x: window.x, y: window.y });
 
@@ -21,11 +23,13 @@ export function WindowShell({ window, onClose, onFocus, onBringToFront }: Window
   }, [window.x, window.y]);
 
   const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+    event.stopPropagation();
     onFocus(window.id);
     onBringToFront(window.id);
 
     const rect = (event.currentTarget as HTMLDivElement).getBoundingClientRect();
     setDragOffset({ x: event.clientX - rect.left, y: event.clientY - rect.top });
+    event.currentTarget.setPointerCapture(event.pointerId);
   };
 
   const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
@@ -38,9 +42,11 @@ export function WindowShell({ window, onClose, onFocus, onBringToFront }: Window
     const safePosition = getViewportSafePosition(nextX, nextY, window.width, window.height);
 
     setPosition({ x: safePosition.x, y: safePosition.y });
+    updateWindowPosition(window.id, safePosition);
   };
 
-  const handlePointerUp = () => {
+  const handlePointerUp = (event: React.PointerEvent<HTMLDivElement>) => {
+    event.currentTarget.releasePointerCapture(event.pointerId);
     setDragOffset(null);
   };
 
@@ -58,19 +64,27 @@ export function WindowShell({ window, onClose, onFocus, onBringToFront }: Window
         height: window.height,
         transform: "translate3d(0,0,0)",
       }}
-      onPointerDown={handlePointerDown}
-      onPointerMove={handlePointerMove}
-      onPointerUp={handlePointerUp}
-      onPointerLeave={handlePointerUp}
     >
-      <div className="flex items-center justify-between border-b border-white/10 bg-black/20 px-3 py-2.5">
+      <div
+        className="flex items-center justify-between border-b border-white/10 bg-black/20 px-3 py-2.5"
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+      >
         <div className="flex items-center gap-2">
           <span className="text-sm text-primary">{window.icon}</span>
           <span className="text-sm font-medium text-white">{window.title}</span>
         </div>
         <button
           type="button"
-          onClick={() => onClose(window.id)}
+          onPointerDown={(event) => {
+            event.stopPropagation();
+            event.preventDefault();
+          }}
+          onClick={(event) => {
+            event.stopPropagation();
+            onClose(window.id);
+          }}
           className="rounded-full border border-white/10 px-2 py-1 text-xs text-secondary transition hover:border-primary/40 hover:text-primary"
         >
           ✕

@@ -29,4 +29,5 @@ export interface WindowContextValue {
   closeWindow: (id: string) => void;
   focusWindow: (id: string) => void;
   bringToFront: (id: string) => void;
+  updateWindowPosition: (id: string, position: { x: number; y: number }) => void;
 }
