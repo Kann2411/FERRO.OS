@@ -28,7 +28,7 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-(--background) text-(--text-primary) transition-colors duration-300">
+      <body className="min-h-full bg-background text-foreground transition-colors duration-300">
         <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
