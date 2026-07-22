@@ -14,6 +14,17 @@ Author: Kristian Kamilo Ferrin
 
 ---
 
+# AI Development Workflow
+
+Every development phase follows the same workflow:
+
+1. Read only the Blueprint documents required for the current phase.
+2. Understand the goal before writing code.
+3. Implement only the current milestone.
+4. Do not anticipate future phases.
+5. Respect the project architecture.
+6. Document architectural decisions after implementation.
+
 # Purpose
 
 This document defines the official development order of FERRO.OS.

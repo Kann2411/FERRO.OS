@@ -1,0 +1,68 @@
+import type { WindowDefinition } from "@/features/window-system/types";
+
+export const windowRegistry: Record<string, WindowDefinition> = {
+  desktop: {
+    id: "desktop",
+    title: "Desktop",
+    icon: "◉",
+    initialWidth: 520,
+    initialHeight: 340,
+    defaultPosition: { x: 120, y: 90 },
+  },
+  projects: {
+    id: "projects",
+    title: "Projects",
+    icon: "⌘",
+    initialWidth: 560,
+    initialHeight: 380,
+    defaultPosition: { x: 180, y: 120 },
+  },
+  studio: {
+    id: "studio",
+    title: "Studio",
+    icon: "♫",
+    initialWidth: 540,
+    initialHeight: 360,
+    defaultPosition: { x: 220, y: 140 },
+  },
+  resume: {
+    id: "resume",
+    title: "Resume",
+    icon: "◫",
+    initialWidth: 500,
+    initialHeight: 340,
+    defaultPosition: { x: 260, y: 160 },
+  },
+  terminal: {
+    id: "terminal",
+    title: "Terminal",
+    icon: ">",
+    initialWidth: 520,
+    initialHeight: 320,
+    defaultPosition: { x: 300, y: 200 },
+  },
+  explorer: {
+    id: "explorer",
+    title: "Explorer",
+    icon: "◌",
+    initialWidth: 480,
+    initialHeight: 300,
+    defaultPosition: { x: 340, y: 220 },
+  },
+  settings: {
+    id: "settings",
+    title: "Settings",
+    icon: "◎",
+    initialWidth: 460,
+    initialHeight: 320,
+    defaultPosition: { x: 380, y: 240 },
+  },
+  aiLab: {
+    id: "aiLab",
+    title: "AI Lab",
+    icon: "◍",
+    initialWidth: 520,
+    initialHeight: 360,
+    defaultPosition: { x: 420, y: 260 },
+  },
+};

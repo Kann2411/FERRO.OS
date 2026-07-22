@@ -1,13 +1,20 @@
 "use client";
 
+"use client";
+
 import { motion } from "framer-motion";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Dock } from "@/components/workspace/dock";
 import { DesktopIcons } from "@/components/workspace/desktop-icons";
 import { StatusPanel } from "@/components/workspace/status-panel";
 import { AmbientBackground } from "@/components/workspace/ambient-background";
+import { WindowManager } from "@/features/window-system/components/window-manager";
+import { WindowProvider } from "@/features/window-system/context/window-context";
+import { useWindowManager } from "@/features/window-system/hooks/use-window-manager";
 
-export function DesktopShell() {
+function WorkspaceContent() {
+  useWindowManager();
+
   return (
     <div className="relative min-h-screen overflow-hidden bg-background text-foreground">
       <AmbientBackground />
@@ -46,6 +53,16 @@ export function DesktopShell() {
           </div>
         </main>
       </div>
+
+      <WindowManager />
     </div>
+  );
+}
+
+export function DesktopShell() {
+  return (
+    <WindowProvider>
+      <WorkspaceContent />
+    </WindowProvider>
   );
 }
