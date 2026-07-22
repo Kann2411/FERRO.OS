@@ -1,229 +1,320 @@
 ---
 Document: 09-ROADMAP
 Project: FERRO.OS
-Version: 1.0.0
+Version: 2.0.0
 Status: Active
 Last Updated: 2026-07-22
 Author: Kristian Kamilo Ferrin
 ---
 
-# 09 - ROADMAP
+# 09 - DEVELOPMENT ROADMAP
 
 > "Great systems are not built in a day.
-> They evolve."
+> They evolve one intentional step at a time."
 
 ---
 
-# Vision
+# Purpose
 
-FERRO.OS will be developed incrementally.
+This document defines the official development order of FERRO.OS.
 
-Every phase must end with a working product.
+It exists to ensure that every contributor, AI agent, or future developer builds the system in the correct sequence.
+
+No phase may begin until the previous one has been completed.
+
+---
+
+# Global Development Rules
+
+Every AI Agent working on FERRO.OS must follow these rules.
+
+## Rule 1
+
+Never implement future phases.
+
+If the current phase is "Workspace", do not create the Window Manager.
+
+---
+
+## Rule 2
+
+Respect the Blueprint.
+
+Every decision must align with the documents inside:
+
+```
+blueprint/
+```
+
+---
+
+## Rule 3
+
+Do not invent architecture.
+
+Respect:
+
+- Folder structure
+- Naming conventions
+- Design System
+- Exploration System
+- Modules
+
+---
+
+## Rule 4
+
+Never modify unrelated files.
+
+Only touch files required for the current phase.
+
+---
+
+## Rule 5
+
+Every component must be:
+
+- Modular
+- Reusable
+- Typed
+- Accessible
+- Documented
+
+---
+
+## Rule 6
+
+Never break existing functionality.
+
+---
+
+## Rule 7
+
+Every phase must end with a fully working milestone.
 
 No unfinished systems.
 
-No dead code.
+---
 
-No unnecessary complexity.
+# PHASE 0 — Blueprint
 
-Every phase builds the foundation for the next.
+## Goal
+
+Complete the documentation of FERRO.OS.
+
+### Includes
+
+- Vision
+- Lore
+- Architecture
+- Modules
+- Design System
+- Gameplay
+- Frontend
+- Backend
+- AI Development
+- Coding Standards
+- AI Context
+- Roadmap
+
+### Status
+
+✅ Completed
 
 ---
 
-# Development Principles
+# PHASE 1 — Foundation
 
-✔ Build small.
+## Goal
 
-✔ Ship often.
+Prepare the technical foundation of the project.
 
-✔ Refactor continuously.
+### Includes
 
-✔ Maintain clean architecture.
+- Next.js
+- TypeScript
+- TailwindCSS
+- ESLint
+- Prettier
+- Absolute Imports
+- Folder Architecture
+- Theme Configuration
+- Design Tokens
+- Global Styles
+- Providers
+- Zustand
+- Framer Motion
+- GSAP
 
-✔ Every commit should improve the system.
+### Files Allowed
 
-✔ Every feature must have a purpose.
+```
+src/app/*
+src/styles/*
+src/lib/*
+src/store/*
+src/hooks/*
+package.json
+tailwind.config.*
+tsconfig.json
+```
 
----
+### Files Forbidden
 
-# Phase 0
+```
+src/modules/*
+src/components/*
+```
 
-## Blueprint
+### Done When
 
-Goal
-
-Finish the project documentation.
-
-Deliverables
-
-✓ Vision
-
-✓ Lore
-
-✓ Architecture
-
-✓ Modules
-
-✓ Design System
-
-✓ Exploration
-
-✓ Backend
-
-✓ Frontend
-
-✓ Roadmap
-
-Status
-
-Completed
-
----
-
-# Phase 1
-
-## Project Foundation
-
-Goal
-
-Create the technical foundation.
-
-Tasks
-
-- Create repository
-- Configure Next.js
-- Configure TypeScript
-- Configure TailwindCSS
-- Configure ESLint
-- Configure Prettier
-- Configure Husky
-- Configure Commitlint
-- Configure absolute imports
-- Create folder architecture
-- Create Design Tokens
-- Configure Dark Theme
-
-Deliverable
-
-A clean scalable project.
+- Project runs successfully.
+- No errors.
+- Architecture is ready.
+- Theme is configured.
+- Design Tokens exist.
 
 ---
 
-# Phase 2
+# PHASE 2 — Workspace
 
-## Desktop Engine
+## Goal
 
-Goal
+Create the operating system desktop.
 
-Build the operating system shell.
-
-Features
+### Includes
 
 Wallpaper
+
+Top Bar
 
 Dock
 
 Desktop Icons
 
-Clock
-
 Mouse Glow
 
 Particles
 
+Status Panel
+
+Clock
+
 Ambient Background
 
-Window Layer
+FERRO CORE Button
 
-Notifications Container
+Explorer Progress Widget
 
-Explorer HUD
+Mission Widget
 
-Deliverable
+### Files Allowed
 
-The desktop is alive.
+```
+src/modules/workspace/*
+src/components/workspace/*
+src/components/ui/*
+```
+
+### Files Forbidden
+
+```
+modules/projects
+modules/music
+modules/terminal
+```
+
+### Done When
+
+Workspace renders correctly.
+
+No windows exist yet.
+
+No module opens yet.
 
 ---
 
-# Phase 3
+# PHASE 3 — Window Manager
 
-## Window Engine
-
-Goal
+## Goal
 
 Create the operating system behavior.
 
-Features
+### Includes
 
-Open Window
+Window Component
 
-Close Window
+Focus
 
-Focus Window
+Open
 
-Drag Window
+Close
 
-Window Animations
+Drag
 
-Remember Position
+Animations
 
-Window Stack
+Z Index
 
-Future
+Window Registry
+
+Window State
+
+### Future
 
 Resize
 
-Minimize
-
 Fullscreen
 
-Deliverable
+Minimize
 
-FERRO.OS behaves like software.
+Snap Layout
+
+### Done When
+
+Windows behave like a real desktop.
 
 ---
 
-# Phase 4
+# PHASE 4 — FERRO CORE
 
-## FERRO CORE
+## Goal
 
-Goal
+Introduce the user to FERRO.OS.
 
-Bring the operating system to life.
-
-Features
+### Includes
 
 Welcome Sequence
+
+Dialogue Engine
 
 Mission System
 
 Explorer Profile
 
-Progress
+Progress Tracking
 
-Dialogue Engine
+Notifications
+
+Unlock System
 
 Tips
 
 Narrative
 
-Unlock Messages
+### Done When
 
-Deliverable
-
-Visitors meet FERRO CORE.
+The user understands how to explore the system.
 
 ---
 
-# Phase 5
+# PHASE 5 — Developer Modules
 
-## Developer Modules
+## Goal
 
-Goal
+Present Kristian as a Full Stack Developer.
 
-Show Kristian as a Full Stack Developer.
-
-Modules
+### Modules
 
 Projects
 
@@ -231,53 +322,59 @@ Resume
 
 Skills
 
+Experience
+
 Timeline
 
 Code Studio
 
-Deliverable
+GitHub
 
-Professional profile completed.
+Tech Stack
+
+### Done When
+
+Professional profile is complete.
 
 ---
 
-# Phase 6
+# PHASE 6 — Music Modules
 
-## Music Modules
+## Goal
 
-Goal
+Present Kristian as a Music Producer.
 
-Show Kristian as a Music Producer.
-
-Modules
+### Modules
 
 Studio
 
 Discography
 
+Equipment
+
 Audio Player
 
 Visualizer
 
-Equipment
-
 Creative Process
 
-Deliverable
+Samples
 
-Both worlds become one.
+### Done When
+
+Music becomes part of the operating system.
 
 ---
 
-# Phase 7
+# PHASE 7 — Exploration Engine
 
-## Exploration Engine
+## Goal
 
-Goal
+Transform FERRO.OS into an exploration experience.
 
-Transform FERRO.OS into an experience.
+### Includes
 
-Features
+Explorer Level
 
 Progress
 
@@ -285,29 +382,31 @@ Achievements
 
 Secrets
 
-Hidden Commands
-
-Module Unlocking
+Hidden Modules
 
 Current Mission
 
 Explorer History
 
-Deliverable
+Discovery Tracking
 
-The operating system rewards curiosity.
+Completion Percentage
+
+Module Unlocking
+
+### Done When
+
+Users are rewarded for exploring.
 
 ---
 
-# Phase 8
+# PHASE 8 — Terminal
 
-## Terminal
-
-Goal
+## Goal
 
 Create the developer experience.
 
-Features
+### Includes
 
 Interactive Commands
 
@@ -321,147 +420,131 @@ Fake Logs
 
 Secret Commands
 
-Unlock System
+Unlock Commands
 
-Deliverable
+### Done When
 
-Terminal becomes memorable.
+Terminal feels authentic.
 
 ---
 
-# Phase 9
+# PHASE 9 — Backend Integration
 
-## Backend Integration
+## Goal
 
-Goal
+Connect FERRO.API.
 
-Connect everything.
-
-Features
-
-REST API
+### Includes
 
 Projects
 
-Music
-
-Resume
-
 Skills
 
-Explorer
+Music
+
+Explorer Progress
 
 Achievements
-
-Notifications
 
 Analytics
 
-Deliverable
+Notifications
 
-Real data powers FERRO.OS.
+### Done When
+
+FERRO.OS consumes real data.
 
 ---
 
-# Phase 10
+# PHASE 10 — Audio Engine
 
-## Audio Engine
+## Goal
 
-Goal
+Increase immersion.
 
-Bring immersion.
+### Includes
 
-Features
+Ambient Music
 
-Ambient Sounds
-
-Typing
+Typing Sounds
 
 Window Sounds
 
+Notifications
+
 Achievements
 
-Background Music
+Audio Reactive Components
 
-Audio Reactive Elements
+### Done When
 
-Deliverable
-
-FERRO.OS sounds alive.
+The operating system sounds alive.
 
 ---
 
-# Phase 11
+# PHASE 11 — Animation Engine
 
-## Animation Engine
+## Goal
 
-Goal
+Reach premium interaction quality.
 
-Reach premium quality.
+### Includes
 
-Features
+Physics
 
-Window Motion
-
-Dock Physics
-
-Hover Effects
-
-Transitions
-
-Particle Effects
-
-Glow
-
-Bloom
+Dock Animation
 
 Parallax
 
-Deliverable
+Glow
+
+Particles
+
+Transitions
+
+Bloom
+
+Motion System
+
+### Done When
 
 Every interaction feels physical.
 
 ---
 
-# Phase 12
+# PHASE 12 — Hidden Content
 
-## Hidden Content
+## Goal
 
-Goal
+Reward curiosity.
 
-Reward explorers.
-
-Features
+### Includes
 
 AI Lab
 
 Legacy Archive
 
-Secret Vault
-
 Debug Console
 
-Wallpaper Secrets
+Secret Wallpapers
 
 Hidden Files
 
 Final Message
 
-Deliverable
+### Done When
 
-100% exploration becomes meaningful.
+100% exploration unlocks exclusive content.
 
 ---
 
-# Phase 13
+# PHASE 13 — Optimization
 
-## Optimization
+## Goal
 
-Goal
+Prepare for production.
 
-Prepare production.
-
-Tasks
+### Includes
 
 Performance
 
@@ -469,55 +552,47 @@ Accessibility
 
 SEO
 
-Image Optimization
-
-Lazy Loading
-
-Bundle Splitting
+Testing
 
 Code Cleanup
 
-Testing
+Bundle Optimization
 
-Deliverable
+Lazy Loading
+
+### Done When
 
 Production Ready.
 
 ---
 
-# Phase 14
+# PHASE 14 — Launch
 
-## Launch
+## Goal
 
-Goal
+Release FERRO.OS v1.0
 
-Release FERRO.OS
+### Checklist
 
-Checklist
+✅ Documentation
 
-✓ Documentation
+✅ Responsive
 
-✓ Responsive
+✅ Accessibility
 
-✓ Accessibility
+✅ Animations
 
-✓ Animations
+✅ Audio
 
-✓ Audio
+✅ Explorer System
 
-✓ Backend
+✅ Hidden Modules
 
-✓ Explorer
+✅ Optimization
 
-✓ Achievements
+### Done When
 
-✓ Hidden Modules
-
-✓ Final Experience
-
-Deliverable
-
-FERRO.OS v1.0
+FERRO.OS is ready for the world.
 
 ---
 
@@ -529,9 +604,9 @@ Visitor Accounts
 
 Cloud Save
 
-Settings
-
 Themes
+
+Settings
 
 Language Support
 
@@ -555,37 +630,43 @@ Electron Desktop App
 
 Offline Mode
 
-Plugin System
-
-Marketplace
+Plugin Marketplace
 
 Voice Assistant
 
-AI Companion
+FERRO AI Companion
 
 ---
 
-# Milestones
+# Official Milestones
 
 🏁 Blueprint Complete
 
-🏁 Desktop Online
+🏁 Foundation Ready
 
-🏁 Window Manager Ready
+🏁 Workspace Online
+
+🏁 Window Manager Online
 
 🏁 FERRO CORE Activated
 
-🏁 Developer Modules Ready
+🏁 Developer Modules Online
 
 🏁 Music Studio Online
 
 🏁 Exploration Engine Ready
 
+🏁 Terminal Online
+
 🏁 Backend Connected
+
+🏁 Audio Engine Ready
 
 🏁 Hidden Modules Activated
 
-🏁 Launch Version
+🏁 Production Ready
+
+🏁 FERRO.OS v1.0 Released
 
 ---
 
@@ -593,48 +674,48 @@ AI Companion
 
 A phase is complete only when:
 
-✓ Code is documented.
+✅ Blueprint respected
 
-✓ Architecture is respected.
+✅ Architecture respected
 
-✓ UI is polished.
+✅ Modular code
 
-✓ Responsive behavior works.
+✅ Reusable components
 
-✓ No critical bugs remain.
+✅ Responsive
 
-✓ Performance is acceptable.
+✅ Typed
 
-✓ Feature matches the Blueprint.
+✅ Accessible
+
+✅ No critical bugs
+
+✅ Performance acceptable
+
+✅ Visual quality approved
 
 ---
 
 # Success Metrics
 
-FERRO.OS is successful if visitors:
+FERRO.OS succeeds when visitors:
 
-Spend several minutes exploring.
-
-Open multiple modules.
-
-Discover hidden content.
-
-Understand both professional identities.
-
-Remember the experience.
-
-Share the portfolio.
-
-Return to explore new updates.
+- Spend several minutes exploring.
+- Open multiple modules.
+- Unlock hidden content.
+- Discover achievements.
+- Understand Kristian's two professional identities.
+- Share the experience.
+- Return to explore future updates.
 
 ---
 
 # Final Principle
 
-FERRO.OS is not finished when every feature is built.
+FERRO.OS is not a website.
 
-FERRO.OS is finished when every interaction feels intentional.
+FERRO.OS is not a portfolio.
 
-Technology changes.
+FERRO.OS is an operating system built to tell the story of a Full Stack Developer and Music Producer through exploration, interaction and discovery.
 
-Experiences remain.
+Every line of code must reinforce that vision.
