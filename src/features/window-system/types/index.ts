@@ -25,9 +25,11 @@ export interface WindowInstance extends WindowDefinition {
 export interface WindowContextValue {
   windows: WindowInstance[];
   activeWindowId: string | null;
+  initialized: boolean;
   openWindow: (definition: WindowDefinition) => void;
   closeWindow: (id: string) => void;
   focusWindow: (id: string) => void;
   bringToFront: (id: string) => void;
   updateWindowPosition: (id: string, position: { x: number; y: number }) => void;
+  updateWindowSize: (id: string, size: { width: number; height: number }) => void;
 }

@@ -1,7 +1,40 @@
 "use client";
 
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import type { WindowContextValue, WindowDefinition, WindowInstance } from "@/features/window-system/types";
+
+const STORAGE_KEY = "ferro.os.window-state";
+
+const loadSavedWindowState = () => {
+  if (typeof window === "undefined") {
+    return { windows: [] as WindowInstance[], activeWindowId: null as string | null };
+  }
+
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    if (!raw) {
+      return { windows: [] as WindowInstance[], activeWindowId: null as string | null };
+    }
+
+    const parsed = JSON.parse(raw) as { windows?: WindowInstance[]; activeWindowId?: string | null };
+    if (!parsed || !Array.isArray(parsed.windows)) {
+      return { windows: [] as WindowInstance[], activeWindowId: null as string | null };
+    }
+
+    const activeWindowId = parsed.activeWindowId ?? null;
+    const windows = parsed.windows.map((window) => ({
+      ...window,
+      focused: window.id === activeWindowId,
+    }));
+
+    return {
+      windows,
+      activeWindowId,
+    };
+  } catch {
+    return { windows: [] as WindowInstance[], activeWindowId: null as string | null };
+  }
+};
 
 const WindowContext = createContext<WindowContextValue | undefined>(undefined);
 
@@ -21,6 +54,27 @@ const createWindowInstance = (definition: WindowDefinition, zIndex: number): Win
 export function WindowProvider({ children }: { children: ReactNode }) {
   const [windows, setWindows] = useState<WindowInstance[]>([]);
   const [activeWindowId, setActiveWindowId] = useState<string | null>(null);
+  const [initialized, setInitialized] = useState(false);
+
+  useEffect(() => {
+    const savedState = loadSavedWindowState();
+    setWindows(savedState.windows);
+    setActiveWindowId(savedState.activeWindowId);
+    setInitialized(true);
+  }, []);
+
+  useEffect(() => {
+    if (!initialized) {
+      return;
+    }
+
+    try {
+      const payload = JSON.stringify({ windows, activeWindowId });
+      window.localStorage.setItem(STORAGE_KEY, payload);
+    } catch {
+      // ignore write failures
+    }
+  }, [initialized, windows, activeWindowId]);
 
   const openWindow = useCallback((definition: WindowDefinition) => {
     setWindows((currentWindows) => {
@@ -75,17 +129,25 @@ export function WindowProvider({ children }: { children: ReactNode }) {
     );
   }, []);
 
+  const updateWindowSize = useCallback((id: string, size: { width: number; height: number }) => {
+    setWindows((currentWindows) =>
+      currentWindows.map((window) => (window.id === id ? { ...window, width: size.width, height: size.height } : window))
+    );
+  }, []);
+
   const value = useMemo<WindowContextValue>(
     () => ({
       windows,
       activeWindowId,
+      initialized,
       openWindow,
       closeWindow,
       focusWindow,
       bringToFront,
       updateWindowPosition,
+      updateWindowSize,
     }),
-    [activeWindowId, bringToFront, closeWindow, focusWindow, openWindow, updateWindowPosition, windows]
+    [activeWindowId, bringToFront, closeWindow, focusWindow, initialized, openWindow, updateWindowPosition, windows]
   );
 
   return <WindowContext.Provider value={value}>{children}</WindowContext.Provider>;

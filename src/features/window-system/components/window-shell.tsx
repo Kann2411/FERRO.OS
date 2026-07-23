@@ -56,13 +56,16 @@ export function WindowShell({ window, onClose, onFocus, onBringToFront }: Window
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2, ease: "easeOut" }}
-      className={`pointer-events-auto absolute z-10 overflow-hidden rounded-[18px] border bg-[#141414]/90 shadow-[0_24px_90px_rgba(0,0,0,0.42)] backdrop-blur-xl ${window.focused ? "border-primary/40" : "border-white/10"}`}
+      className={`pointer-events-auto absolute z-10 overflow-hidden rounded-[18px] border bg-[#141414]/90 backdrop-blur-xl ${window.focused ? "border-primary/40" : "border-white/10"}`}
       style={{
         left: position.x,
         top: position.y,
         width: window.width,
         height: window.height,
         transform: "translate3d(0,0,0)",
+        boxShadow: window.focused
+          ? "0 0 15px rgba(248, 113, 113, 0.30), 0 0 120px rgba(248, 113, 113, 0.18), 0 24px 90px rgba(0,0,0,0.42)"
+          : "0 0 25px rgba(248, 113, 113, 0.15), 0 24px 90px rgba(0,0,0,0.42)",
       }}
     >
       <div
