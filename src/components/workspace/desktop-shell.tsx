@@ -38,7 +38,7 @@ function WorkspaceContent() {
           <div className="flex h-full flex-col justify-between gap-6">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
               <DesktopIcons />
-              <div className="w-full max-w-[340px] space-y-3">
+              <div className="w-full max-w-85 space-y-3">
                 <ExplorerProfileCard />
                 <MissionBoard />
                 <CoreMessages />

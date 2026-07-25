@@ -48,7 +48,7 @@ export function ProjectsModule() {
       </div>
 
       {projects.length === 0 ? (
-        <div className="flex flex-1 items-center justify-center rounded-[24px] border border-dashed border-white/10 bg-white/5 p-6 text-center text-sm text-secondary">
+        <div className="flex flex-1 items-center justify-center rounded-3xl border border-dashed border-white/10 bg-white/5 p-6 text-center text-sm text-secondary">
           No projects are available yet. This state is ready to support future API-driven content.
         </div>
       ) : (
