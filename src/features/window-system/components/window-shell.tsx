@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useWindowContext } from "@/features/window-system/context/window-context";
 import { ProjectsModule } from "@/features/projects/components/projects-module";
+import { ResumeModule } from "@/features/resume/components/resume-module";
 import type { WindowInstance } from "@/features/window-system/types";
 import { getViewportSafePosition } from "@/features/window-system/utils";
 
@@ -96,7 +97,13 @@ export function WindowShell({ window, onClose, onFocus, onBringToFront }: Window
       </div>
 
       <div className="h-[calc(100%-44px)] bg-[#0d0d0d]/70 p-4 text-sm text-secondary">
-        {window.id === "projects" ? <ProjectsModule /> : <p className="text-sm leading-7">{window.title} module placeholder. The window engine is now ready for future modules.</p>}
+        {window.id === "projects" ? (
+          <ProjectsModule />
+        ) : window.id === "resume" ? (
+          <ResumeModule />
+        ) : (
+          <p className="text-sm leading-7">{window.title} module placeholder. The window engine is now ready for future modules.</p>
+        )}
       </div>
     </motion.div>
   );
