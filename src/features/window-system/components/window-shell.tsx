@@ -5,6 +5,9 @@ import { useEffect, useState } from "react";
 import { useWindowContext } from "@/features/window-system/context/window-context";
 import { ProjectsModule } from "@/features/projects/components/projects-module";
 import { ResumeModule } from "@/features/resume/components/resume-module";
+import { SkillsModule } from "@/features/skills/components/skills-module";
+import { TimelineModule } from "@/features/timeline/components/timeline-module";
+import { CodeStudioModule } from "@/features/code-studio/components/code-studio-module";
 import type { WindowInstance } from "@/features/window-system/types";
 import { getViewportSafePosition } from "@/features/window-system/utils";
 
@@ -101,6 +104,12 @@ export function WindowShell({ window, onClose, onFocus, onBringToFront }: Window
           <ProjectsModule />
         ) : window.id === "resume" ? (
           <ResumeModule />
+        ) : window.id === "skills" ? (
+          <SkillsModule />
+        ) : window.id === "timeline" ? (
+          <TimelineModule />
+        ) : window.id === "studio" ? (
+          <CodeStudioModule />
         ) : (
           <p className="text-sm leading-7">{window.title} module placeholder. The window engine is now ready for future modules.</p>
         )}
