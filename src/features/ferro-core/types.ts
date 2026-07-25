@@ -8,6 +8,7 @@ export interface ExplorerProfile {
   visitCount: number;
   welcomeCompleted: boolean;
   missionProgress: Record<string, boolean>;
+  lastSavedAt: string | null;
 }
 
 export interface MissionDefinition {
@@ -24,6 +25,13 @@ export interface CoreMessage {
   body: string;
 }
 
+export interface CoreNotification {
+  id: string;
+  type: "success" | "info" | "achievement" | "mission" | "warning";
+  title: string;
+  body: string;
+}
+
 export interface FerroCoreContextValue {
   coreName: string;
   logo: string;
@@ -33,6 +41,7 @@ export interface FerroCoreContextValue {
   missions: MissionDefinition[];
   completedMissions: string[];
   messages: CoreMessage[];
+  notifications: CoreNotification[];
   setExplorerName: (name: string) => void;
   advanceProgress: (amount: number) => void;
   registerDiscovery: () => void;
@@ -42,4 +51,6 @@ export interface FerroCoreContextValue {
   completeMission: (missionId: string) => void;
   unlockMission: (missionId: string) => void;
   pushMessage: (message: CoreMessage) => void;
+  pushNotification: (notification: CoreNotification) => void;
+  dismissNotification: (id: string) => void;
 }

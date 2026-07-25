@@ -8,7 +8,7 @@ import { Dock } from "@/components/workspace/dock";
 import { DesktopIcons } from "@/components/workspace/desktop-icons";
 import { StatusPanel } from "@/components/workspace/status-panel";
 import { AmbientBackground } from "@/components/workspace/ambient-background";
-import { CoreMessages, ExplorerProfileCard, MissionBoard } from "@/features/ferro-core";
+import { CoreMessages, CoreNotifications, ExplorerProfileCard, MissionBoard } from "@/features/ferro-core";
 import { WindowManager } from "@/features/window-system/components/window-manager";
 import { WindowProvider } from "@/features/window-system/context/window-context";
 import { useWindowManager } from "@/features/window-system/hooks/use-window-manager";
@@ -63,6 +63,7 @@ function WorkspaceContent() {
       </div>
 
       <WindowManager />
+      <CoreNotifications />
     </div>
   );
 }

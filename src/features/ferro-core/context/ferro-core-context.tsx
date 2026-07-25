@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import type { CoreMessage, ExplorerProfile, FerroCoreContextValue } from "@/features/ferro-core/types";
+import type { CoreMessage, CoreNotification, ExplorerProfile, FerroCoreContextValue } from "@/features/ferro-core/types";
 
 const STORAGE_KEY = "ferro.os.ferro-core";
 
@@ -15,6 +15,7 @@ const defaultProfile: ExplorerProfile = {
   visitCount: 0,
   welcomeCompleted: false,
   missionProgress: {},
+  lastSavedAt: null,
 };
 
 const loadSavedProfile = (): ExplorerProfile => {
@@ -55,10 +56,18 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
   const [initialized, setInitialized] = useState(false);
   const [missions] = useState(initialMissions);
   const [messages, setMessages] = useState<CoreMessage[]>([]);
+  const [notifications, setNotifications] = useState<CoreNotification[]>([]);
 
   useEffect(() => {
     const savedProfile = loadSavedProfile();
-    setExplorerProfile(savedProfile);
+    const now = new Date().toISOString();
+
+    setExplorerProfile({
+      ...savedProfile,
+      firstVisit: savedProfile.firstVisit ?? now,
+      lastVisit: now,
+      visitCount: savedProfile.firstVisit ? savedProfile.visitCount + 1 : 1,
+    });
     setInitialized(true);
   }, []);
 
@@ -75,6 +84,15 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
         body: "The system has begun to remember your first steps.",
       },
     ]);
+
+    setNotifications([
+      {
+        id: "welcome-notification",
+        type: "info",
+        title: "System initialized",
+        body: "FERRO CORE is now observing your exploration.",
+      },
+    ]);
   }, [initialized, messages.length]);
 
   useEffect(() => {
@@ -83,7 +101,12 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
     }
 
     try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(explorerProfile));
+      const snapshot = {
+        ...explorerProfile,
+        lastSavedAt: new Date().toISOString(),
+      };
+
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot));
     } catch {
       // ignore localStorage write errors
     }
@@ -167,6 +190,20 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
     ].slice(0, 4));
   };
 
+  const pushNotification = (notification: CoreNotification) => {
+    setNotifications((current) => [
+      {
+        ...notification,
+        id: notification.id || `notification-${Date.now()}`,
+      },
+      ...current,
+    ].slice(0, 3));
+  };
+
+  const dismissNotification = (id: string) => {
+    setNotifications((current) => current.filter((notification) => notification.id !== id));
+  };
+
   const value = useMemo<FerroCoreContextValue>(
     () => ({
       coreName: "FERRO CORE",
@@ -177,6 +214,7 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
       missions,
       completedMissions: missions.filter((mission) => explorerProfile.missionProgress[mission.id]).map((mission) => mission.id),
       messages,
+      notifications,
       setExplorerName,
       advanceProgress,
       registerDiscovery,
@@ -186,8 +224,10 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
       completeMission,
       unlockMission,
       pushMessage,
+      pushNotification,
+      dismissNotification,
     }),
-    [explorerProfile, initialized]
+    [explorerProfile, initialized, missions, messages, notifications]
   );
 
   return <FerroCoreContext.Provider value={value}>{children}</FerroCoreContext.Provider>;
