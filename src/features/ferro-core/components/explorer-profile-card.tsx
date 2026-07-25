@@ -12,7 +12,7 @@ export function ExplorerProfileCard() {
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, ease: "easeOut" }}
-      className="rounded-[24px] border border-white/10 bg-[#101010]/90 p-4 shadow-[0_20px_80px_rgba(0,0,0,0.24)] backdrop-blur-xl"
+      className="rounded-3xl border border-white/10 bg-[#101010]/90 p-4 shadow-[0_20px_80px_rgba(0,0,0,0.24)] backdrop-blur-xl"
     >
       <div className="flex items-center justify-between gap-3">
         <div>

@@ -22,7 +22,7 @@ export function WelcomeSequence() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[60] flex items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(217,4,41,0.22),_transparent_54%),rgba(2,2,2,0.92)] px-4 py-8 backdrop-blur-xl"
+        className="fixed inset-0 z-60 flex items-center justify-center bg-[radial-gradient(circle_at_top,rgba(217,4,41,0.22),transparent_54%),rgba(2,2,2,0.92)] px-4 py-8 backdrop-blur-xl"
       >
         <motion.div
           initial={{ y: 24, opacity: 0, scale: 0.97 }}
