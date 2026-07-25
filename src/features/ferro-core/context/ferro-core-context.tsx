@@ -13,6 +13,7 @@ const defaultProfile: ExplorerProfile = {
   firstVisit: null,
   lastVisit: null,
   visitCount: 0,
+  welcomeCompleted: false,
 };
 
 const loadSavedProfile = (): ExplorerProfile => {
@@ -104,6 +105,13 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
     }));
   };
 
+  const completeWelcome = () => {
+    setExplorerProfile((current) => ({
+      ...current,
+      welcomeCompleted: true,
+    }));
+  };
+
   const value = useMemo<FerroCoreContextValue>(
     () => ({
       coreName: "FERRO CORE",
@@ -116,6 +124,7 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
       registerDiscovery,
       awardAchievement,
       recordVisit,
+      completeWelcome,
     }),
     [explorerProfile, initialized]
   );

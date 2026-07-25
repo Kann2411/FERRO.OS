@@ -6,6 +6,7 @@ export interface ExplorerProfile {
   firstVisit: string | null;
   lastVisit: string | null;
   visitCount: number;
+  welcomeCompleted: boolean;
 }
 
 export interface FerroCoreContextValue {
@@ -19,4 +20,5 @@ export interface FerroCoreContextValue {
   registerDiscovery: () => void;
   awardAchievement: (achievement: string) => void;
   recordVisit: () => void;
+  completeWelcome: () => void;
 }

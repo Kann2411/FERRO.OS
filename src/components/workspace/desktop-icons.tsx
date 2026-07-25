@@ -1,7 +1,7 @@
 "use client";
 
 import { useWindowContext } from "@/features/window-system/context/window-context";
-import { windowRegistry } from "@/features/window-system/registry";
+import { resolveWindowDefinition } from "@/features/window-system/utils/open-module";
 
 const items = [
   { label: "Projects", icon: "⌘", accent: "bg-primary/20 text-primary", windowId: "projects" },
@@ -14,7 +14,7 @@ export function DesktopIcons() {
   const { openWindow, focusWindow, bringToFront } = useWindowContext();
 
   const handleOpen = (windowId: string) => {
-    const definition = windowRegistry[windowId];
+    const definition = resolveWindowDefinition(windowId);
     if (!definition) {
       return;
     }

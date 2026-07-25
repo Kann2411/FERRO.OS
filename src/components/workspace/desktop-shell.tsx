@@ -8,6 +8,7 @@ import { Dock } from "@/components/workspace/dock";
 import { DesktopIcons } from "@/components/workspace/desktop-icons";
 import { StatusPanel } from "@/components/workspace/status-panel";
 import { AmbientBackground } from "@/components/workspace/ambient-background";
+import { ExplorerProfileCard } from "@/features/ferro-core";
 import { WindowManager } from "@/features/window-system/components/window-manager";
 import { WindowProvider } from "@/features/window-system/context/window-context";
 import { useWindowManager } from "@/features/window-system/hooks/use-window-manager";
@@ -35,7 +36,12 @@ function WorkspaceContent() {
 
         <main className="flex-1 p-4 sm:p-6 lg:p-8">
           <div className="flex h-full flex-col justify-between gap-6">
-            <DesktopIcons />
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+              <DesktopIcons />
+              <div className="w-full max-w-[320px]">
+                <ExplorerProfileCard />
+              </div>
+            </div>
             <div className="flex items-end justify-between gap-4">
               <motion.div
                 initial={{ opacity: 0, y: 16 }}
