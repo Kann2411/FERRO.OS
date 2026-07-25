@@ -19,7 +19,7 @@ export function CoreNotifications() {
   }
 
   return (
-    <div className="fixed right-4 top-20 z-70 flex w-[320px] flex-col gap-3">
+    <div className="fixed right-4 top-20 z-70 flex w-[320px] flex-col gap-3" role="region" aria-label="Notifications">
       <AnimatePresence>
         {notifications.map((notification) => (
           <motion.div
@@ -29,6 +29,8 @@ export function CoreNotifications() {
             exit={{ opacity: 0, y: -10, scale: 0.96 }}
             transition={{ duration: 0.25, ease: "easeOut" }}
             className={`rounded-2xl border px-4 py-3 shadow-[0_20px_60px_rgba(0,0,0,0.28)] backdrop-blur-xl ${notificationStyles[notification.type]}`}
+            role="alert"
+            aria-live="polite"
           >
             <div className="flex items-start justify-between gap-3">
               <div>
@@ -37,10 +39,11 @@ export function CoreNotifications() {
               </div>
               <button
                 type="button"
+                aria-label={`Dismiss notification: ${notification.title}`}
                 onClick={() => dismissNotification(notification.id)}
                 className="text-sm text-secondary transition hover:text-white"
               >
-                ×
+                <span aria-hidden="true">×</span>
               </button>
             </div>
           </motion.div>

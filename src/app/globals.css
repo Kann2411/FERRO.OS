@@ -11,6 +11,9 @@
   --success: #00c853;
   --warning: #ffb300;
   --error: #ff1744;
+  --focus-ring: #d90429;
+  --skip-bg: #141414;
+  --skip-text: #f8f8f8;
 }
 
 @theme inline {
@@ -24,6 +27,7 @@
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-error: var(--error);
+  --color-focus-ring: var(--focus-ring);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -47,4 +51,66 @@ body {
 
 button {
   cursor: pointer;
+}
+
+/* Skip Link */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 16px;
+  z-index: 100;
+  padding: 12px 24px;
+  background: var(--skip-bg);
+  color: var(--skip-text);
+  border: 2px solid var(--focus-ring);
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+  top: 16px;
+  outline: none;
+}
+
+/* Focus Styles */
+*:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+button:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  :root {
+    --focus-ring: #ffffff;
+  }
+
+  button,
+  [role="button"] {
+    border-width: 2px !important;
+    border-color: var(--text-primary) !important;
+  }
+
+  *:focus-visible {
+    outline-width: 3px !important;
+    outline-color: var(--text-primary) !important;
+  }
 }

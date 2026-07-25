@@ -23,6 +23,9 @@ export function WelcomeSequence() {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         className="fixed inset-0 z-60 flex items-center justify-center bg-[radial-gradient(circle_at_top,rgba(217,4,41,0.22),transparent_54%),rgba(2,2,2,0.92)] px-4 py-8 backdrop-blur-xl"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Welcome to FERRO.OS"
       >
         <motion.div
           initial={{ y: 24, opacity: 0, scale: 0.97 }}
@@ -35,7 +38,7 @@ export function WelcomeSequence() {
 
           <div className="relative">
             <div className="flex items-center gap-4">
-              <div className="flex h-14 w-14 items-center justify-center rounded-full border border-primary/40 bg-primary/10 text-3xl text-primary">
+              <div className="flex h-14 w-14 items-center justify-center rounded-full border border-primary/40 bg-primary/10 text-3xl text-primary" aria-hidden="true">
                 {logo}
               </div>
               <div>
@@ -60,16 +63,17 @@ export function WelcomeSequence() {
                     type="button"
                     onClick={handleBegin}
                     className="rounded-full border border-primary/40 bg-primary px-5 py-3 text-sm font-medium text-white transition hover:bg-primary/90"
+                    aria-label="Begin exploring FERRO.OS"
                   >
                     Begin exploration
                   </button>
-                  <div className="rounded-full border border-white/10 bg-white/5 px-4 py-3 text-sm text-secondary">
+                  <div className="rounded-full border border-white/10 bg-white/5 px-4 py-3 text-sm text-secondary" aria-label="This is your first visit, local memory is enabled">
                     First visit • local memory enabled
                   </div>
                 </div>
               </div>
 
-              <div className="rounded-[28px] border border-white/10 bg-[#0b0b0b]/80 p-6">
+              <div className="rounded-[28px] border border-white/10 bg-[#0b0b0b]/80 p-6" aria-label="System state information">
                 <p className="text-xs uppercase tracking-[0.32em] text-muted">System state</p>
                 <div className="mt-5 space-y-4 text-sm text-secondary">
                   <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3">

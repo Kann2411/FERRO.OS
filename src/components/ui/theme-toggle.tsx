@@ -11,8 +11,9 @@ export function ThemeToggle() {
       onClick={toggleMode}
       className="rounded-full border border-white/10 bg-surface-strong px-4 py-2 text-sm font-medium text-foreground transition hover:border-primary/50"
       aria-label={`Switch to ${mode === "dark" ? "light" : "dark"} mode`}
+      aria-pressed={mode === "light"}
     >
-      {mode === "dark" ? "☀︎" : "☾"}
+      <span aria-hidden="true">{mode === "dark" ? "☀︎" : "☾"}</span>
     </button>
   );
 }

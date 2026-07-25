@@ -33,6 +33,22 @@ export const windowRegistry: Record<string, WindowDefinition> = {
     initialHeight: 340,
     defaultPosition: { x: 260, y: 160 },
   },
+  skills: {
+    id: "skills",
+    title: "Skills",
+    icon: "◌",
+    initialWidth: 540,
+    initialHeight: 360,
+    defaultPosition: { x: 300, y: 180 },
+  },
+  timeline: {
+    id: "timeline",
+    title: "Timeline",
+    icon: "⧉",
+    initialWidth: 520,
+    initialHeight: 340,
+    defaultPosition: { x: 340, y: 200 },
+  },
   terminal: {
     id: "terminal",
     title: "Terminal",

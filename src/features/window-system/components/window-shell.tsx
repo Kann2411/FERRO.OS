@@ -10,6 +10,7 @@ import { TimelineModule } from "@/features/timeline/components/timeline-module";
 import { CodeStudioModule } from "@/features/code-studio/components/code-studio-module";
 import type { WindowInstance } from "@/features/window-system/types";
 import { getViewportSafePosition } from "@/features/window-system/utils";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
 interface WindowShellProps {
   window: WindowInstance;
@@ -22,6 +23,7 @@ export function WindowShell({ window, onClose, onFocus, onBringToFront }: Window
   const { updateWindowPosition } = useWindowContext();
   const [dragOffset, setDragOffset] = useState<{ x: number; y: number } | null>(null);
   const [position, setPosition] = useState({ x: window.x, y: window.y });
+  const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
     setPosition({ x: window.x, y: window.y });
@@ -57,11 +59,14 @@ export function WindowShell({ window, onClose, onFocus, onBringToFront }: Window
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.96 }}
+      initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, scale: 0.96 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.2, ease: "easeOut" }}
+      transition={{ duration: prefersReducedMotion ? 0 : 0.2, ease: "easeOut" }}
       className={`pointer-events-auto absolute z-10 overflow-hidden rounded-[18px] border bg-[#141414]/90 backdrop-blur-xl ${window.focused ? "border-primary/40" : "border-white/10"}`}
+      role="dialog"
+      aria-modal="true"
+      aria-label={`${window.title} window`}
       style={{
         left: position.x,
         top: position.y,
@@ -78,13 +83,16 @@ export function WindowShell({ window, onClose, onFocus, onBringToFront }: Window
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
+        role="toolbar"
+        aria-label="Window controls"
       >
         <div className="flex items-center gap-2">
-          <span className="text-sm text-primary">{window.icon}</span>
+          <span className="text-sm text-primary" aria-hidden="true">{window.icon}</span>
           <span className="text-sm font-medium text-white">{window.title}</span>
         </div>
         <button
           type="button"
+          aria-label={`Close ${window.title} window`}
           onPointerDown={(event) => {
             event.stopPropagation();
             event.preventDefault();
@@ -95,11 +103,11 @@ export function WindowShell({ window, onClose, onFocus, onBringToFront }: Window
           }}
           className="rounded-full border border-white/10 px-2 py-1 text-xs text-secondary transition hover:border-primary/40 hover:text-primary"
         >
-          ✕
+          <span aria-hidden="true">✕</span>
         </button>
       </div>
 
-      <div className="h-[calc(100%-44px)] bg-[#0d0d0d]/70 p-4 text-sm text-secondary">
+      <div className="h-[calc(100%-44px)] bg-[#0d0d0d]/70 p-4 text-sm text-secondary" role="region" aria-label={`${window.title} content`}>
         {window.id === "projects" ? (
           <ProjectsModule />
         ) : window.id === "resume" ? (

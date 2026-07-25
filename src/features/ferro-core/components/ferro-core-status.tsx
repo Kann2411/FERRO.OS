@@ -13,18 +13,19 @@ export function FerroCoreStatus() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
       className="rounded-3xl border border-white/10 bg-surface/80 p-5 shadow-[0_24px_80px_rgba(0,0,0,0.22)] backdrop-blur-xl"
+      aria-label={`FERRO CORE status: ${explorerProfile.name}, ${progress}% progress`}
     >
       <div className="flex items-center justify-between gap-4">
         <div>
           <p className="text-xs uppercase tracking-[0.32em] text-muted">Explorer</p>
           <p className="mt-1 text-lg font-semibold text-white">{explorerProfile.name}</p>
         </div>
-        <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs uppercase text-muted">
+        <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs uppercase text-muted" aria-label="Level 0">
           Level 0
         </span>
       </div>
 
-      <div className="mt-6 rounded-3xl bg-white/5 p-1">
+      <div className="mt-6 rounded-3xl bg-white/5 p-1" role="progressbar" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100} aria-label={`Progress: ${progress}%`}>
         <div className="h-3 rounded-3xl bg-primary transition-all" style={{ width: `${progress}%` }} />
       </div>
 

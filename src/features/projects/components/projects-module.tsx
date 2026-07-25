@@ -1,6 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { EmptyState } from "@/components/ui/empty-state";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
 interface ProjectCardData {
   title: string;
@@ -35,6 +37,8 @@ const projects: ProjectCardData[] = [
 ];
 
 export function ProjectsModule() {
+  const prefersReducedMotion = useReducedMotion();
+
   return (
     <div className="flex h-full flex-col gap-4 overflow-auto">
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -48,17 +52,19 @@ export function ProjectsModule() {
       </div>
 
       {projects.length === 0 ? (
-        <div className="flex flex-1 items-center justify-center rounded-3xl border border-dashed border-white/10 bg-white/5 p-6 text-center text-sm text-secondary">
-          No projects are available yet. This state is ready to support future API-driven content.
-        </div>
+        <EmptyState
+          icon="◇"
+          title="No projects yet"
+          message="Projects will appear here when data is loaded from the API."
+        />
       ) : (
         <div className="grid gap-4 xl:grid-cols-2">
           {projects.map((project, index) => (
             <motion.article
               key={project.title}
-              initial={{ opacity: 0, y: 12 }}
+              initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05, duration: 0.25 }}
+              transition={{ delay: prefersReducedMotion ? 0 : index * 0.05, duration: prefersReducedMotion ? 0 : 0.25 }}
               className="rounded-[22px] border border-white/10 bg-[#121212]/80 p-4 shadow-[0_20px_70px_rgba(0,0,0,0.22)]"
             >
               <div className="flex items-center justify-between gap-3">

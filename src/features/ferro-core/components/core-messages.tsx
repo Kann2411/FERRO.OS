@@ -25,11 +25,12 @@ export function CoreMessages() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, ease: "easeOut" }}
       className="rounded-3xl border border-white/10 bg-[#101010]/90 p-4 shadow-[0_20px_80px_rgba(0,0,0,0.22)] backdrop-blur-xl"
+      aria-label="FERRO CORE messages"
     >
       <p className="text-[10px] uppercase tracking-[0.32em] text-muted">FERRO CORE</p>
-      <div className="mt-3 space-y-2">
+      <div className="mt-3 space-y-2" role="log" aria-live="polite">
         {messages.map((message) => (
-          <div key={message.id} className={`rounded-2xl border px-3 py-3 ${messageStyles[message.type]}`}>
+          <div key={message.id} className={`rounded-2xl border px-3 py-3 ${messageStyles[message.type]}`} role="article" aria-label={`${message.type} message: ${message.title}`}>
             <p className="text-sm font-medium text-white">{message.title}</p>
             <p className="mt-1 text-sm leading-6 text-secondary">{message.body}</p>
           </div>

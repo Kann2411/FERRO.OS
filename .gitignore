@@ -12,6 +12,8 @@
 
 # testing
 /coverage
+QUICK_REFERENCE_IMPROVEMENTS.md
+USER_INTERACTION_IMPROVEMENTS.md
 
 # next.js
 /.next/
