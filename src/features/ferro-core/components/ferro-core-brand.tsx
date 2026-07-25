@@ -11,7 +11,7 @@ export function FerroCoreBrand() {
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
-      className="rounded-[32px] border border-white/10 bg-[#101010]/95 p-6 shadow-[0_40px_120px_rgba(217,4,41,0.24)] backdrop-blur-xl"
+      className="rounded-4xl border border-white/10 bg-[#101010]/95 p-6 shadow-[0_40px_120px_rgba(217,4,41,0.24)] backdrop-blur-xl"
     >
       <div className="flex items-center gap-3 text-primary">
         <span className="text-3xl">{logo}</span>
