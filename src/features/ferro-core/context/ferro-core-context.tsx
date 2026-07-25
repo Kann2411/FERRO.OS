@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import type { ExplorerProfile, FerroCoreContextValue } from "@/features/ferro-core/types";
+import type { CoreMessage, ExplorerProfile, FerroCoreContextValue } from "@/features/ferro-core/types";
 
 const STORAGE_KEY = "ferro.os.ferro-core";
 
@@ -14,6 +14,7 @@ const defaultProfile: ExplorerProfile = {
   lastVisit: null,
   visitCount: 0,
   welcomeCompleted: false,
+  missionProgress: {},
 };
 
 const loadSavedProfile = (): ExplorerProfile => {
@@ -41,17 +42,40 @@ const loadSavedProfile = (): ExplorerProfile => {
   }
 };
 
+const initialMissions = [
+  { id: "explore-desktop", title: "Explore the desktop", description: "Survey the workspace and understand the environment.", reward: 5 },
+  { id: "open-first-module", title: "Open your first module", description: "Launch a module from the desktop to begin the journey.", reward: 8 },
+  { id: "discover-projects", title: "Discover Projects", description: "Open the Projects module and inspect its contents.", reward: 7 },
+];
+
 const FerroCoreContext = createContext<FerroCoreContextValue | undefined>(undefined);
 
 export function FerroCoreProvider({ children }: { children: ReactNode }) {
   const [explorerProfile, setExplorerProfile] = useState<ExplorerProfile>(defaultProfile);
   const [initialized, setInitialized] = useState(false);
+  const [missions] = useState(initialMissions);
+  const [messages, setMessages] = useState<CoreMessage[]>([]);
 
   useEffect(() => {
     const savedProfile = loadSavedProfile();
     setExplorerProfile(savedProfile);
     setInitialized(true);
   }, []);
+
+  useEffect(() => {
+    if (!initialized || messages.length > 0) {
+      return;
+    }
+
+    setMessages([
+      {
+        id: "welcome-core",
+        type: "welcome",
+        title: "FERRO CORE online",
+        body: "The system has begun to remember your first steps.",
+      },
+    ]);
+  }, [initialized, messages.length]);
 
   useEffect(() => {
     if (!initialized) {
@@ -112,6 +136,37 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
     }));
   };
 
+  const completeMission = (missionId: string) => {
+    setExplorerProfile((current) => ({
+      ...current,
+      missionProgress: {
+        ...current.missionProgress,
+        [missionId]: true,
+      },
+      progress: Math.min(100, current.progress + 5),
+    }));
+  };
+
+  const unlockMission = (missionId: string) => {
+    setExplorerProfile((current) => ({
+      ...current,
+      missionProgress: {
+        ...current.missionProgress,
+        [missionId]: current.missionProgress[missionId] ?? false,
+      },
+    }));
+  };
+
+  const pushMessage = (message: CoreMessage) => {
+    setMessages((current) => [
+      {
+        ...message,
+        id: message.id || `${message.type}-${Date.now()}`,
+      },
+      ...current,
+    ].slice(0, 4));
+  };
+
   const value = useMemo<FerroCoreContextValue>(
     () => ({
       coreName: "FERRO CORE",
@@ -119,12 +174,18 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
       tagline: "The operating system's inner mind.",
       explorerProfile,
       initialized,
+      missions,
+      completedMissions: missions.filter((mission) => explorerProfile.missionProgress[mission.id]).map((mission) => mission.id),
+      messages,
       setExplorerName,
       advanceProgress,
       registerDiscovery,
       awardAchievement,
       recordVisit,
       completeWelcome,
+      completeMission,
+      unlockMission,
+      pushMessage,
     }),
     [explorerProfile, initialized]
   );
