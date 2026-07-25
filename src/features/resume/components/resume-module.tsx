@@ -101,13 +101,13 @@ export function ResumeModule() {
         </button>
       </div>
 
-      <div className="rounded-[24px] border border-white/10 bg-[#121212]/80 p-4 text-sm leading-7 text-secondary">
+      <div className="rounded-3xl border border-white/10 bg-[#121212]/80 p-4 text-sm leading-7 text-secondary">
         <p className="text-[10px] uppercase tracking-[0.28em] text-muted">Summary</p>
         <p className="mt-2 text-white">{profile.summary}</p>
       </div>
 
       <div className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
-        <div className="rounded-[24px] border border-white/10 bg-[#121212]/80 p-4">
+        <div className="rounded-3xl border border-white/10 bg-[#121212]/80 p-4">
           <p className="text-[10px] uppercase tracking-[0.28em] text-muted">Experience</p>
           <div className="mt-4 space-y-3">
             {experience.map((item, index) => (
@@ -129,7 +129,7 @@ export function ResumeModule() {
         </div>
 
         <div className="space-y-4">
-          <div className="rounded-[24px] border border-white/10 bg-[#121212]/80 p-4">
+          <div className="rounded-3xl border border-white/10 bg-[#121212]/80 p-4">
             <p className="text-[10px] uppercase tracking-[0.28em] text-muted">Education</p>
             <div className="mt-3 space-y-3">
               {education.map((item) => (
@@ -142,7 +142,7 @@ export function ResumeModule() {
             </div>
           </div>
 
-          <div className="rounded-[24px] border border-white/10 bg-[#121212]/80 p-4">
+          <div className="rounded-3xl border border-white/10 bg-[#121212]/80 p-4">
             <p className="text-[10px] uppercase tracking-[0.28em] text-muted">Certifications</p>
             <div className="mt-3 flex flex-wrap gap-2">
               {certifications.map((item) => (
@@ -153,7 +153,7 @@ export function ResumeModule() {
             </div>
           </div>
 
-          <div className="rounded-[24px] border border-white/10 bg-[#121212]/80 p-4">
+          <div className="rounded-3xl border border-white/10 bg-[#121212]/80 p-4">
             <p className="text-[10px] uppercase tracking-[0.28em] text-muted">Languages</p>
             <div className="mt-3 flex flex-wrap gap-2">
               {languages.map((item) => (

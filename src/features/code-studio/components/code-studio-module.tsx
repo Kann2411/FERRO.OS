@@ -52,7 +52,7 @@ export function CodeStudioModule() {
       </div>
 
       <div className="grid gap-4 xl:grid-cols-[0.8fr_1.2fr]">
-        <div className="rounded-[24px] border border-white/10 bg-[#121212]/80 p-4">
+        <div className="rounded-3xl border border-white/10 bg-[#121212]/80 p-4">
           <p className="text-[10px] uppercase tracking-[0.28em] text-muted">Studio metrics</p>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             {stats.map((stat, index) => (
@@ -70,7 +70,7 @@ export function CodeStudioModule() {
           </div>
         </div>
 
-        <div className="rounded-[24px] border border-primary/20 bg-primary/10 p-4">
+        <div className="rounded-3xl border border-primary/20 bg-primary/10 p-4">
           <p className="text-[10px] uppercase tracking-[0.28em] text-primary">Operating context</p>
           <p className="mt-3 text-sm leading-8 text-secondary">
             This laboratory presents the engineering mindset behind FERRO.OS: elegant systems, expressive interfaces and a deliberate blend of technical discipline and creative direction.

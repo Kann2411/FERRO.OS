@@ -71,7 +71,7 @@ export function DesktopIcons() {
           role="listitem"
           onClick={() => handleOpen(item.windowId)}
           aria-label={`Open ${item.label}: ${item.description}`}
-          className={`group flex min-h-[44px] min-w-[44px] flex-col items-center gap-2 rounded-2xl border bg-surface/40 p-3 text-center transition hover:border-primary/40 hover:bg-surface/70 active:scale-95 sm:p-4 ${prefersHighContrast ? "border-white" : "border-white/10"}`}
+          className={`group flex min-h-11 min-w-11 flex-col items-center gap-2 rounded-2xl border bg-surface/40 p-3 text-center transition hover:border-primary/40 hover:bg-surface/70 active:scale-95 sm:p-4 ${prefersHighContrast ? "border-white" : "border-white/10"}`}
         >
           <div className={`flex h-10 w-10 items-center justify-center rounded-2xl text-lg sm:h-12 sm:w-12 ${item.accent}`} aria-hidden="true">
             {item.icon}
