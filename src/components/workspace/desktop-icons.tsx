@@ -1,5 +1,6 @@
 "use client";
 
+import { useFerroCore } from "@/features/ferro-core/context/ferro-core-context";
 import { useWindowContext } from "@/features/window-system/context/window-context";
 import { resolveWindowDefinition } from "@/features/window-system/utils/open-module";
 
@@ -12,11 +13,45 @@ const items = [
 
 export function DesktopIcons() {
   const { openWindow, focusWindow, bringToFront } = useWindowContext();
+  const { explorerProfile, completeMission, advanceProgress, registerDiscovery, awardAchievement, pushMessage, pushNotification } = useFerroCore();
 
   const handleOpen = (windowId: string) => {
     const definition = resolveWindowDefinition(windowId);
     if (!definition) {
       return;
+    }
+
+    const isFirstModuleOpen = !explorerProfile.discoveredModules.includes(windowId);
+
+    if (isFirstModuleOpen) {
+      completeMission("explore-desktop");
+      completeMission("open-first-module");
+      advanceProgress(4);
+      registerDiscovery(windowId);
+
+      if (windowId === "projects") {
+        completeMission("discover-projects");
+        awardAchievement("Projects discovered");
+        pushMessage({
+          id: "projects-discovered",
+          type: "achievement",
+          title: "Projects unlocked",
+          body: "FERRO CORE has mapped the first visible frontier.",
+        });
+        pushNotification({
+          id: "projects-notification",
+          type: "achievement",
+          title: "Achievement unlocked",
+          body: "You discovered the Projects signal.",
+        });
+      }
+
+      pushNotification({
+        id: `module-opened-${windowId}`,
+        type: "info",
+        title: "Module opened",
+        body: `${definition.title} is now active.`,
+      });
     }
 
     openWindow(definition);

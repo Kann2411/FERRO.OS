@@ -9,12 +9,14 @@ const defaultProfile: ExplorerProfile = {
   name: "Explorer",
   progress: 0,
   modulesDiscovered: 0,
+  discoveredModules: [],
   achievements: [],
   firstVisit: null,
   lastVisit: null,
   visitCount: 0,
   welcomeCompleted: false,
   missionProgress: {},
+  explorationSeconds: 0,
   lastSavedAt: null,
 };
 
@@ -44,9 +46,9 @@ const loadSavedProfile = (): ExplorerProfile => {
 };
 
 const initialMissions = [
-  { id: "explore-desktop", title: "Explore the desktop", description: "Survey the workspace and understand the environment.", reward: 5 },
-  { id: "open-first-module", title: "Open your first module", description: "Launch a module from the desktop to begin the journey.", reward: 8 },
-  { id: "discover-projects", title: "Discover Projects", description: "Open the Projects module and inspect its contents.", reward: 7 },
+  { id: "explore-desktop", title: "Explore the desktop", description: "Survey the workspace and understand the environment.", reward: 5, prerequisite: null },
+  { id: "open-first-module", title: "Open your first module", description: "Launch a module from the desktop to begin the journey.", reward: 8, prerequisite: "explore-desktop" },
+  { id: "discover-projects", title: "Discover Projects", description: "Open the Projects module and inspect its contents.", reward: 7, prerequisite: "open-first-module" },
 ];
 
 const FerroCoreContext = createContext<FerroCoreContextValue | undefined>(undefined);
@@ -100,6 +102,21 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
       return;
     }
 
+    const timer = window.setInterval(() => {
+      setExplorerProfile((current) => ({
+        ...current,
+        explorationSeconds: current.explorationSeconds + 1,
+      }));
+    }, 1000);
+
+    return () => window.clearInterval(timer);
+  }, [initialized]);
+
+  useEffect(() => {
+    if (!initialized) {
+      return;
+    }
+
     try {
       const snapshot = {
         ...explorerProfile,
@@ -123,11 +140,22 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
     }));
   };
 
-  const registerDiscovery = () => {
-    setExplorerProfile((current) => ({
-      ...current,
-      modulesDiscovered: current.modulesDiscovered + 1,
-    }));
+  const registerDiscovery = (moduleId?: string) => {
+    setExplorerProfile((current) => {
+      if (moduleId && current.discoveredModules.includes(moduleId)) {
+        return current;
+      }
+
+      const nextDiscoveredModules = moduleId
+        ? [...current.discoveredModules, moduleId]
+        : current.discoveredModules;
+
+      return {
+        ...current,
+        discoveredModules: nextDiscoveredModules,
+        modulesDiscovered: nextDiscoveredModules.length,
+      };
+    });
   };
 
   const awardAchievement = (achievement: string) => {
@@ -160,14 +188,20 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
   };
 
   const completeMission = (missionId: string) => {
-    setExplorerProfile((current) => ({
-      ...current,
-      missionProgress: {
-        ...current.missionProgress,
-        [missionId]: true,
-      },
-      progress: Math.min(100, current.progress + 5),
-    }));
+    setExplorerProfile((current) => {
+      if (current.missionProgress[missionId]) {
+        return current;
+      }
+
+      return {
+        ...current,
+        missionProgress: {
+          ...current.missionProgress,
+          [missionId]: true,
+        },
+        progress: Math.min(100, current.progress + 5),
+      };
+    });
   };
 
   const unlockMission = (missionId: string) => {

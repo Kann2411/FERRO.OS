@@ -1,8 +1,22 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useFerroCore } from "@/features/ferro-core/context/ferro-core-context";
+
+function formatExplorationTime(totalSeconds: number) {
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+
+  if (hours > 0) {
+    return `${hours}h ${minutes}m`;
+  }
+
+  return `${minutes}m`;
+}
 
 export function StatusPanel() {
+  const { explorerProfile, missions, completedMissions } = useFerroCore();
+
   return (
     <motion.div
       initial={{ opacity: 0, x: 12 }}
@@ -11,7 +25,7 @@ export function StatusPanel() {
       className="rounded-full border border-white/10 bg-surface/70 px-3 py-2 text-sm text-secondary backdrop-blur-xl"
     >
       <span className="mr-2 inline-block h-2.5 w-2.5 rounded-full bg-success" />
-      03:14 • Explorer Sync
+      {Math.round(explorerProfile.progress)}% • {completedMissions.length}/{missions.length} missions • {formatExplorationTime(explorerProfile.explorationSeconds)}
     </motion.div>
   );
 }

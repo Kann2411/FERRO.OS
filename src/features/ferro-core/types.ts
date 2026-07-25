@@ -2,12 +2,14 @@ export interface ExplorerProfile {
   name: string;
   progress: number;
   modulesDiscovered: number;
+  discoveredModules: string[];
   achievements: string[];
   firstVisit: string | null;
   lastVisit: string | null;
   visitCount: number;
   welcomeCompleted: boolean;
   missionProgress: Record<string, boolean>;
+  explorationSeconds: number;
   lastSavedAt: string | null;
 }
 
@@ -16,6 +18,7 @@ export interface MissionDefinition {
   title: string;
   description: string;
   reward: number;
+  prerequisite: string | null;
 }
 
 export interface CoreMessage {
@@ -44,7 +47,7 @@ export interface FerroCoreContextValue {
   notifications: CoreNotification[];
   setExplorerName: (name: string) => void;
   advanceProgress: (amount: number) => void;
-  registerDiscovery: () => void;
+  registerDiscovery: (moduleId?: string) => void;
   awardAchievement: (achievement: string) => void;
   recordVisit: () => void;
   completeWelcome: () => void;

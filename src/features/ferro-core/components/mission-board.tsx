@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { useFerroCore } from "@/features/ferro-core/context/ferro-core-context";
 
 export function MissionBoard() {
-  const { missions, completedMissions } = useFerroCore();
+  const { missions, completedMissions, explorerProfile } = useFerroCore();
 
   return (
     <motion.section
@@ -26,18 +26,19 @@ export function MissionBoard() {
       <div className="mt-4 space-y-3">
         {missions.map((mission) => {
           const done = completedMissions.includes(mission.id);
+          const isLocked = Boolean(mission.prerequisite && !explorerProfile.missionProgress[mission.prerequisite]);
           return (
             <div
               key={mission.id}
-              className={`rounded-2xl border px-3 py-3 ${done ? "border-primary/30 bg-primary/10" : "border-white/10 bg-white/5"}`}
+              className={`rounded-2xl border px-3 py-3 ${done ? "border-primary/30 bg-primary/10" : isLocked ? "border-white/10 bg-white/5 opacity-70" : "border-primary/20 bg-primary/5"}`}
             >
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <p className="text-sm font-medium text-white">{mission.title}</p>
                   <p className="mt-1 text-sm leading-6 text-secondary">{mission.description}</p>
                 </div>
-                <span className={`rounded-full px-2.5 py-1 text-[10px] uppercase tracking-[0.28em] ${done ? "bg-primary/20 text-primary" : "bg-white/10 text-secondary"}`}>
-                  {done ? "Done" : "Open"}
+                <span className={`rounded-full px-2.5 py-1 text-[10px] uppercase tracking-[0.28em] ${done ? "bg-primary/20 text-primary" : isLocked ? "bg-white/10 text-secondary" : "bg-primary/20 text-primary"}`}>
+                  {done ? "Done" : isLocked ? "Locked" : "Ready"}
                 </span>
               </div>
             </div>
