@@ -4,6 +4,8 @@ import { createContext, useContext, useEffect, useMemo, useState, type ReactNode
 import type { CoreMessage, CoreNotification, ExplorerProfile, FerroCoreContextValue } from "@/features/ferro-core/types";
 import { loadExplorerProfileSnapshot, saveExplorerProfileSnapshot } from "@/features/ferro-core/utils/explorer-profile-storage";
 import { getDiscoveryProgressReward, updateProgress } from "@/features/ferro-core/utils/explorer-progress";
+import { getDiscoveryRecords, registerDiscoveryRecord } from "@/features/ferro-core/utils/discovery-registry";
+import { evaluateAchievements } from "@/features/ferro-core/utils/achievement-system";
 
 const STORAGE_KEY = "ferro.os.ferro-core";
 
@@ -66,6 +68,7 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
   const [missions] = useState(initialMissions);
   const [messages, setMessages] = useState<CoreMessage[]>([]);
   const [notifications, setNotifications] = useState<CoreNotification[]>([]);
+  const [discoveries, setDiscoveries] = useState(getDiscoveryRecords);
 
   useEffect(() => {
     const savedProfile = loadSavedProfile();
@@ -124,6 +127,33 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
       return;
     }
 
+    const nextAchievements = evaluateAchievements({
+      progress: explorerProfile.progress,
+      modulesDiscovered: explorerProfile.modulesDiscovered,
+      discoveredModules: explorerProfile.discoveredModules,
+      completedMissions: Object.values(explorerProfile.missionProgress).filter(Boolean).length,
+    });
+
+    const achievementNames = nextAchievements.map((achievement) => achievement.title);
+
+    setExplorerProfile((current) => {
+      const missing = achievementNames.filter((name) => !current.achievements.includes(name));
+      if (missing.length === 0) {
+        return current;
+      }
+
+      return {
+        ...current,
+        achievements: [...current.achievements, ...missing],
+      };
+    });
+  }, [initialized, explorerProfile.progress, explorerProfile.modulesDiscovered, explorerProfile.discoveredModules, explorerProfile.missionProgress]);
+
+  useEffect(() => {
+    if (!initialized) {
+      return;
+    }
+
     try {
       const snapshot = {
         ...explorerProfile,
@@ -159,6 +189,12 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
         : current.discoveredModules;
 
       const reward = getDiscoveryProgressReward(moduleId);
+      const discoveryLabel = moduleId ? `${moduleId} discovered` : "New system discovery";
+      const registered = registerDiscoveryRecord(moduleId ?? `discovery-${Date.now()}`, discoveryLabel, "ferro-core");
+
+      if (registered) {
+        setDiscoveries(getDiscoveryRecords());
+      }
 
       return {
         ...current,
@@ -260,6 +296,7 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
       completedMissions: missions.filter((mission) => explorerProfile.missionProgress[mission.id]).map((mission) => mission.id),
       messages,
       notifications,
+      discoveries,
       setExplorerName,
       advanceProgress,
       registerDiscovery,
@@ -272,7 +309,7 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
       pushNotification,
       dismissNotification,
     }),
-    [explorerProfile, initialized, missions, messages, notifications]
+    [explorerProfile, initialized, missions, messages, notifications, discoveries]
   );
 
   return <FerroCoreContext.Provider value={value}>{children}</FerroCoreContext.Provider>;

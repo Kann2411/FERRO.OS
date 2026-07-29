@@ -45,6 +45,7 @@ export interface FerroCoreContextValue {
   completedMissions: string[];
   messages: CoreMessage[];
   notifications: CoreNotification[];
+  discoveries: Array<{ id: string; label: string; source: string; timestamp: string }>;
   setExplorerName: (name: string) => void;
   advanceProgress: (amount: number) => void;
   registerDiscovery: (moduleId?: string) => void;
