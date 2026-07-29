@@ -6,6 +6,8 @@ import { loadExplorerProfileSnapshot, saveExplorerProfileSnapshot } from "@/feat
 import { getDiscoveryProgressReward, updateProgress } from "@/features/ferro-core/utils/explorer-progress";
 import { getDiscoveryRecords, registerDiscoveryRecord } from "@/features/ferro-core/utils/discovery-registry";
 import { evaluateAchievements } from "@/features/ferro-core/utils/achievement-system";
+import { getActiveMission, missionDefinitions } from "@/features/ferro-core/utils/mission-system";
+import { addHistoryEntry, getHistoryEntries } from "@/features/ferro-core/utils/history-log";
 
 const STORAGE_KEY = "ferro.os.ferro-core";
 
@@ -54,11 +56,7 @@ const loadSavedProfile = (): ExplorerProfile => {
   }
 };
 
-const initialMissions = [
-  { id: "explore-desktop", title: "Explore the desktop", description: "Survey the workspace and understand the environment.", reward: 5, prerequisite: null },
-  { id: "open-first-module", title: "Open your first module", description: "Launch a module from the desktop to begin the journey.", reward: 8, prerequisite: "explore-desktop" },
-  { id: "discover-projects", title: "Discover Projects", description: "Open the Projects module and inspect its contents.", reward: 7, prerequisite: "open-first-module" },
-];
+const initialMissions = missionDefinitions;
 
 const FerroCoreContext = createContext<FerroCoreContextValue | undefined>(undefined);
 
@@ -66,9 +64,11 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
   const [explorerProfile, setExplorerProfile] = useState<ExplorerProfile>(defaultProfile);
   const [initialized, setInitialized] = useState(false);
   const [missions] = useState(initialMissions);
+  const activeMission = getActiveMission(explorerProfile.missionProgress);
   const [messages, setMessages] = useState<CoreMessage[]>([]);
   const [notifications, setNotifications] = useState<CoreNotification[]>([]);
   const [discoveries, setDiscoveries] = useState(getDiscoveryRecords);
+  const [history, setHistory] = useState(getHistoryEntries);
 
   useEffect(() => {
     const savedProfile = loadSavedProfile();
@@ -142,9 +142,24 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
         return current;
       }
 
+      const nextAchievements = [...current.achievements, ...missing];
+
+      if (missing.length > 0) {
+        setHistory((currentHistory) => {
+          const next = addHistoryEntry({
+            id: `achievement-${Date.now()}`,
+            type: "achievement",
+            label: missing[0],
+            detail: "Achievement unlocked",
+            timestamp: new Date().toISOString(),
+          });
+          return next;
+        });
+      }
+
       return {
         ...current,
-        achievements: [...current.achievements, ...missing],
+        achievements: nextAchievements,
       };
     });
   }, [initialized, explorerProfile.progress, explorerProfile.modulesDiscovered, explorerProfile.discoveredModules, explorerProfile.missionProgress]);
@@ -194,6 +209,16 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
 
       if (registered) {
         setDiscoveries(getDiscoveryRecords());
+        setHistory((current) => {
+          const next = addHistoryEntry({
+            id: `module-${Date.now()}`,
+            type: "module",
+            label: moduleId ?? "System event",
+            detail: "Module discovered",
+            timestamp: new Date().toISOString(),
+          });
+          return next;
+        });
       }
 
       return {
@@ -297,6 +322,8 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
       messages,
       notifications,
       discoveries,
+      history,
+      activeMission,
       setExplorerName,
       advanceProgress,
       registerDiscovery,
@@ -309,7 +336,7 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
       pushNotification,
       dismissNotification,
     }),
-    [explorerProfile, initialized, missions, messages, notifications, discoveries]
+    [explorerProfile, initialized, missions, messages, notifications, discoveries, history, activeMission]
   );
 
   return <FerroCoreContext.Provider value={value}>{children}</FerroCoreContext.Provider>;
