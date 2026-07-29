@@ -33,6 +33,22 @@ export const windowRegistry: Record<string, WindowDefinition> = {
     initialHeight: 380,
     defaultPosition: { x: 260, y: 160 },
   },
+  audioPlayer: {
+    id: "audioPlayer",
+    title: "Audio Player",
+    icon: "♪",
+    initialWidth: 560,
+    initialHeight: 420,
+    defaultPosition: { x: 300, y: 180 },
+  },
+  equipment: {
+    id: "equipment",
+    title: "Equipment",
+    icon: "⚙",
+    initialWidth: 560,
+    initialHeight: 400,
+    defaultPosition: { x: 320, y: 200 },
+  },
   resume: {
     id: "resume",
     title: "Resume",

@@ -10,6 +10,8 @@ import { TimelineModule } from "@/features/timeline/components/timeline-module";
 import { CodeStudioModule } from "@/features/code-studio/components/code-studio-module";
 import { StudioModule } from "@/features/studio/components/studio-module";
 import { DiscographyModule } from "@/features/discography/components/discography-module";
+import { AudioPlayerModule } from "@/features/audio-player/components/audio-player-module";
+import { EquipmentModule } from "@/features/equipment/components/equipment-module";
 import type { WindowInstance } from "@/features/window-system/types";
 import { getViewportSafePosition } from "@/features/window-system/utils";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
@@ -122,6 +124,10 @@ export function WindowShell({ window, onClose, onFocus, onBringToFront }: Window
           <StudioModule />
         ) : window.id === "discography" ? (
           <DiscographyModule />
+        ) : window.id === "audioPlayer" ? (
+          <AudioPlayerModule />
+        ) : window.id === "equipment" ? (
+          <EquipmentModule />
         ) : window.id === "code-studio" ? (
           <CodeStudioModule />
         ) : (

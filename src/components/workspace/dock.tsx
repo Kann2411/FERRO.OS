@@ -8,6 +8,8 @@ const apps = [
   { icon: "⌘", windowId: "projects", label: "Projects" },
   { icon: "♫", windowId: "studio", label: "Studio" },
   { icon: "◈", windowId: "discography", label: "Discography" },
+  { icon: "♪", windowId: "audioPlayer", label: "Audio Player" },
+  { icon: "⚙", windowId: "equipment", label: "Equipment" },
   { icon: "◫", windowId: "resume", label: "Resume" },
   { icon: "◌", windowId: "skills", label: "Skills" },
   { icon: "⧉", windowId: "timeline", label: "Timeline" },
