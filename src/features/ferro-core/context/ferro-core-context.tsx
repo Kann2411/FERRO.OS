@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import type { CoreMessage, CoreNotification, ExplorerProfile, FerroCoreContextValue } from "@/features/ferro-core/types";
-import { loadExplorerProfileSnapshot, saveExplorerProfileSnapshot } from "@/features/ferro-core/utils/explorer-profile-storage";
+import { clearExplorerProfileSnapshot, loadExplorerProfileSnapshot, migrateExplorerProfileSnapshot, saveExplorerProfileSnapshot } from "@/features/ferro-core/utils/explorer-profile-storage";
 import { getDiscoveryProgressReward, updateProgress } from "@/features/ferro-core/utils/explorer-progress";
 import { clearDiscoveryRegistry, getDiscoveryRecords, registerDiscoveryRecord } from "@/features/ferro-core/utils/discovery-registry";
 import { generateUUID } from "@/lib/uuid";
@@ -48,10 +48,7 @@ const loadSavedProfile = (): ExplorerProfile => {
       return defaultProfile;
     }
 
-    return {
-      ...defaultProfile,
-      ...parsed,
-    };
+    return migrateExplorerProfileSnapshot(parsed, defaultProfile);
   } catch {
     return defaultProfile;
   }
@@ -345,6 +342,8 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
     } catch {
       // ignore storage cleanup errors
     }
+
+    clearExplorerProfileSnapshot();
   };
 
   const pushMessage = (message: CoreMessage) => {
