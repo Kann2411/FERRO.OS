@@ -58,14 +58,14 @@ export function MusicVisualizer({ isPlaying }: MusicVisualizerProps) {
         </div>
       </div>
 
-      <div className="mt-4 rounded-[20px] border border-white/10 bg-gradient-to-br from-primary/10 via-white/5 to-transparent p-4">
+      <div className="mt-4 rounded-[20px] border border-white/10 bg-linear-to-br from-primary/10 via-white/5 to-transparent p-4">
         <div className="flex h-28 items-end justify-between gap-1">
           {levels.map((level, index) => (
             <motion.div
               key={`${index}-${level}`}
               animate={{ height: `${Math.max(12, level)}px` }}
               transition={{ duration: prefersReducedMotion ? 0 : 0.14, ease: "easeOut" }}
-              className="w-full max-w-[8px] rounded-full bg-gradient-to-t from-primary via-white/80 to-primary/50"
+              className="w-full max-w-2 rounded-full bg-linear-to-t from-primary via-white/80 to-primary/50"
             />
           ))}
         </div>

@@ -81,7 +81,7 @@ export function ExplorerProfileCard() {
         </div>
         <div className="rounded-2xl bg-white/10 p-1" role="progressbar" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100} aria-label={`Exploration progress: ${progress}%`}>
           <motion.div
-            className="h-2 rounded-2xl bg-gradient-to-r from-primary via-sky-400 to-emerald-400"
+            className="h-2 rounded-2xl bg-linear-to-r from-primary via-sky-400 to-emerald-400"
             animate={{ width: `${progress}%` }}
             transition={{ duration: 0.45, ease: "easeOut" }}
             style={{ width: `${progress}%` }}

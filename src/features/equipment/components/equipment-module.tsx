@@ -88,7 +88,7 @@ export function EquipmentModule() {
             initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: prefersReducedMotion ? 0 : index * 0.04, duration: prefersReducedMotion ? 0 : 0.2 }}
-            className="rounded-[24px] border border-white/10 bg-[#121212]/80 p-4"
+            className="rounded-3xl border border-white/10 bg-[#121212]/80 p-4"
           >
             <div className="flex items-center justify-between gap-3">
               <h3 className="text-base font-semibold text-white">{category}</h3>
@@ -99,7 +99,7 @@ export function EquipmentModule() {
               {items.map((item) => (
                 <article key={item.name} className="rounded-[18px] border border-white/10 bg-white/5 p-3">
                   <div className="flex items-start gap-3">
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[16px] border border-primary/20 bg-primary/10 text-xl text-primary">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-primary/20 bg-primary/10 text-xl text-primary">
                       {item.icon}
                     </div>
                     <div>

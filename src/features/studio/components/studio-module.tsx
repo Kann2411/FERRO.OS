@@ -44,7 +44,7 @@ export function StudioModule() {
         </div>
       </div>
 
-      <div className="rounded-[24px] border border-primary/20 bg-primary/10 p-4 text-sm leading-8 text-secondary">
+      <div className="rounded-3xl border border-primary/20 bg-primary/10 p-4 text-sm leading-8 text-secondary">
         <p className="text-[10px] uppercase tracking-[0.28em] text-primary">Studio atmosphere</p>
         <p className="mt-2 text-white">
           Una experiencia inspirada en un estudio profesional: elegante, precisa y orientada a la creación.

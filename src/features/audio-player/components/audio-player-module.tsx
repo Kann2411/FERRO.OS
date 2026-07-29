@@ -173,10 +173,10 @@ export function AudioPlayerModule() {
         initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: prefersReducedMotion ? 0 : 0.22 }}
-        className="rounded-[24px] border border-white/10 bg-[#121212]/80 p-4"
+        className="rounded-3xl border border-white/10 bg-[#121212]/80 p-4"
       >
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center">
-          <div className={`flex h-24 w-24 shrink-0 items-center justify-center rounded-[22px] bg-gradient-to-br ${currentTrack.accent} text-3xl text-primary`}>
+          <div className={`flex h-24 w-24 shrink-0 items-center justify-center rounded-[22px] bg-linear-to-br ${currentTrack.accent} text-3xl text-primary`}>
             ♫
           </div>
 
@@ -231,7 +231,7 @@ export function AudioPlayerModule() {
             </button>
           </div>
 
-          <div className="flex min-w-[180px] items-center gap-2 text-sm text-secondary">
+          <div className="flex min-w-45 items-center gap-2 text-sm text-secondary">
             <span aria-hidden="true">🔊</span>
             <input
               aria-label="Volume"

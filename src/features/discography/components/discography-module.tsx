@@ -72,7 +72,7 @@ export function DiscographyModule() {
               className="rounded-[22px] border border-white/10 bg-[#121212]/80 p-4 shadow-[0_20px_70px_rgba(0,0,0,0.22)]"
             >
               <div className="flex items-start gap-3">
-                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-[18px] border border-white/10 bg-gradient-to-br from-primary/20 via-white/10 to-primary/10 text-2xl text-primary">
+                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-[18px] border border-white/10 bg-linear-to-br from-primary/20 via-white/10 to-primary/10 text-2xl text-primary">
                   {release.cover}
                 </div>
                 <div className="min-w-0">

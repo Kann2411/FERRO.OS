@@ -176,7 +176,7 @@ export function TerminalModule() {
   }, [history, historyIndex]);
 
   return (
-    <div className="flex h-full flex-col overflow-hidden rounded-[16px] border border-white/10 bg-[#060606]/80 text-sm text-secondary shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
+    <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#060606]/80 text-sm text-secondary shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
       <div className="flex items-center justify-between border-b border-white/10 bg-black/20 px-3 py-2">
         <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.28em] text-muted">
           <span className="h-2 w-2 rounded-full bg-primary" />
