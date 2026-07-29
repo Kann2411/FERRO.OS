@@ -2,6 +2,8 @@
 
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import type { CoreMessage, CoreNotification, ExplorerProfile, FerroCoreContextValue } from "@/features/ferro-core/types";
+import { loadExplorerProfileSnapshot, saveExplorerProfileSnapshot } from "@/features/ferro-core/utils/explorer-profile-storage";
+import { getDiscoveryProgressReward, updateProgress } from "@/features/ferro-core/utils/explorer-progress";
 
 const STORAGE_KEY = "ferro.os.ferro-core";
 
@@ -21,6 +23,11 @@ const defaultProfile: ExplorerProfile = {
 };
 
 const loadSavedProfile = (): ExplorerProfile => {
+  const sessionProfile = loadExplorerProfileSnapshot(defaultProfile);
+  if (sessionProfile !== defaultProfile) {
+    return sessionProfile;
+  }
+
   if (typeof window === "undefined") {
     return defaultProfile;
   }
@@ -123,9 +130,10 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
         lastSavedAt: new Date().toISOString(),
       };
 
+      saveExplorerProfileSnapshot(snapshot);
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot));
     } catch {
-      // ignore localStorage write errors
+      // ignore storage write errors
     }
   }, [initialized, explorerProfile]);
 
@@ -136,7 +144,7 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
   const advanceProgress = (amount: number) => {
     setExplorerProfile((current) => ({
       ...current,
-      progress: Math.min(100, Math.max(0, current.progress + amount)),
+      progress: updateProgress(current.progress, amount),
     }));
   };
 
@@ -150,10 +158,13 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
         ? [...current.discoveredModules, moduleId]
         : current.discoveredModules;
 
+      const reward = getDiscoveryProgressReward(moduleId);
+
       return {
         ...current,
         discoveredModules: nextDiscoveredModules,
         modulesDiscovered: nextDiscoveredModules.length,
+        progress: updateProgress(current.progress, reward),
       };
     });
   };
