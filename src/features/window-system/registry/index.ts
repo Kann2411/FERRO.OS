@@ -25,6 +25,14 @@ export const windowRegistry: Record<string, WindowDefinition> = {
     initialHeight: 360,
     defaultPosition: { x: 220, y: 140 },
   },
+  discography: {
+    id: "discography",
+    title: "Discography",
+    icon: "◈",
+    initialWidth: 560,
+    initialHeight: 380,
+    defaultPosition: { x: 260, y: 160 },
+  },
   resume: {
     id: "resume",
     title: "Resume",

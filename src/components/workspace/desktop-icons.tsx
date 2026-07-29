@@ -8,6 +8,7 @@ import { useHighContrast } from "@/hooks/use-high-contrast";
 const items = [
   { label: "Projects", icon: "⌘", accent: "bg-primary/20 text-primary", windowId: "projects", description: "View Kristian's portfolio projects" },
   { label: "Studio", icon: "♫", accent: "bg-white/10 text-foreground", windowId: "studio", description: "Music production environment" },
+  { label: "Discography", icon: "◈", accent: "bg-white/10 text-foreground", windowId: "discography", description: "Artist releases and catalog" },
   { label: "Resume", icon: "◫", accent: "bg-white/10 text-foreground", windowId: "resume", description: "Professional resume and experience" },
   { label: "Skills", icon: "◌", accent: "bg-white/10 text-foreground", windowId: "skills", description: "Technical skills and proficiencies" },
   { label: "Timeline", icon: "⧉", accent: "bg-white/10 text-foreground", windowId: "timeline", description: "Career timeline and milestones" },

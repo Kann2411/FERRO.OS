@@ -7,6 +7,7 @@ import { useHighContrast } from "@/hooks/use-high-contrast";
 const apps = [
   { icon: "⌘", windowId: "projects", label: "Projects" },
   { icon: "♫", windowId: "studio", label: "Studio" },
+  { icon: "◈", windowId: "discography", label: "Discography" },
   { icon: "◫", windowId: "resume", label: "Resume" },
   { icon: "◌", windowId: "skills", label: "Skills" },
   { icon: "⧉", windowId: "timeline", label: "Timeline" },
