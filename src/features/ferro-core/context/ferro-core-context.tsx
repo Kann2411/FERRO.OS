@@ -187,10 +187,26 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
   };
 
   const advanceProgress = (amount: number) => {
-    setExplorerProfile((current) => ({
-      ...current,
-      progress: updateProgress(current.progress, amount),
-    }));
+    setExplorerProfile((current) => {
+      const nextProgress = updateProgress(current.progress, amount);
+
+      if (amount > 0) {
+        setHistory(() =>
+          addHistoryEntry({
+            id: `progress-${Date.now()}`,
+            type: "progress",
+            label: "Progress update",
+            detail: `Exploration advanced by ${amount}%`,
+            timestamp: new Date().toISOString(),
+          })
+        );
+      }
+
+      return {
+        ...current,
+        progress: nextProgress,
+      };
+    });
   };
 
   const registerDiscovery = (moduleId?: string) => {
@@ -235,6 +251,17 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
       if (current.achievements.includes(achievement)) {
         return current;
       }
+
+      setHistory(() =>
+        addHistoryEntry({
+          id: `achievement-${Date.now()}`,
+          type: "achievement",
+          label: achievement,
+          detail: "Achievement unlocked",
+          timestamp: new Date().toISOString(),
+        })
+      );
+
       return {
         ...current,
         achievements: [...current.achievements, achievement],
@@ -264,6 +291,18 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
       if (current.missionProgress[missionId]) {
         return current;
       }
+
+      const missionTitle = missionDefinitions.find((mission) => mission.id === missionId)?.title ?? "Mission";
+
+      setHistory(() =>
+        addHistoryEntry({
+          id: `mission-${Date.now()}`,
+          type: "mission",
+          label: missionTitle,
+          detail: "Mission completed",
+          timestamp: new Date().toISOString(),
+        })
+      );
 
       return {
         ...current,

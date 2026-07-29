@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useWindowContext } from "@/features/window-system/context/window-context";
 import { ProjectsModule } from "@/features/projects/components/projects-module";
 import { ResumeModule } from "@/features/resume/components/resume-module";
@@ -27,11 +27,21 @@ export function WindowShell({ window, onClose, onFocus, onBringToFront }: Window
   const { updateWindowPosition } = useWindowContext();
   const [dragOffset, setDragOffset] = useState<{ x: number; y: number } | null>(null);
   const [position, setPosition] = useState({ x: window.x, y: window.y });
+  const [isClosing, setIsClosing] = useState(false);
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
     setPosition({ x: window.x, y: window.y });
   }, [window.x, window.y]);
+
+  useEffect(() => {
+    return () => {
+      if (closeTimerRef.current) {
+        globalThis.clearTimeout(closeTimerRef.current);
+      }
+    };
+  }, []);
 
   const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
     event.stopPropagation();
@@ -61,12 +71,32 @@ export function WindowShell({ window, onClose, onFocus, onBringToFront }: Window
     setDragOffset(null);
   };
 
+  const handleClose = () => {
+    if (isClosing) {
+      return;
+    }
+
+    setIsClosing(true);
+
+    if (prefersReducedMotion) {
+      onClose(window.id);
+      return;
+    }
+
+    if (closeTimerRef.current) {
+      globalThis.clearTimeout(closeTimerRef.current);
+    }
+
+    closeTimerRef.current = globalThis.setTimeout(() => {
+      onClose(window.id);
+    }, 180);
+  };
+
   return (
     <motion.div
       initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, scale: 0.96 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: prefersReducedMotion ? 0 : 0.2, ease: "easeOut" }}
+      animate={isClosing ? { opacity: 0, scale: 0.96 } : { opacity: 1, scale: 1 }}
+      transition={{ duration: prefersReducedMotion ? 0 : 0.18, ease: "easeOut" }}
       className={`pointer-events-auto absolute z-10 overflow-hidden rounded-[18px] border bg-[#141414]/90 backdrop-blur-xl ${window.focused ? "border-primary/40" : "border-white/10"}`}
       role="dialog"
       aria-modal="true"
@@ -103,7 +133,7 @@ export function WindowShell({ window, onClose, onFocus, onBringToFront }: Window
           }}
           onClick={(event) => {
             event.stopPropagation();
-            onClose(window.id);
+            handleClose();
           }}
           className="rounded-full border border-white/10 px-2 py-1 text-xs text-secondary transition hover:border-primary/40 hover:text-primary"
         >
