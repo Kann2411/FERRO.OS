@@ -13,6 +13,7 @@ const apps = [
   { icon: "◫", windowId: "resume", label: "Resume" },
   { icon: "◌", windowId: "skills", label: "Skills" },
   { icon: "⧉", windowId: "timeline", label: "Timeline" },
+  { icon: ">", windowId: "terminal", label: "Terminal" },
 ];
 
 export function Dock() {

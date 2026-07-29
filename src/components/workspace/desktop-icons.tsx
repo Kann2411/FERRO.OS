@@ -14,6 +14,7 @@ const items = [
   { label: "Resume", icon: "◫", accent: "bg-white/10 text-foreground", windowId: "resume", description: "Professional resume and experience" },
   { label: "Skills", icon: "◌", accent: "bg-white/10 text-foreground", windowId: "skills", description: "Technical skills and proficiencies" },
   { label: "Timeline", icon: "⧉", accent: "bg-white/10 text-foreground", windowId: "timeline", description: "Career timeline and milestones" },
+  { label: "Terminal", icon: ">", accent: "bg-primary/20 text-primary", windowId: "terminal", description: "Interactive terminal for system commands" },
 ];
 
 export function DesktopIcons() {

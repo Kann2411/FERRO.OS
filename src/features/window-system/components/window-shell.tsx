@@ -12,6 +12,7 @@ import { StudioModule } from "@/features/studio/components/studio-module";
 import { DiscographyModule } from "@/features/discography/components/discography-module";
 import { AudioPlayerModule } from "@/features/audio-player/components/audio-player-module";
 import { EquipmentModule } from "@/features/equipment/components/equipment-module";
+import { TerminalModule } from "@/features/terminal/components/terminal-module";
 import type { WindowInstance } from "@/features/window-system/types";
 import { getViewportSafePosition } from "@/features/window-system/utils";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
@@ -158,6 +159,8 @@ export function WindowShell({ window, onClose, onFocus, onBringToFront }: Window
           <AudioPlayerModule />
         ) : window.id === "equipment" ? (
           <EquipmentModule />
+        ) : window.id === "terminal" ? (
+          <TerminalModule />
         ) : window.id === "code-studio" ? (
           <CodeStudioModule />
         ) : (
