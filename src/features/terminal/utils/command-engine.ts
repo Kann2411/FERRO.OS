@@ -1,4 +1,6 @@
-import { getTerminalCommands, registerTerminalCommand, type TerminalCommandDefinition } from "@/features/terminal/utils/command-registry";
+import { getTerminalCommands, registerTerminalCommand, type TerminalCommandContext, type TerminalCommandDefinition } from "@/features/terminal/utils/command-registry";
+
+export type { TerminalCommandContext, TerminalCommandDefinition } from "@/features/terminal/utils/command-registry";
 
 export interface ParsedCommand {
   name: string;
@@ -15,7 +17,7 @@ export function parseCommand(input: string): ParsedCommand {
   return { name: name.toLowerCase(), args };
 }
 
-export function executeCommand(input: string): string {
+export function executeCommand(input: string, context: TerminalCommandContext): string {
   const { name, args } = parseCommand(input);
   if (!name) {
     return "No command entered.";
@@ -26,7 +28,7 @@ export function executeCommand(input: string): string {
     return `Command not recognized: ${name}. Type 'help' for available commands.`;
   }
 
-  return command.handler(args);
+  return command.handler(args, context);
 }
 
 export function registerBuiltInCommands() {
@@ -34,57 +36,72 @@ export function registerBuiltInCommands() {
     {
       name: "help",
       description: "List available commands",
-      handler: () => "Available commands: help, clear, about, status, projects, skills, resume, music, studio, explorer, version",
+      handler: (_args, _context) => "Available commands:\nhelp, clear, about, status, projects, skills, resume, music, studio, explorer, version",
     },
     {
       name: "clear",
       description: "Clear the terminal buffer",
-      handler: () => "[terminal cleared]",
+      handler: (_args, _context) => "[terminal cleared]",
     },
     {
       name: "about",
       description: "Describe FERRO.OS Terminal",
-      handler: () => "FERRO.OS Terminal is a cinematic command interface for exploring the portfolio experience.",
+      handler: (_args, _context) => "FERRO.OS Terminal\nA cinematic command layer for navigating the portfolio experience. Built to feel like a native system companion rather than a conventional shell.",
     },
     {
       name: "status",
       description: "Show system status",
-      handler: () => "System status: interface online, exploration engine active, terminal ready.",
+      handler: (_args, context) => `System status:\n- Interface online\n- Exploration engine active\n- Window manager responsive\n- Terminal ready for commands\n- Progress: ${Math.round(context.explorerProfile.progress)}%`,
     },
     {
       name: "projects",
       description: "Open the projects overview",
-      handler: () => "Projects module recognized. Use the desktop to open it directly.",
+      handler: (_args, context) => {
+        context.openWindow("projects");
+        return "Projects module recognized. The terminal has requested the projects window and updated the explorer state.";
+      },
     },
     {
       name: "skills",
       description: "Show skills overview",
-      handler: () => "Skills command accepted. The system will surface the skills panel next.",
+      handler: (_args, context) => {
+        context.openWindow("skills");
+        return "Skills command accepted. The system maps engineering craft, design systems, audio tooling, and creative development across the interface.";
+      },
     },
     {
       name: "resume",
       description: "Show resume overview",
-      handler: () => "Resume command accepted. The experience is ready for deeper inspection.",
+      handler: (_args, context) => {
+        context.openWindow("resume");
+        return "Resume command accepted. The system exposes the professional trajectory, experience, and milestones behind the FERRO.OS identity.";
+      },
     },
     {
       name: "music",
       description: "Reference the music experience",
-      handler: () => "Music modules are available from the Studio and Audio Player applications.",
+      handler: (_args, context) => {
+        context.openWindow("studio");
+        return "Music modules are available through Studio and Audio Player. Together they shape the sonic layer of the experience.";
+      },
     },
     {
       name: "studio",
       description: "Reference the studio environment",
-      handler: () => "Studio command accepted. The music production environment is online.",
+      handler: (_args, context) => {
+        context.openWindow("studio");
+        return "Studio command accepted. The music production environment is online and ready to receive creative input.";
+      },
     },
     {
       name: "explorer",
       description: "Show explorer status",
-      handler: () => "Explorer status: progress is tracked by each discovery and mission you complete.",
+      handler: (_args, context) => `Explorer status:\n- Progress: ${Math.round(context.explorerProfile.progress)}%\n- Modules discovered: ${context.explorerProfile.modulesDiscovered}\n- Achievements: ${context.explorerProfile.achievements.length}\n- Active mission: ${context.activeMission?.title ?? "None"}`,
     },
     {
       name: "version",
       description: "Show terminal version",
-      handler: () => "FERRO.OS Terminal v0.2",
+      handler: (_args, _context) => "FERRO.OS Terminal v0.4\nBuilt for exploration, interfaces, and immersive storytelling.",
     },
   ];
 

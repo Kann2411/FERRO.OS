@@ -123,6 +123,17 @@ export function WindowProvider({ children }: { children: ReactNode }) {
     setActiveWindowId(id);
   }, []);
 
+  const resetWindowState = useCallback(() => {
+    setWindows([]);
+    setActiveWindowId(null);
+
+    try {
+      window.localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      // ignore storage cleanup errors
+    }
+  }, []);
+
   const updateWindowPosition = useCallback((id: string, position: { x: number; y: number }) => {
     setWindows((currentWindows) =>
       currentWindows.map((window) => (window.id === id ? { ...window, x: position.x, y: position.y } : window))
@@ -144,6 +155,7 @@ export function WindowProvider({ children }: { children: ReactNode }) {
       closeWindow,
       focusWindow,
       bringToFront,
+      resetWindowState,
       updateWindowPosition,
       updateWindowSize,
     }),

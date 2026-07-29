@@ -1,4 +1,12 @@
-export type TerminalCommandHandler = (args: string[]) => string;
+import type { FerroCoreContextValue } from "@/features/ferro-core/types";
+
+export interface TerminalCommandContext {
+  openWindow: (windowId: string) => boolean;
+  explorerProfile: FerroCoreContextValue["explorerProfile"];
+  activeMission: FerroCoreContextValue["activeMission"];
+}
+
+export type TerminalCommandHandler = (args: string[], context: TerminalCommandContext) => string;
 
 export interface TerminalCommandDefinition {
   name: string;

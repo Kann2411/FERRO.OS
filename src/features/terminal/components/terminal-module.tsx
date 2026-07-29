@@ -1,7 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { executeCommand, registerBuiltInCommands } from "@/features/terminal/utils/command-engine";
+import { useFerroCore } from "@/features/ferro-core/context/ferro-core-context";
+import { useWindowContext } from "@/features/window-system/context/window-context";
+import { resolveWindowDefinition } from "@/features/window-system/utils/open-module";
+import { executeCommand, getCommandDefinitions, registerBuiltInCommands, type TerminalCommandContext } from "@/features/terminal/utils/command-engine";
+import { generateUUID } from "@/lib/uuid";
 
 type TerminalEntry = {
   id: string;
@@ -10,6 +14,8 @@ type TerminalEntry = {
 };
 
 export function TerminalModule() {
+  const { explorerProfile, activeMission, completeMission, advanceProgress, registerDiscovery } = useFerroCore();
+  const { openWindow, focusWindow, bringToFront } = useWindowContext();
   const [entries, setEntries] = useState<TerminalEntry[]>([
     {
       id: "boot-1",
@@ -23,10 +29,15 @@ export function TerminalModule() {
     },
   ]);
   const [inputValue, setInputValue] = useState("");
+  const [history, setHistory] = useState<string[]>([]);
+  const [historyIndex, setHistoryIndex] = useState<number | null>(null);
+  const [suggestion, setSuggestion] = useState<string | null>(null);
+  const [commandNames, setCommandNames] = useState<string[]>([]);
   const outputRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     registerBuiltInCommands();
+    setCommandNames(getCommandDefinitions().map((command) => command.name));
   }, []);
 
   useEffect(() => {
@@ -36,6 +47,39 @@ export function TerminalModule() {
   }, [entries]);
 
   const prompt = useMemo(() => "guest@ferro:~$", []);
+  const commandList = commandNames;
+  const commandContext = useMemo<TerminalCommandContext>(() => ({
+    explorerProfile,
+    activeMission,
+    openWindow: (windowId: string) => {
+      const definition = resolveWindowDefinition(windowId);
+      if (!definition) {
+        return false;
+      }
+
+      if (!explorerProfile.discoveredModules.includes(windowId)) {
+        completeMission("open-first-module");
+        registerDiscovery(windowId);
+        advanceProgress(2);
+      }
+
+      openWindow(definition);
+      focusWindow(definition.id);
+      bringToFront(definition.id);
+      return true;
+    },
+  }), [activeMission, advanceProgress, bringToFront, completeMission, explorerProfile, focusWindow, openWindow, registerDiscovery]);
+
+  useEffect(() => {
+    if (!inputValue.trim()) {
+      setSuggestion(null);
+      return;
+    }
+
+    const currentToken = inputValue.trim().split(/\s+/)[0];
+    const nextSuggestion = commandList.find((command) => command.startsWith(currentToken));
+    setSuggestion(nextSuggestion ?? null);
+  }, [commandList, inputValue]);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -45,13 +89,19 @@ export function TerminalModule() {
       return;
     }
 
-    const response = executeCommand(command);
+    const response = executeCommand(command, commandContext);
+
+    setHistory((current) => {
+      const nextHistory = current.length > 0 && current[current.length - 1] === command ? current : [...current, command];
+      return nextHistory;
+    });
+    setHistoryIndex(null);
 
     setEntries((current) => {
       const nextEntries = [
         ...current,
-        { id: `input-${Date.now()}`, kind: "input" as const, text: `${prompt} ${command}` },
-        { id: `response-${Date.now()}-1`, kind: "system" as const, text: response },
+        { id: generateUUID(), kind: "input" as const, text: `${prompt} ${command}` },
+        { id: generateUUID(), kind: "system" as const, text: response },
       ];
 
       if (command.toLowerCase() === "clear") {
@@ -74,6 +124,56 @@ export function TerminalModule() {
 
     setInputValue("");
   };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Tab") {
+      event.preventDefault();
+      if (!suggestion) {
+        return;
+      }
+
+      const [firstToken] = inputValue.trim().split(/\s+/);
+      const nextValue = firstToken ? suggestion : suggestion;
+      setInputValue(nextValue);
+      setSuggestion(null);
+      return;
+    }
+
+    if (event.key === "ArrowUp") {
+      event.preventDefault();
+      setHistoryIndex((current) => {
+        if (history.length === 0) {
+          return null;
+        }
+
+        if (current === null) {
+          return history.length - 1;
+        }
+
+        return Math.max(0, current - 1);
+      });
+    }
+
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      setHistoryIndex((current) => {
+        if (history.length === 0 || current === null) {
+          return null;
+        }
+
+        return Math.min(history.length - 1, current + 1);
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (historyIndex === null) {
+      setInputValue("");
+      return;
+    }
+
+    setInputValue(history[historyIndex] ?? "");
+  }, [history, historyIndex]);
 
   return (
     <div className="flex h-full flex-col overflow-hidden rounded-[16px] border border-white/10 bg-[#060606]/80 text-sm text-secondary shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
@@ -99,16 +199,22 @@ export function TerminalModule() {
         </label>
         <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-[#111111]/80 px-3 py-2">
           <span className="text-primary">{prompt}</span>
-          <input
-            id="terminal-input"
-            value={inputValue}
-            onChange={(event) => setInputValue(event.target.value)}
-            autoComplete="off"
-            spellCheck={false}
-            placeholder="Type a command"
-            className="flex-1 bg-transparent text-sm text-white outline-none placeholder:text-muted"
-            autoFocus
-          />
+          <div className="flex flex-1 flex-col">
+            <input
+              id="terminal-input"
+              value={inputValue}
+              onChange={(event) => setInputValue(event.target.value)}
+              onKeyDown={handleKeyDown}
+              autoComplete="off"
+              spellCheck={false}
+              placeholder="Type a command"
+              className="w-full bg-transparent text-sm text-white outline-none placeholder:text-muted"
+              autoFocus
+            />
+            {suggestion ? (
+              <span className="mt-1 text-xs text-secondary">Suggestion: {suggestion}</span>
+            ) : null}
+          </div>
           <span className="h-2.5 w-2.5 rounded-full bg-primary/80" style={{ animation: "blink 1s step-end infinite" }} />
         </div>
       </form>

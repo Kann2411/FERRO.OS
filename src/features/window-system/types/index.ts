@@ -30,6 +30,7 @@ export interface WindowContextValue {
   closeWindow: (id: string) => void;
   focusWindow: (id: string) => void;
   bringToFront: (id: string) => void;
+  resetWindowState: () => void;
   updateWindowPosition: (id: string, position: { x: number; y: number }) => void;
   updateWindowSize: (id: string, size: { width: number; height: number }) => void;
 }

@@ -5,15 +5,18 @@ export interface DiscoveryRecord {
   timestamp: string;
 }
 
+import { generateUUID } from "@/lib/uuid";
+
 const discoveryRegistry = new Map<string, DiscoveryRecord>();
 
-export function registerDiscoveryRecord(id: string, label: string, source: string) {
-  if (discoveryRegistry.has(id)) {
+export function registerDiscoveryRecord(id: string | undefined, label: string, source: string) {
+  const recordId = id ?? generateUUID();
+  if (discoveryRegistry.has(recordId)) {
     return false;
   }
 
-  discoveryRegistry.set(id, {
-    id,
+  discoveryRegistry.set(recordId, {
+    id: recordId,
     label,
     source,
     timestamp: new Date().toISOString(),

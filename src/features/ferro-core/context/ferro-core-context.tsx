@@ -4,10 +4,11 @@ import { createContext, useContext, useEffect, useMemo, useState, type ReactNode
 import type { CoreMessage, CoreNotification, ExplorerProfile, FerroCoreContextValue } from "@/features/ferro-core/types";
 import { loadExplorerProfileSnapshot, saveExplorerProfileSnapshot } from "@/features/ferro-core/utils/explorer-profile-storage";
 import { getDiscoveryProgressReward, updateProgress } from "@/features/ferro-core/utils/explorer-progress";
-import { getDiscoveryRecords, registerDiscoveryRecord } from "@/features/ferro-core/utils/discovery-registry";
+import { clearDiscoveryRegistry, getDiscoveryRecords, registerDiscoveryRecord } from "@/features/ferro-core/utils/discovery-registry";
+import { generateUUID } from "@/lib/uuid";
 import { evaluateAchievements } from "@/features/ferro-core/utils/achievement-system";
 import { getActiveMission, missionDefinitions } from "@/features/ferro-core/utils/mission-system";
-import { addHistoryEntry, getHistoryEntries } from "@/features/ferro-core/utils/history-log";
+import { addHistoryEntry, clearHistoryEntries, getHistoryEntries } from "@/features/ferro-core/utils/history-log";
 
 const STORAGE_KEY = "ferro.os.ferro-core";
 
@@ -147,7 +148,7 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
       if (missing.length > 0) {
         setHistory((currentHistory) => {
           const next = addHistoryEntry({
-            id: `achievement-${Date.now()}`,
+            id: generateUUID(),
             type: "achievement",
             label: missing[0],
             detail: "Achievement unlocked",
@@ -193,7 +194,7 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
       if (amount > 0) {
         setHistory(() =>
           addHistoryEntry({
-            id: `progress-${Date.now()}`,
+            id: generateUUID(),
             type: "progress",
             label: "Progress update",
             detail: `Exploration advanced by ${amount}%`,
@@ -221,13 +222,13 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
 
       const reward = getDiscoveryProgressReward(moduleId);
       const discoveryLabel = moduleId ? `${moduleId} discovered` : "New system discovery";
-      const registered = registerDiscoveryRecord(moduleId ?? `discovery-${Date.now()}`, discoveryLabel, "ferro-core");
+      const registered = registerDiscoveryRecord(undefined, discoveryLabel, "ferro-core");
 
       if (registered) {
         setDiscoveries(getDiscoveryRecords());
         setHistory((current) => {
           const next = addHistoryEntry({
-            id: `module-${Date.now()}`,
+            id: generateUUID(),
             type: "module",
             label: moduleId ?? "System event",
             detail: "Module discovered",
@@ -254,7 +255,7 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
 
       setHistory(() =>
         addHistoryEntry({
-          id: `achievement-${Date.now()}`,
+          id: generateUUID(),
           type: "achievement",
           label: achievement,
           detail: "Achievement unlocked",
@@ -296,7 +297,7 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
 
       setHistory(() =>
         addHistoryEntry({
-          id: `mission-${Date.now()}`,
+          id: generateUUID(),
           type: "mission",
           label: missionTitle,
           detail: "Mission completed",
@@ -325,11 +326,32 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
     }));
   };
 
+  const resetFlow = () => {
+    setExplorerProfile({
+      ...defaultProfile,
+      firstVisit: null,
+      lastVisit: null,
+      visitCount: 0,
+    });
+    setMessages([]);
+    setNotifications([]);
+    setDiscoveries([]);
+    setHistory([]);
+    clearDiscoveryRegistry();
+    clearHistoryEntries();
+
+    try {
+      window.localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      // ignore storage cleanup errors
+    }
+  };
+
   const pushMessage = (message: CoreMessage) => {
     setMessages((current) => [
       {
         ...message,
-        id: message.id || `${message.type}-${Date.now()}`,
+        id: message.id || generateUUID(),
       },
       ...current,
     ].slice(0, 4));
@@ -339,7 +361,7 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
     setNotifications((current) => [
       {
         ...notification,
-        id: notification.id || `notification-${Date.now()}`,
+        id: notification.id || generateUUID(),
       },
       ...current,
     ].slice(0, 3));
@@ -371,6 +393,7 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
       completeWelcome,
       completeMission,
       unlockMission,
+      resetFlow,
       pushMessage,
       pushNotification,
       dismissNotification,

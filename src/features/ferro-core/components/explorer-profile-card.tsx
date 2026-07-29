@@ -124,8 +124,8 @@ export function ExplorerProfileCard() {
           </div>
           <div className="mt-3 space-y-2">
             {recentActivity.length > 0 ? (
-              recentActivity.map((entry) => (
-                <div key={entry.id} className={`rounded-xl border p-2 ${getHistoryAccent(entry.type)}`}>
+              recentActivity.map((entry, idx) => (
+                <div key={`${entry.id}-${idx}`} className={`rounded-xl border p-2 ${getHistoryAccent(entry.type)}`}>
                   <div className="flex items-center justify-between gap-2">
                     <span className="text-xs font-medium">{entry.label}</span>
                     <span className="text-[10px] uppercase tracking-[0.22em] opacity-70">{formatHistoryStamp(entry.timestamp)}</span>

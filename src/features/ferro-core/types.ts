@@ -57,6 +57,7 @@ export interface FerroCoreContextValue {
   completeWelcome: () => void;
   completeMission: (missionId: string) => void;
   unlockMission: (missionId: string) => void;
+  resetFlow: () => void;
   pushMessage: (message: CoreMessage) => void;
   pushNotification: (notification: CoreNotification) => void;
   dismissNotification: (id: string) => void;

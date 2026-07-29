@@ -8,11 +8,24 @@ import { StatusPanel } from "@/components/workspace/status-panel";
 import { AmbientBackground } from "@/components/workspace/ambient-background";
 import { CoreMessages, CoreNotifications, ExplorerProfileCard, MissionBoard } from "@/features/ferro-core";
 import { WindowManager } from "@/features/window-system/components/window-manager";
-import { WindowProvider } from "@/features/window-system/context/window-context";
+import { useWindowContext, WindowProvider } from "@/features/window-system/context/window-context";
+import { useFerroCore } from "@/features/ferro-core/context/ferro-core-context";
 import { useWindowManager } from "@/features/window-system/hooks/use-window-manager";
 
 function WorkspaceContent() {
   useWindowManager();
+  const { resetFlow } = useFerroCore();
+  const { resetWindowState } = useWindowContext();
+
+  const handleReset = () => {
+    const confirmed = window.confirm("Reset the entire workspace flow and return to zero?");
+    if (!confirmed) {
+      return;
+    }
+
+    resetFlow();
+    resetWindowState();
+  };
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-background text-foreground">
@@ -31,6 +44,13 @@ function WorkspaceContent() {
             </span>
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
+            <button
+              type="button"
+              onClick={handleReset}
+              className="rounded-full border border-rose-400/30 bg-rose-500/10 px-2.5 py-1.5 text-[11px] font-medium uppercase tracking-[0.25em] text-rose-200 transition hover:border-rose-300/50 hover:bg-rose-500/20"
+            >
+              Reset flow
+            </button>
             <StatusPanel />
             <ThemeToggle />
           </div>
