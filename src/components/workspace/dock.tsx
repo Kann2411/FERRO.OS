@@ -2,6 +2,7 @@
 
 import { useWindowContext } from "@/features/window-system/context/window-context";
 import { resolveWindowDefinition } from "@/features/window-system/utils/open-module";
+import { useAudio } from "@/features/audio-engine";
 import { useHighContrast } from "@/hooks/use-high-contrast";
 
 const apps = [
@@ -18,6 +19,7 @@ const apps = [
 
 export function Dock() {
   const { openWindow, focusWindow, bringToFront } = useWindowContext();
+  const { playSound } = useAudio();
   const prefersHighContrast = useHighContrast();
 
   const handleOpen = (windowId: string) => {
@@ -40,6 +42,7 @@ export function Dock() {
             key={app.windowId}
             type="button"
             aria-label={`Open ${app.label}`}
+            onPointerEnter={() => playSound("ui", "hover")}
             onClick={() => handleOpen(app.windowId)}
             className={`flex h-12 w-12 items-center justify-center rounded-full border bg-black/20 text-lg text-secondary transition hover:-translate-y-1 hover:border-primary/40 hover:text-primary ${prefersHighContrast ? "border-white" : "border-white/10"}`}
           >

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { FerroCoreProvider } from "@/features/ferro-core";
+import { AudioProvider } from "@/features/audio-engine";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -31,7 +32,9 @@ export default function RootLayout({
     >
       <body className="min-h-full bg-background text-foreground transition-colors duration-300">
         <ThemeProvider>
-          <FerroCoreProvider>{children}</FerroCoreProvider>
+          <AudioProvider>
+            <FerroCoreProvider>{children}</FerroCoreProvider>
+          </AudioProvider>
         </ThemeProvider>
       </body>
     </html>

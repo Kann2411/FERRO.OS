@@ -1,10 +1,22 @@
 "use client";
 
+import { useEffect } from "react";
 import { motion } from "framer-motion";
+import { useAudio } from "@/features/audio-engine";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
 export function AmbientBackground() {
   const prefersReducedMotion = useReducedMotion();
+  const { enabled, playSound, stopSound } = useAudio();
+
+  useEffect(() => {
+    if (!enabled) {
+      return;
+    }
+
+    playSound("ambient", "drift");
+    return () => stopSound("ambient", "drift");
+  }, [enabled, playSound, stopSound]);
 
   return (
     <div className="absolute inset-0 overflow-hidden bg-[radial-gradient(circle_at_top_left,rgba(217,4,41,0.16),transparent_34%),linear-gradient(135deg,rgba(20,20,20,0.95),rgba(9,9,9,0.98))]" aria-hidden="true">

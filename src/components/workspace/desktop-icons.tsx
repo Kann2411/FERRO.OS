@@ -1,5 +1,6 @@
 "use client";
 
+import { useAudio } from "@/features/audio-engine";
 import { useFerroCore } from "@/features/ferro-core/context/ferro-core-context";
 import { useWindowContext } from "@/features/window-system/context/window-context";
 import { resolveWindowDefinition } from "@/features/window-system/utils/open-module";
@@ -19,6 +20,7 @@ const items = [
 
 export function DesktopIcons() {
   const { openWindow, focusWindow, bringToFront } = useWindowContext();
+  const { playSound } = useAudio();
   const { explorerProfile, completeMission, advanceProgress, registerDiscovery, awardAchievement, pushMessage, pushNotification } = useFerroCore();
   const prefersHighContrast = useHighContrast();
 
@@ -73,6 +75,7 @@ export function DesktopIcons() {
           key={item.label}
           type="button"
           role="listitem"
+          onPointerEnter={() => playSound("ui", "hover")}
           onClick={() => handleOpen(item.windowId)}
           aria-label={`Open ${item.label}: ${item.description}`}
           className={`group flex min-h-11 min-w-11 flex-col items-center gap-2 rounded-2xl border bg-surface/40 p-3 text-center transition hover:border-primary/40 hover:bg-surface/70 active:scale-95 sm:p-4 ${prefersHighContrast ? "border-white" : "border-white/10"}`}

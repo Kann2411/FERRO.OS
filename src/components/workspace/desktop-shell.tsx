@@ -9,15 +9,20 @@ import { AmbientBackground } from "@/components/workspace/ambient-background";
 import { CoreMessages, CoreNotifications, ExplorerProfileCard, MissionBoard } from "@/features/ferro-core";
 import { WindowManager } from "@/features/window-system/components/window-manager";
 import { useWindowContext, WindowProvider } from "@/features/window-system/context/window-context";
+import { resolveWindowDefinition } from "@/features/window-system/utils/open-module";
 import { useFerroCore } from "@/features/ferro-core/context/ferro-core-context";
 import { useWindowManager } from "@/features/window-system/hooks/use-window-manager";
+import { useAudio } from "@/features/audio-engine";
 
 function WorkspaceContent() {
   useWindowManager();
   const { resetFlow } = useFerroCore();
-  const { resetWindowState } = useWindowContext();
+  const { resetWindowState, openWindow, focusWindow, bringToFront } = useWindowContext();
+  const { playSound } = useAudio();
 
   const handleReset = () => {
+    playSound("ui", "click");
+
     const confirmed = window.confirm("Reset the entire workspace flow and return to zero?");
     if (!confirmed) {
       return;
@@ -25,6 +30,18 @@ function WorkspaceContent() {
 
     resetFlow();
     resetWindowState();
+  };
+
+  const handleOpenSettings = () => {
+    const definition = resolveWindowDefinition("settings");
+    if (!definition) {
+      return;
+    }
+
+    playSound("ui", "open");
+    openWindow(definition);
+    focusWindow(definition.id);
+    bringToFront(definition.id);
   };
 
   return (
@@ -46,6 +63,15 @@ function WorkspaceContent() {
           <div className="flex items-center gap-2 sm:gap-3">
             <button
               type="button"
+              onPointerEnter={() => playSound("ui", "hover")}
+              onClick={handleOpenSettings}
+              className="rounded-full border border-white/10 bg-surface/10 px-2.5 py-1.5 text-[11px] font-medium uppercase tracking-[0.25em] text-white transition hover:border-primary/40 hover:bg-surface/20"
+            >
+              Settings
+            </button>
+            <button
+              type="button"
+              onPointerEnter={() => playSound("ui", "hover")}
               onClick={handleReset}
               className="rounded-full border border-rose-400/30 bg-rose-500/10 px-2.5 py-1.5 text-[11px] font-medium uppercase tracking-[0.25em] text-rose-200 transition hover:border-rose-300/50 hover:bg-rose-500/20"
             >

@@ -1,6 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
+import { useAudio } from "@/features/audio-engine";
 import { useFerroCore } from "@/features/ferro-core/context/ferro-core-context";
 
 const notificationStyles: Record<string, string> = {
@@ -13,6 +14,7 @@ const notificationStyles: Record<string, string> = {
 
 export function CoreNotifications() {
   const { notifications, dismissNotification } = useFerroCore();
+  const { playSound } = useAudio();
 
   if (notifications.length === 0) {
     return null;
@@ -40,7 +42,10 @@ export function CoreNotifications() {
               <button
                 type="button"
                 aria-label={`Dismiss notification: ${notification.title}`}
-                onClick={() => dismissNotification(notification.id)}
+                onClick={() => {
+                  playSound("notifications", "dismiss");
+                  dismissNotification(notification.id);
+                }}
                 className="text-sm text-secondary transition hover:text-white"
               >
                 <span aria-hidden="true">×</span>

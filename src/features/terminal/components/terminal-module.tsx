@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useAudio } from "@/features/audio-engine";
 import { useFerroCore } from "@/features/ferro-core/context/ferro-core-context";
 import { useWindowContext } from "@/features/window-system/context/window-context";
 import { resolveWindowDefinition } from "@/features/window-system/utils/open-module";
@@ -16,6 +17,7 @@ type TerminalEntry = {
 export function TerminalModule() {
   const { explorerProfile, activeMission, completeMission, advanceProgress, registerDiscovery } = useFerroCore();
   const { openWindow, focusWindow, bringToFront } = useWindowContext();
+  const { playSound } = useAudio();
   const [entries, setEntries] = useState<TerminalEntry[]>([
     {
       id: "boot-1",
@@ -86,9 +88,11 @@ export function TerminalModule() {
 
     const command = inputValue.trim();
     if (!command) {
+      playSound("terminal", "error");
       return;
     }
 
+    playSound("terminal", "execute");
     const response = executeCommand(command, commandContext);
 
     setHistory((current) => {
@@ -105,6 +109,7 @@ export function TerminalModule() {
       ];
 
       if (command.toLowerCase() === "clear") {
+        playSound("terminal", "clear");
         return [
           {
             id: "boot-1",
@@ -122,10 +127,18 @@ export function TerminalModule() {
       return nextEntries;
     });
 
+    if (response.startsWith("Command not recognized:")) {
+      playSound("terminal", "error");
+    }
+
     setInputValue("");
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey) {
+      playSound("terminal", "type");
+    }
+
     if (event.key === "Tab") {
       event.preventDefault();
       if (!suggestion) {

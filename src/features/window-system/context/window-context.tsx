@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { useAudio } from "@/features/audio-engine";
 import type { WindowContextValue, WindowDefinition, WindowInstance } from "@/features/window-system/types";
 
 const STORAGE_KEY = "ferro.os.window-state";
@@ -52,6 +53,7 @@ const createWindowInstance = (definition: WindowDefinition, zIndex: number): Win
 });
 
 export function WindowProvider({ children }: { children: ReactNode }) {
+  const { playSound } = useAudio();
   const [windows, setWindows] = useState<WindowInstance[]>([]);
   const [activeWindowId, setActiveWindowId] = useState<string | null>(null);
   const [initialized, setInitialized] = useState(false);
@@ -77,6 +79,8 @@ export function WindowProvider({ children }: { children: ReactNode }) {
   }, [initialized, windows, activeWindowId]);
 
   const openWindow = useCallback((definition: WindowDefinition) => {
+    playSound("ui", "open");
+
     setWindows((currentWindows) => {
       if (currentWindows.some((window) => window.id === definition.id)) {
         return currentWindows.map((window) =>
@@ -90,7 +94,7 @@ export function WindowProvider({ children }: { children: ReactNode }) {
     });
 
     setActiveWindowId(definition.id);
-  }, []);
+  }, [playSound]);
 
   const closeWindow = useCallback((id: string) => {
     setWindows((currentWindows) => currentWindows.filter((window) => window.id !== id));

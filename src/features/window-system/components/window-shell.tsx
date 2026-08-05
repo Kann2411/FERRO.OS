@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import { useAudio } from "@/features/audio-engine";
 import { useWindowContext } from "@/features/window-system/context/window-context";
 import { ProjectsModule } from "@/features/projects/components/projects-module";
 import { ResumeModule } from "@/features/resume/components/resume-module";
@@ -13,6 +14,7 @@ import { DiscographyModule } from "@/features/discography/components/discography
 import { AudioPlayerModule } from "@/features/audio-player/components/audio-player-module";
 import { EquipmentModule } from "@/features/equipment/components/equipment-module";
 import { TerminalModule } from "@/features/terminal/components/terminal-module";
+import { SettingsModule } from "@/features/settings/components/settings-module";
 import type { WindowInstance } from "@/features/window-system/types";
 import { getViewportSafePosition } from "@/features/window-system/utils";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
@@ -26,6 +28,7 @@ interface WindowShellProps {
 
 export function WindowShell({ window, onClose, onFocus, onBringToFront }: WindowShellProps) {
   const { updateWindowPosition } = useWindowContext();
+  const { playSound } = useAudio();
   const [dragOffset, setDragOffset] = useState<{ x: number; y: number } | null>(null);
   const [position, setPosition] = useState({ x: window.x, y: window.y });
   const [isClosing, setIsClosing] = useState(false);
@@ -77,6 +80,7 @@ export function WindowShell({ window, onClose, onFocus, onBringToFront }: Window
       return;
     }
 
+    playSound("ui", "close");
     setIsClosing(true);
 
     if (prefersReducedMotion) {
@@ -132,6 +136,7 @@ export function WindowShell({ window, onClose, onFocus, onBringToFront }: Window
             event.stopPropagation();
             event.preventDefault();
           }}
+          onPointerEnter={() => playSound("ui", "hover")}
           onClick={(event) => {
             event.stopPropagation();
             handleClose();
@@ -161,6 +166,8 @@ export function WindowShell({ window, onClose, onFocus, onBringToFront }: Window
           <EquipmentModule />
         ) : window.id === "terminal" ? (
           <TerminalModule />
+        ) : window.id === "settings" ? (
+          <SettingsModule />
         ) : window.id === "code-studio" ? (
           <CodeStudioModule />
         ) : (

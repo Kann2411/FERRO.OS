@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { useAudio } from "@/features/audio-engine";
 import type { CoreMessage, CoreNotification, ExplorerProfile, FerroCoreContextValue } from "@/features/ferro-core/types";
 import { clearExplorerProfileSnapshot, loadExplorerProfileSnapshot, migrateExplorerProfileSnapshot, saveExplorerProfileSnapshot } from "@/features/ferro-core/utils/explorer-profile-storage";
 import { getDiscoveryProgressReward, updateProgress } from "@/features/ferro-core/utils/explorer-progress";
@@ -59,6 +60,7 @@ const initialMissions = missionDefinitions;
 const FerroCoreContext = createContext<FerroCoreContextValue | undefined>(undefined);
 
 export function FerroCoreProvider({ children }: { children: ReactNode }) {
+  const { playSound } = useAudio();
   const [explorerProfile, setExplorerProfile] = useState<ExplorerProfile>(defaultProfile);
   const [initialized, setInitialized] = useState(false);
   const [missions] = useState(initialMissions);
@@ -245,6 +247,8 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
   };
 
   const awardAchievement = (achievement: string) => {
+    playSound("achievements", "unlock");
+
     setExplorerProfile((current) => {
       if (current.achievements.includes(achievement)) {
         return current;
@@ -347,6 +351,8 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
   };
 
   const pushMessage = (message: CoreMessage) => {
+    playSound("notifications", "message");
+
     setMessages((current) => [
       {
         ...message,
@@ -357,6 +363,8 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
   };
 
   const pushNotification = (notification: CoreNotification) => {
+    playSound("notifications", "receive");
+
     setNotifications((current) => [
       {
         ...notification,
