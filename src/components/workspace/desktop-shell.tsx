@@ -13,12 +13,15 @@ import { resolveWindowDefinition } from "@/features/window-system/utils/open-mod
 import { useFerroCore } from "@/features/ferro-core/context/ferro-core-context";
 import { useWindowManager } from "@/features/window-system/hooks/use-window-manager";
 import { useAudio } from "@/features/audio-engine";
+import { createMotionProps } from "@/features/animation-engine";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
 function WorkspaceContent() {
   useWindowManager();
   const { resetFlow } = useFerroCore();
   const { resetWindowState, openWindow, focusWindow, bringToFront } = useWindowContext();
   const { playSound } = useAudio();
+  const prefersReducedMotion = useReducedMotion();
 
   const handleReset = () => {
     playSound("ui", "click");
@@ -96,9 +99,7 @@ function WorkspaceContent() {
             </div>
             <div className="hidden items-end justify-between gap-4 sm:flex">
               <motion.div
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.35 }}
+                {...createMotionProps("panel", { reducedMotion: prefersReducedMotion })}
                 className="rounded-3xl border border-white/10 bg-surface/70 p-4 shadow-[0_20px_80px_rgba(0,0,0,0.25)] backdrop-blur-xl"
                 role="status"
                 aria-label="Current mission hint"

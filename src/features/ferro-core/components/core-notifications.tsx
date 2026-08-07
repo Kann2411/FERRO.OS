@@ -1,8 +1,10 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
+import { createPopoverMotion } from "@/features/animation-engine";
 import { useAudio } from "@/features/audio-engine";
 import { useFerroCore } from "@/features/ferro-core/context/ferro-core-context";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
 const notificationStyles: Record<string, string> = {
   success: "border-emerald-400/30 bg-emerald-500/10 text-secondary",
@@ -15,6 +17,7 @@ const notificationStyles: Record<string, string> = {
 export function CoreNotifications() {
   const { notifications, dismissNotification } = useFerroCore();
   const { playSound } = useAudio();
+  const prefersReducedMotion = useReducedMotion();
 
   if (notifications.length === 0) {
     return null;
@@ -26,10 +29,8 @@ export function CoreNotifications() {
         {notifications.map((notification) => (
           <motion.div
             key={notification.id}
-            initial={{ opacity: 0, y: -12, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
+            {...createPopoverMotion("window", { reducedMotion: prefersReducedMotion })}
             exit={{ opacity: 0, y: -10, scale: 0.96 }}
-            transition={{ duration: 0.25, ease: "easeOut" }}
             className={`rounded-2xl border px-4 py-3 shadow-[0_20px_60px_rgba(0,0,0,0.28)] backdrop-blur-xl ${notificationStyles[notification.type]}`}
             role="alert"
             aria-live="polite"

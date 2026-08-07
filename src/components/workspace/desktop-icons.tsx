@@ -1,10 +1,13 @@
 "use client";
 
+import { motion } from "framer-motion";
 import { useAudio } from "@/features/audio-engine";
 import { useFerroCore } from "@/features/ferro-core/context/ferro-core-context";
 import { useWindowContext } from "@/features/window-system/context/window-context";
 import { resolveWindowDefinition } from "@/features/window-system/utils/open-module";
+import { createMotionProps } from "@/features/animation-engine";
 import { useHighContrast } from "@/hooks/use-high-contrast";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
 const items = [
   { label: "Projects", icon: "⌘", accent: "bg-primary/20 text-primary", windowId: "projects", description: "View Kristian's portfolio projects" },
@@ -23,6 +26,7 @@ export function DesktopIcons() {
   const { playSound } = useAudio();
   const { explorerProfile, completeMission, advanceProgress, registerDiscovery, awardAchievement, pushMessage, pushNotification } = useFerroCore();
   const prefersHighContrast = useHighContrast();
+  const prefersReducedMotion = useReducedMotion();
 
   const handleOpen = (windowId: string) => {
     const definition = resolveWindowDefinition(windowId);
@@ -71,22 +75,27 @@ export function DesktopIcons() {
   return (
     <div className="grid w-full max-w-xl grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3" role="list" aria-label="Desktop applications">
       {items.map((item) => (
-        <button
+        <motion.button
           key={item.label}
           type="button"
           role="listitem"
+          whileHover={{ y: -3, scale: 1.03, rotate: -1 }}
+          whileTap={{ scale: 0.96 }}
+          initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={createMotionProps("entrance", { reducedMotion: prefersReducedMotion }).transition}
           onPointerEnter={() => playSound("ui", "hover")}
           onClick={() => handleOpen(item.windowId)}
           aria-label={`Open ${item.label}: ${item.description}`}
-          className={`group flex min-h-11 min-w-11 flex-col items-center gap-2 rounded-2xl border bg-surface/40 p-3 text-center transition hover:border-primary/40 hover:bg-surface/70 active:scale-95 sm:p-4 ${prefersHighContrast ? "border-white" : "border-white/10"}`}
+          className={`group flex min-h-11 min-w-11 flex-col items-center gap-2 rounded-2xl border bg-surface/40 p-3 text-center shadow-[0_12px_40px_rgba(0,0,0,0.16)] transition hover:border-primary/40 hover:bg-surface/70 sm:p-4 ${prefersHighContrast ? "border-white" : "border-white/10"}`}
         >
-          <div className={`flex h-10 w-10 items-center justify-center rounded-2xl text-lg sm:h-12 sm:w-12 ${item.accent}`} aria-hidden="true">
+          <div className={`flex h-10 w-10 items-center justify-center rounded-2xl text-lg shadow-inner shadow-black/20 sm:h-12 sm:w-12 ${item.accent}`} aria-hidden="true">
             {item.icon}
           </div>
           <span className="text-xs font-medium text-secondary transition group-hover:text-foreground sm:text-sm">
             {item.label}
           </span>
-        </button>
+        </motion.button>
       ))}
     </div>
   );

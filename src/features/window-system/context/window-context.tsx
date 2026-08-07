@@ -50,6 +50,9 @@ const createWindowInstance = (definition: WindowDefinition, zIndex: number): Win
   focused: false,
   draggable: true,
   closable: true,
+  isMinimized: false,
+  isMaximized: false,
+  previousBounds: null,
 });
 
 export function WindowProvider({ children }: { children: ReactNode }) {
@@ -150,6 +153,98 @@ export function WindowProvider({ children }: { children: ReactNode }) {
     );
   }, []);
 
+  const toggleWindowMinimize = useCallback((id: string) => {
+    setWindows((currentWindows) =>
+      currentWindows.map((window) => {
+        if (window.id !== id) {
+          return window;
+        }
+
+        if (window.isMinimized) {
+          const previousBounds = window.previousBounds ?? { x: window.x, y: window.y, width: window.width, height: window.height };
+          return {
+            ...window,
+            state: "active",
+            isMinimized: false,
+            isMaximized: false,
+            previousBounds: null,
+            x: previousBounds.x,
+            y: previousBounds.y,
+            width: previousBounds.width,
+            height: previousBounds.height,
+            focused: true,
+          };
+        }
+
+        const nextBounds = {
+          x: window.x,
+          y: window.y,
+          width: window.width,
+          height: window.height,
+        };
+
+        return {
+          ...window,
+          state: "minimized",
+          isMinimized: true,
+          isMaximized: false,
+          previousBounds: nextBounds,
+          height: 44,
+          focused: false,
+        };
+      })
+    );
+  }, []);
+
+  const toggleWindowMaximize = useCallback((id: string) => {
+    setWindows((currentWindows) =>
+      currentWindows.map((window) => {
+        if (window.id !== id) {
+          return window;
+        }
+
+        if (window.isMaximized) {
+          const previousBounds = window.previousBounds ?? { x: window.x, y: window.y, width: window.width, height: window.height };
+          return {
+            ...window,
+            state: "active",
+            isMaximized: false,
+            isMinimized: false,
+            previousBounds: null,
+            x: previousBounds.x,
+            y: previousBounds.y,
+            width: previousBounds.width,
+            height: previousBounds.height,
+            focused: true,
+          };
+        }
+
+        const nextBounds = {
+          x: window.x,
+          y: window.y,
+          width: window.width,
+          height: window.height,
+        };
+
+        const viewportWidth = typeof globalThis.window !== "undefined" ? globalThis.window.innerWidth : 1280;
+        const viewportHeight = typeof globalThis.window !== "undefined" ? globalThis.window.innerHeight : 900;
+
+        return {
+          ...window,
+          state: "maximized",
+          isMaximized: true,
+          isMinimized: false,
+          previousBounds: nextBounds,
+          x: 24,
+          y: 24,
+          width: Math.max(320, viewportWidth - 48),
+          height: Math.max(280, viewportHeight - 80),
+          focused: true,
+        };
+      })
+    );
+  }, []);
+
   const value = useMemo<WindowContextValue>(
     () => ({
       windows,
@@ -162,8 +257,10 @@ export function WindowProvider({ children }: { children: ReactNode }) {
       resetWindowState,
       updateWindowPosition,
       updateWindowSize,
+      toggleWindowMinimize,
+      toggleWindowMaximize,
     }),
-    [activeWindowId, bringToFront, closeWindow, focusWindow, initialized, openWindow, updateWindowPosition, windows]
+    [activeWindowId, bringToFront, closeWindow, focusWindow, initialized, openWindow, toggleWindowMaximize, toggleWindowMinimize, updateWindowPosition, windows]
   );
 
   return <WindowContext.Provider value={value}>{children}</WindowContext.Provider>;

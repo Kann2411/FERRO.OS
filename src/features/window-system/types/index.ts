@@ -1,4 +1,4 @@
-export type WindowState = "opening" | "active" | "focused" | "closing" | "closed";
+export type WindowState = "opening" | "active" | "focused" | "closing" | "closed" | "minimized" | "maximized";
 
 export interface WindowDefinition {
   id: string;
@@ -20,6 +20,9 @@ export interface WindowInstance extends WindowDefinition {
   focused: boolean;
   draggable: boolean;
   closable: boolean;
+  isMinimized: boolean;
+  isMaximized: boolean;
+  previousBounds: { x: number; y: number; width: number; height: number } | null;
 }
 
 export interface WindowContextValue {
@@ -33,4 +36,6 @@ export interface WindowContextValue {
   resetWindowState: () => void;
   updateWindowPosition: (id: string, position: { x: number; y: number }) => void;
   updateWindowSize: (id: string, size: { width: number; height: number }) => void;
+  toggleWindowMinimize: (id: string) => void;
+  toggleWindowMaximize: (id: string) => void;
 }

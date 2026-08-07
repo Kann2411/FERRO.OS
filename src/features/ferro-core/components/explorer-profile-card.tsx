@@ -1,7 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { createMotionProps, createTransition } from "@/features/animation-engine";
 import { useFerroCore } from "@/features/ferro-core/context/ferro-core-context";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
 function formatExplorationTime(totalSeconds: number) {
   const hours = Math.floor(totalSeconds / 3600);
@@ -39,6 +41,7 @@ function getHistoryAccent(type: string) {
 
 export function ExplorerProfileCard() {
   const { explorerProfile, missions, completedMissions, history, activeMission } = useFerroCore();
+  const prefersReducedMotion = useReducedMotion();
   const progress = Math.round(explorerProfile.progress);
   const level = Math.max(1, Math.min(9, Math.floor(progress / 25) + 1));
   const currentMission = missions.find((mission) => !completedMissions.includes(mission.id));
@@ -52,9 +55,7 @@ export function ExplorerProfileCard() {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35, ease: "easeOut" }}
+      {...createMotionProps("panel", { reducedMotion: prefersReducedMotion })}
       className="relative overflow-hidden rounded-[28px] border border-white/10 bg-[#0b0b0f]/90 p-4 shadow-[0_24px_90px_rgba(0,0,0,0.28)] backdrop-blur-xl"
       role="region"
       aria-label={`Explorer profile: ${explorerProfile.name}, Level ${level}, ${progress}% progress`}
@@ -83,7 +84,7 @@ export function ExplorerProfileCard() {
           <motion.div
             className="h-2 rounded-2xl bg-linear-to-r from-primary via-sky-400 to-emerald-400"
             animate={{ width: `${progress}%` }}
-            transition={{ duration: 0.45, ease: "easeOut" }}
+            transition={createTransition("emphasis", { reducedMotion: prefersReducedMotion, durationMultiplier: 1.15 })}
             style={{ width: `${progress}%` }}
           />
         </div>
@@ -125,13 +126,19 @@ export function ExplorerProfileCard() {
           <div className="mt-3 space-y-2">
             {recentActivity.length > 0 ? (
               recentActivity.map((entry, idx) => (
-                <div key={`${entry.id}-${idx}`} className={`rounded-xl border p-2 ${getHistoryAccent(entry.type)}`}>
+                <motion.div
+                  key={`${entry.id}-${idx}`}
+                  initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={createTransition("window", { reducedMotion: prefersReducedMotion })}
+                  className={`rounded-xl border p-2 ${getHistoryAccent(entry.type)}`}
+                >
                   <div className="flex items-center justify-between gap-2">
                     <span className="text-xs font-medium">{entry.label}</span>
                     <span className="text-[10px] uppercase tracking-[0.22em] opacity-70">{formatHistoryStamp(entry.timestamp)}</span>
                   </div>
                   <p className="mt-1 text-xs opacity-80">{entry.detail}</p>
-                </div>
+                </motion.div>
               ))
             ) : (
               <p className="text-xs text-secondary">Your first discoveries will appear here as the system learns your rhythm.</p>
