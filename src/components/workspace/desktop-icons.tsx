@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useState } from "react";
 import { useAudio } from "@/features/audio-engine";
 import { useFerroCore } from "@/features/ferro-core/context/ferro-core-context";
 import { useWindowContext } from "@/features/window-system/context/window-context";
@@ -24,7 +25,8 @@ const items = [
 export function DesktopIcons() {
   const { openWindow, focusWindow, bringToFront } = useWindowContext();
   const { playSound } = useAudio();
-  const { explorerProfile, completeMission, advanceProgress, registerDiscovery, awardAchievement, pushMessage, pushNotification } = useFerroCore();
+  const { explorerProfile, completeMission, advanceProgress, registerDiscovery, registerHiddenDiscovery, awardAchievement, pushMessage, pushNotification } = useFerroCore();
+  const [recentOpens, setRecentOpens] = useState<string[]>([]);
   const prefersHighContrast = useHighContrast();
   const prefersReducedMotion = useReducedMotion();
 
@@ -35,6 +37,24 @@ export function DesktopIcons() {
     }
 
     const isFirstModuleOpen = !explorerProfile.discoveredModules.includes(windowId);
+    const nextSequence = [...recentOpens.slice(-2), windowId];
+    setRecentOpens(nextSequence);
+
+    if (
+      nextSequence.length === 3 &&
+      nextSequence[0] === "projects" &&
+      nextSequence[1] === "skills" &&
+      nextSequence[2] === "resume" &&
+      !explorerProfile.discoveredHiddenFiles.includes("easter-egg-sequence.txt")
+    ) {
+      registerHiddenDiscovery("easter-egg-sequence.txt");
+      pushNotification({
+        id: "easter-egg-sequence",
+        type: "info",
+        title: "Secret sequence found",
+        body: "FERRO.OS responded to a hidden chain of module openings.",
+      });
+    }
 
     if (isFirstModuleOpen) {
       completeMission("explore-desktop");

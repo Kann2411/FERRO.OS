@@ -105,4 +105,12 @@ export const windowRegistry: Record<string, WindowDefinition> = {
     initialHeight: 360,
     defaultPosition: { x: 420, y: 260 },
   },
+  debugConsole: {
+    id: "debugConsole",
+    title: "Debug Console",
+    icon: "⌗",
+    initialWidth: 560,
+    initialHeight: 380,
+    defaultPosition: { x: 420, y: 260 },
+  },
 };

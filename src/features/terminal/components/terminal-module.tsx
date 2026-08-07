@@ -15,7 +15,7 @@ type TerminalEntry = {
 };
 
 export function TerminalModule() {
-  const { explorerProfile, activeMission, completeMission, advanceProgress, registerDiscovery } = useFerroCore();
+  const { explorerProfile, activeMission, completeMission, advanceProgress, registerDiscovery, registerHiddenDiscovery } = useFerroCore();
   const { openWindow, focusWindow, bringToFront } = useWindowContext();
   const { playSound } = useAudio();
   const [entries, setEntries] = useState<TerminalEntry[]>([
@@ -70,7 +70,9 @@ export function TerminalModule() {
       bringToFront(definition.id);
       return true;
     },
-  }), [activeMission, advanceProgress, bringToFront, completeMission, explorerProfile, focusWindow, openWindow, registerDiscovery]);
+    registerHiddenDiscovery,
+    completeMission,
+  }), [activeMission, advanceProgress, bringToFront, completeMission, explorerProfile, focusWindow, openWindow, registerDiscovery, registerHiddenDiscovery]);
 
   useEffect(() => {
     if (!inputValue.trim()) {

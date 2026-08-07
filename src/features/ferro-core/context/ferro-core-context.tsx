@@ -10,6 +10,8 @@ import { generateUUID } from "@/lib/uuid";
 import { evaluateAchievements } from "@/features/ferro-core/utils/achievement-system";
 import { getActiveMission, missionDefinitions } from "@/features/ferro-core/utils/mission-system";
 import { addHistoryEntry, clearHistoryEntries, getHistoryEntries } from "@/features/ferro-core/utils/history-log";
+import { getHiddenFileDefinition } from "@/features/hidden-files/utils/hidden-files";
+import { useWallpaperStore } from "@/store/wallpaper-store";
 
 const STORAGE_KEY = "ferro.os.ferro-core";
 
@@ -18,6 +20,7 @@ const defaultProfile: ExplorerProfile = {
   progress: 0,
   modulesDiscovered: 0,
   discoveredModules: [],
+  discoveredHiddenFiles: [],
   achievements: [],
   firstVisit: null,
   lastVisit: null,
@@ -65,6 +68,7 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
   const [initialized, setInitialized] = useState(false);
   const [missions] = useState(initialMissions);
   const activeMission = getActiveMission(explorerProfile.missionProgress);
+  const unlockWallpaper = useWallpaperStore((state) => state.unlockWallpaper);
   const [messages, setMessages] = useState<CoreMessage[]>([]);
   const [notifications, setNotifications] = useState<CoreNotification[]>([]);
   const [discoveries, setDiscoveries] = useState(getDiscoveryRecords);
@@ -246,6 +250,49 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
     });
   };
 
+  const registerHiddenDiscovery = (fileId: string) => {
+    let wasRegistered = false;
+
+    setExplorerProfile((current) => {
+      if (current.discoveredHiddenFiles.includes(fileId)) {
+        return current;
+      }
+
+      const fileDefinition = getHiddenFileDefinition(fileId);
+      const reward = fileDefinition?.reward ?? 3;
+      const nextDiscoveredHiddenFiles = [...current.discoveredHiddenFiles, fileId];
+      const discoveryLabel = `${fileId} uncovered`;
+      const registered = registerDiscoveryRecord(undefined, discoveryLabel, "hidden-files");
+
+      if (registered) {
+        wasRegistered = true;
+        setDiscoveries(getDiscoveryRecords());
+        setHistory((current) => {
+          const next = addHistoryEntry({
+            id: generateUUID(),
+            type: "event",
+            label: discoveryLabel,
+            detail: "Hidden file discovered",
+            timestamp: new Date().toISOString(),
+          });
+          return next;
+        });
+      }
+
+      if (fileDefinition?.unlocksWallpaper) {
+        unlockWallpaper(fileDefinition.unlocksWallpaper);
+      }
+
+      return {
+        ...current,
+        discoveredHiddenFiles: nextDiscoveredHiddenFiles,
+        progress: updateProgress(current.progress, reward),
+      };
+    });
+
+    return wasRegistered;
+  };
+
   const awardAchievement = (achievement: string) => {
     playSound("achievements", "unlock");
 
@@ -378,6 +425,32 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
     setNotifications((current) => current.filter((notification) => notification.id !== id));
   };
 
+  useEffect(() => {
+    if (!initialized || explorerProfile.progress < 100) {
+      return;
+    }
+
+    if (explorerProfile.discoveredHiddenFiles.includes("final-message.txt")) {
+      return;
+    }
+
+    const unlocked = registerHiddenDiscovery("final-message.txt");
+    if (unlocked) {
+      pushNotification({
+        id: "final-message-unlocked",
+        type: "success",
+        title: "Final message unlocked",
+        body: "FERRO CORE has prepared a closing message for reaching 100% exploration.",
+      });
+      pushMessage({
+        id: "final-message",
+        type: "info",
+        title: "FERRO CORE final message",
+        body: "A special closing note has been added to your hidden files.",
+      } as CoreMessage);
+    }
+  }, [initialized, explorerProfile.progress, explorerProfile.discoveredHiddenFiles, registerHiddenDiscovery, pushNotification, pushMessage]);
+
   const value = useMemo<FerroCoreContextValue>(
     () => ({
       coreName: "FERRO CORE",
@@ -395,6 +468,7 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
       setExplorerName,
       advanceProgress,
       registerDiscovery,
+      registerHiddenDiscovery,
       awardAchievement,
       recordVisit,
       completeWelcome,

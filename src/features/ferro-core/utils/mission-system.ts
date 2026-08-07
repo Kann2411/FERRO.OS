@@ -47,6 +47,14 @@ export const missionDefinitions: MissionDefinition[] = [
     prerequisite: "visit-studio",
     targetModule: "skills",
   },
+  {
+    id: "unlock-ai-lab",
+    title: "Unlock AI Lab",
+    description: "Open the hidden AI Lab using the invitation from FERRO CORE.",
+    reward: 10,
+    prerequisite: "discover-skills",
+    targetModule: "aiLab",
+  },
 ];
 
 export function getActiveMission(missionProgress: Record<string, boolean>) {

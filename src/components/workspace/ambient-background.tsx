@@ -5,10 +5,14 @@ import { motion } from "framer-motion";
 import { createTransition } from "@/features/animation-engine";
 import { useAudio } from "@/features/audio-engine";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
+import { getWallpaperDefinition } from "@/lib/wallpapers";
+import { useWallpaperStore } from "@/store/wallpaper-store";
 
 export function AmbientBackground() {
   const prefersReducedMotion = useReducedMotion();
   const { enabled, playSound, stopSound } = useAudio();
+  const currentWallpaper = useWallpaperStore((state) => state.current);
+  const wallpaper = getWallpaperDefinition(currentWallpaper);
 
   useEffect(() => {
     if (!enabled) {
@@ -33,7 +37,7 @@ export function AmbientBackground() {
   ];
 
   return (
-    <div className="absolute inset-0 overflow-hidden bg-[radial-gradient(circle_at_top_left,rgba(217,4,41,0.16),transparent_34%),linear-gradient(135deg,rgba(20,20,20,0.95),rgba(9,9,9,0.98))]" aria-hidden="true">
+    <div className="absolute inset-0 overflow-hidden" style={{ background: wallpaper.background }} aria-hidden="true">
       <motion.div
         className="absolute inset-0"
         animate={prefersReducedMotion ? { x: 0, y: 0 } : { x: [0, 4, -3, 0], y: [0, -3, 4, 0] }}

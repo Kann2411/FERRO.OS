@@ -4,6 +4,8 @@ export interface TerminalCommandContext {
   openWindow: (windowId: string) => boolean;
   explorerProfile: FerroCoreContextValue["explorerProfile"];
   activeMission: FerroCoreContextValue["activeMission"];
+  completeMission: (missionId: string) => void;
+  registerHiddenDiscovery: (fileId: string) => boolean;
 }
 
 export type TerminalCommandHandler = (args: string[], context: TerminalCommandContext) => string;

@@ -9,6 +9,8 @@ import { ResumeModule } from "@/features/resume/components/resume-module";
 import { SkillsModule } from "@/features/skills/components/skills-module";
 import { TimelineModule } from "@/features/timeline/components/timeline-module";
 import { CodeStudioModule } from "@/features/code-studio/components/code-studio-module";
+import { AiLabModule } from "@/features/ai-lab/components/ai-lab-module";
+import { DebugConsoleModule } from "@/features/debug-console/components/debug-console-module";
 import { StudioModule } from "@/features/studio/components/studio-module";
 import { DiscographyModule } from "@/features/discography/components/discography-module";
 import { AudioPlayerModule } from "@/features/audio-player/components/audio-player-module";
@@ -247,6 +249,10 @@ export function WindowShell({ window, onClose, onFocus, onBringToFront }: Window
               <TerminalModule />
             ) : window.id === "settings" ? (
               <SettingsModule />
+            ) : window.id === "aiLab" ? (
+              <AiLabModule />
+            ) : window.id === "debugConsole" ? (
+              <DebugConsoleModule />
             ) : window.id === "code-studio" ? (
               <CodeStudioModule />
             ) : (

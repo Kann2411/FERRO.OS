@@ -3,6 +3,7 @@ export interface ExplorerProfile {
   progress: number;
   modulesDiscovered: number;
   discoveredModules: string[];
+  discoveredHiddenFiles: string[];
   achievements: string[];
   firstVisit: string | null;
   lastVisit: string | null;
@@ -57,6 +58,7 @@ export interface FerroCoreContextValue {
   completeWelcome: () => void;
   completeMission: (missionId: string) => void;
   unlockMission: (missionId: string) => void;
+  registerHiddenDiscovery: (fileId: string) => boolean;
   resetFlow: () => void;
   pushMessage: (message: CoreMessage) => void;
   pushNotification: (notification: CoreNotification) => void;

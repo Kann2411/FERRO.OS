@@ -25,6 +25,7 @@ export function migrateExplorerProfileSnapshot(
     modulesDiscovered:
       typeof parsed.modulesDiscovered === "number" ? parsed.modulesDiscovered : defaultProfile.modulesDiscovered,
     discoveredModules: Array.isArray(parsed.discoveredModules) ? parsed.discoveredModules : defaultProfile.discoveredModules,
+    discoveredHiddenFiles: Array.isArray(parsed.discoveredHiddenFiles) ? parsed.discoveredHiddenFiles : defaultProfile.discoveredHiddenFiles,
     achievements: Array.isArray(parsed.achievements) ? parsed.achievements : defaultProfile.achievements,
     firstVisit: typeof parsed.firstVisit === "string" ? parsed.firstVisit : defaultProfile.firstVisit,
     lastVisit: typeof parsed.lastVisit === "string" ? parsed.lastVisit : defaultProfile.lastVisit,
