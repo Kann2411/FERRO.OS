@@ -20,6 +20,7 @@ const defaultProfile: ExplorerProfile = {
   progress: 0,
   modulesDiscovered: 0,
   discoveredModules: [],
+  unlockedModules: ["projects", "resume", "skills", "terminal"],
   discoveredHiddenFiles: [],
   achievements: [],
   firstVisit: null,
@@ -341,7 +342,8 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
         return current;
       }
 
-      const missionTitle = missionDefinitions.find((mission) => mission.id === missionId)?.title ?? "Mission";
+      const missionDef = missionDefinitions.find((mission) => mission.id === missionId);
+      const missionTitle = missionDef?.title ?? "Mission";
 
       setHistory(() =>
         addHistoryEntry({
@@ -353,12 +355,38 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
         })
       );
 
+      const nextMissionProgress = {
+        ...current.missionProgress,
+        [missionId]: true,
+      };
+
+      let nextUnlockedModules = current.unlockedModules;
+      if (missionDef?.unlocksModule && !current.unlockedModules.includes(missionDef.unlocksModule)) {
+        nextUnlockedModules = [...current.unlockedModules, missionDef.unlocksModule];
+        setHistory(() =>
+          addHistoryEntry({
+            id: generateUUID(),
+            type: "module",
+            label: missionDef.unlocksModule,
+            detail: "Module unlocked",
+            timestamp: new Date().toISOString(),
+          })
+        );
+        setNotifications((current) => [
+          {
+            id: `unlock-${missionDef.unlocksModule}`,
+            type: "success",
+            title: "Module unlocked",
+            body: `${missionDef.unlocksModule} is now accessible.`,
+          },
+          ...current,
+        ].slice(0, 3));
+      }
+
       return {
         ...current,
-        missionProgress: {
-          ...current.missionProgress,
-          [missionId]: true,
-        },
+        missionProgress: nextMissionProgress,
+        unlockedModules: nextUnlockedModules,
         progress: Math.min(100, current.progress + 5),
       };
     });
@@ -372,6 +400,18 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
         [missionId]: current.missionProgress[missionId] ?? false,
       },
     }));
+  };
+
+  const unlockModule = (moduleId: string) => {
+    setExplorerProfile((current) => {
+      if (current.unlockedModules.includes(moduleId)) {
+        return current;
+      }
+      return {
+        ...current,
+        unlockedModules: [...current.unlockedModules, moduleId],
+      };
+    });
   };
 
   const resetFlow = () => {
@@ -474,6 +514,7 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
       completeWelcome,
       completeMission,
       unlockMission,
+      unlockModule,
       resetFlow,
       pushMessage,
       pushNotification,

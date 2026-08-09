@@ -4,27 +4,33 @@ import { motion } from "framer-motion";
 import { useWindowContext } from "@/features/window-system/context/window-context";
 import { resolveWindowDefinition } from "@/features/window-system/utils/open-module";
 import { useAudio } from "@/features/audio-engine";
+import { useFerroCore } from "@/features/ferro-core/context/ferro-core-context";
 import { createMotionProps } from "@/features/animation-engine";
 import { useHighContrast } from "@/hooks/use-high-contrast";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
-const apps = [
-  { icon: "⌘", windowId: "projects", label: "Projects" },
-  { icon: "♫", windowId: "studio", label: "Studio" },
-  { icon: "◈", windowId: "discography", label: "Discography" },
-  { icon: "♪", windowId: "audioPlayer", label: "Audio Player" },
-  { icon: "⚙", windowId: "equipment", label: "Equipment" },
-  { icon: "◫", windowId: "resume", label: "Resume" },
-  { icon: "◌", windowId: "skills", label: "Skills" },
-  { icon: "⧉", windowId: "timeline", label: "Timeline" },
-  { icon: ">", windowId: "terminal", label: "Terminal" },
+const allApps = [
+  { icon: "⌘", windowId: "projects", label: "Projects", moduleId: "projects" },
+  { icon: "◫", windowId: "resume", label: "Resume", moduleId: "resume" },
+  { icon: "◌", windowId: "skills", label: "Skills", moduleId: "skills" },
+  { icon: ">", windowId: "terminal", label: "Terminal", moduleId: "terminal" },
+  { icon: "♫", windowId: "studio", label: "Studio", moduleId: "studio" },
+  { icon: "◈", windowId: "discography", label: "Discography", moduleId: "discography" },
+  { icon: "♪", windowId: "audioPlayer", label: "Audio Player", moduleId: "audioPlayer" },
+  { icon: "⚙", windowId: "equipment", label: "Equipment", moduleId: "equipment" },
+  { icon: "⧉", windowId: "timeline", label: "Timeline", moduleId: "timeline" },
+  { icon: "⌬", windowId: "code-studio", label: "Code Studio", moduleId: "code-studio" },
+  { icon: "◎", windowId: "aiLab", label: "AI Lab", moduleId: "aiLab" },
 ];
 
 export function Dock() {
   const { openWindow, focusWindow, bringToFront } = useWindowContext();
   const { playSound } = useAudio();
+  const { explorerProfile } = useFerroCore();
   const prefersHighContrast = useHighContrast();
   const prefersReducedMotion = useReducedMotion();
+
+  const unlockedApps = allApps.filter((app) => explorerProfile.unlockedModules.includes(app.moduleId));
 
   const handleOpen = (windowId: string) => {
     const definition = resolveWindowDefinition(windowId);
@@ -41,7 +47,7 @@ export function Dock() {
     <>
       {/* Desktop dock - hidden on mobile */}
       <div className={`hidden items-center gap-3 rounded-full border bg-surface/70 px-3 py-3 shadow-[0_18px_60px_rgba(0,0,0,0.3)] backdrop-blur-xl sm:flex ${prefersHighContrast ? "border-white" : "border-white/10"}`} role="toolbar" aria-label="Application dock">
-        {apps.map((app) => (
+        {unlockedApps.map((app) => (
           <motion.button
             key={app.windowId}
             type="button"
@@ -62,7 +68,7 @@ export function Dock() {
 
       {/* Mobile dock - shown only on mobile */}
       <div className={`fixed bottom-0 left-0 right-0 z-50 flex items-center justify-around border-t bg-surface/90 px-2 py-2 backdrop-blur-xl sm:hidden ${prefersHighContrast ? "border-white" : "border-white/10"}`} role="toolbar" aria-label="Mobile application dock">
-        {apps.map((app) => (
+        {unlockedApps.map((app) => (
           <motion.button
             key={app.windowId}
             type="button"
