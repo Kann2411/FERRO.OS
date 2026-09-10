@@ -18,10 +18,13 @@ import { EquipmentModule } from "@/features/equipment/components/equipment-modul
 import { TerminalModule } from "@/features/terminal/components/terminal-module";
 import { SettingsModule } from "@/features/settings/components/settings-module";
 import type { WindowInstance } from "@/features/window-system/types";
-import { getViewportSafePosition } from "@/features/window-system/utils";
+import { clamp, getViewportSafePosition } from "@/features/window-system/utils";
 import { createTransition } from "@/features/animation-engine";
 import { SkeletonCard, SkeletonList } from "@/components/ui/skeleton";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
+
+const MIN_WINDOW_WIDTH = 320;
+const MIN_WINDOW_HEIGHT = 240;
 
 interface WindowShellProps {
   window: WindowInstance;
@@ -31,9 +34,10 @@ interface WindowShellProps {
 }
 
 export function WindowShell({ window, onClose, onFocus, onBringToFront }: WindowShellProps) {
-  const { updateWindowPosition, toggleWindowMinimize, toggleWindowMaximize } = useWindowContext();
+  const { updateWindowPosition, updateWindowSize, toggleWindowMinimize, toggleWindowMaximize } = useWindowContext();
   const { playSound } = useAudio();
   const [dragOffset, setDragOffset] = useState<{ x: number; y: number } | null>(null);
+  const [resizeOrigin, setResizeOrigin] = useState<{ x: number; y: number; width: number; height: number } | null>(null);
   const [position, setPosition] = useState({ x: window.x, y: window.y });
   const [isClosing, setIsClosing] = useState(false);
   const [isContentReady, setIsContentReady] = useState(false);
@@ -41,10 +45,11 @@ export function WindowShell({ window, onClose, onFocus, onBringToFront }: Window
   const prefersReducedMotion = useReducedMotion();
   const motionTransition = createTransition("window", { reducedMotion: prefersReducedMotion });
 
-  useEffect(() => {
+  if (position.x !== window.x || position.y !== window.y) {
     setPosition({ x: window.x, y: window.y });
-    setIsContentReady(false);
+  }
 
+  useEffect(() => {
     const frame = globalThis.setTimeout(() => {
       setIsContentReady(true);
     }, 140);
@@ -52,7 +57,7 @@ export function WindowShell({ window, onClose, onFocus, onBringToFront }: Window
     return () => {
       globalThis.clearTimeout(frame);
     };
-  }, [window.id, window.x, window.y]);
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -88,6 +93,33 @@ export function WindowShell({ window, onClose, onFocus, onBringToFront }: Window
   const handlePointerUp = (event: React.PointerEvent<HTMLDivElement>) => {
     event.currentTarget.releasePointerCapture(event.pointerId);
     setDragOffset(null);
+  };
+
+  const handleResizePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+    event.stopPropagation();
+    onFocus(window.id);
+    onBringToFront(window.id);
+
+    setResizeOrigin({ x: event.clientX, y: event.clientY, width: window.width, height: window.height });
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+
+  const handleResizePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (!resizeOrigin) {
+      return;
+    }
+
+    const maxWidth = Math.max(MIN_WINDOW_WIDTH, globalThis.innerWidth - position.x - 24);
+    const maxHeight = Math.max(MIN_WINDOW_HEIGHT, globalThis.innerHeight - position.y - 24);
+    const nextWidth = clamp(resizeOrigin.width + (event.clientX - resizeOrigin.x), MIN_WINDOW_WIDTH, maxWidth);
+    const nextHeight = clamp(resizeOrigin.height + (event.clientY - resizeOrigin.y), MIN_WINDOW_HEIGHT, maxHeight);
+
+    updateWindowSize(window.id, { width: nextWidth, height: nextHeight });
+  };
+
+  const handleResizePointerUp = (event: React.PointerEvent<HTMLDivElement>) => {
+    event.currentTarget.releasePointerCapture(event.pointerId);
+    setResizeOrigin(null);
   };
 
   const handleClose = () => {
@@ -261,6 +293,20 @@ export function WindowShell({ window, onClose, onFocus, onBringToFront }: Window
           </motion.div>
         )}
       </div>
+
+      {!window.isMaximized && !window.isMinimized && (
+        <div
+          onPointerDown={handleResizePointerDown}
+          onPointerMove={handleResizePointerMove}
+          onPointerUp={handleResizePointerUp}
+          className="absolute bottom-0 right-0 z-10 h-4 w-4 cursor-nwse-resize touch-none rounded-tl-md transition hover:bg-white/10"
+          role="separator"
+          aria-label={`Resize ${window.title} window`}
+          aria-orientation="horizontal"
+        >
+          <div className="absolute bottom-1 right-1 h-2 w-2 border-b-2 border-r-2 border-white/25" aria-hidden="true" />
+        </div>
+      )}
     </motion.div>
   );
 }

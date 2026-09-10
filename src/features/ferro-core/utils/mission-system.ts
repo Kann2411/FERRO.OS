@@ -14,7 +14,6 @@ export const missionDefinitions: MissionDefinition[] = [
     description: "Survey the workspace and understand the environment.",
     reward: 5,
     prerequisite: null,
-    unlocksModule: "terminal",
   },
   {
     id: "open-first-module",
@@ -62,7 +61,7 @@ export const missionDefinitions: MissionDefinition[] = [
     description: "Trace the version history of the explorer's evolution.",
     reward: 5,
     prerequisite: "read-resume",
-    unlocksModule: "audio-player",
+    unlocksModule: "audioPlayer",
   },
   {
     id: "listen-discography",
@@ -70,7 +69,6 @@ export const missionDefinitions: MissionDefinition[] = [
     description: "Browse the music releases in the Discography module.",
     reward: 7,
     prerequisite: "explore-timeline",
-    unlocksModule: "settings",
   },
   {
     id: "visit-ai-lab",

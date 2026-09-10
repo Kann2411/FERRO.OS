@@ -1,10 +1,13 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useRef } from "react";
 import { createPopoverMotion } from "@/features/animation-engine";
 import { useAudio } from "@/features/audio-engine";
 import { useFerroCore } from "@/features/ferro-core/context/ferro-core-context";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
+
+const AUTO_DISMISS_MS = 6000;
 
 const notificationStyles: Record<string, string> = {
   success: "border-emerald-400/30 bg-emerald-500/10 text-secondary",
@@ -18,6 +21,18 @@ export function CoreNotifications() {
   const { notifications, dismissNotification } = useFerroCore();
   const { playSound } = useAudio();
   const prefersReducedMotion = useReducedMotion();
+  const scheduledDismissals = useRef<Set<string>>(new Set());
+
+  useEffect(() => {
+    notifications.forEach((notification) => {
+      if (scheduledDismissals.current.has(notification.id)) return;
+      scheduledDismissals.current.add(notification.id);
+      setTimeout(() => {
+        scheduledDismissals.current.delete(notification.id);
+        dismissNotification(notification.id);
+      }, AUTO_DISMISS_MS);
+    });
+  }, [notifications, dismissNotification]);
 
   if (notifications.length === 0) {
     return null;

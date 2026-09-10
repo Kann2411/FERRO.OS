@@ -61,7 +61,6 @@ export function DesktopIcons() {
     }
 
     if (isFirstModuleOpen) {
-      completeMission("explore-desktop");
       completeMission("open-first-module");
       advanceProgress(4);
       registerDiscovery(windowId);
@@ -108,10 +107,13 @@ export function DesktopIcons() {
           initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={createMotionProps("entrance", { reducedMotion: prefersReducedMotion }).transition}
-          onPointerEnter={() => playSound("ui", "hover")}
+          onPointerEnter={() => {
+            playSound("ui", "hover");
+            completeMission("explore-desktop");
+          }}
           onClick={() => handleOpen(item.windowId)}
           aria-label={`Open ${item.label}: ${item.description}`}
-          className={`group flex min-h-11 min-w-11 flex-col items-center gap-2 rounded-2xl border bg-surface/40 p-3 text-center shadow-[0_12px_40px_rgba(0,0,0,0.16)] transition hover:border-primary/40 hover:bg-surface/70 sm:p-4 ${prefersHighContrast ? "border-white" : "border-white/10"}`}
+          className={`group relative flex min-h-11 min-w-11 flex-col items-center gap-2 rounded-2xl border bg-surface/40 p-3 text-center shadow-[0_12px_40px_rgba(0,0,0,0.16)] transition hover:border-primary/40 hover:bg-surface/70 sm:p-4 ${prefersHighContrast ? "border-white" : "border-white/10"}`}
         >
           <div className={`flex h-10 w-10 items-center justify-center rounded-2xl text-lg shadow-inner shadow-black/20 sm:h-12 sm:w-12 ${item.accent}`} aria-hidden="true">
             {item.icon}

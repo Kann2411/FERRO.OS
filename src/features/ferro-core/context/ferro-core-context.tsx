@@ -139,35 +139,36 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
       completedMissions: Object.values(explorerProfile.missionProgress).filter(Boolean).length,
     });
 
-    const achievementNames = nextAchievements.map((achievement) => achievement.title);
+    const missing = nextAchievements
+      .map((achievement) => achievement.title)
+      .filter((name) => !explorerProfile.achievements.includes(name));
+
+    if (missing.length === 0) {
+      return;
+    }
+
+    setHistory(() =>
+      addHistoryEntry({
+        id: generateUUID(),
+        type: "achievement",
+        label: missing[0],
+        detail: "Achievement unlocked",
+        timestamp: new Date().toISOString(),
+      })
+    );
 
     setExplorerProfile((current) => {
-      const missing = achievementNames.filter((name) => !current.achievements.includes(name));
-      if (missing.length === 0) {
+      const stillMissing = missing.filter((name) => !current.achievements.includes(name));
+      if (stillMissing.length === 0) {
         return current;
-      }
-
-      const nextAchievements = [...current.achievements, ...missing];
-
-      if (missing.length > 0) {
-        setHistory((currentHistory) => {
-          const next = addHistoryEntry({
-            id: generateUUID(),
-            type: "achievement",
-            label: missing[0],
-            detail: "Achievement unlocked",
-            timestamp: new Date().toISOString(),
-          });
-          return next;
-        });
       }
 
       return {
         ...current,
-        achievements: nextAchievements,
+        achievements: [...current.achievements, ...stillMissing],
       };
     });
-  }, [initialized, explorerProfile.progress, explorerProfile.modulesDiscovered, explorerProfile.discoveredModules, explorerProfile.missionProgress]);
+  }, [initialized, explorerProfile.progress, explorerProfile.modulesDiscovered, explorerProfile.discoveredModules, explorerProfile.missionProgress, explorerProfile.achievements]);
 
   useEffect(() => {
     if (!initialized) {
@@ -192,29 +193,46 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
   };
 
   const advanceProgress = (amount: number) => {
-    setExplorerProfile((current) => {
-      const nextProgress = updateProgress(current.progress, amount);
+    if (amount > 0) {
+      setHistory(() =>
+        addHistoryEntry({
+          id: generateUUID(),
+          type: "progress",
+          label: "Progress update",
+          detail: `Exploration advanced by ${amount}%`,
+          timestamp: new Date().toISOString(),
+        })
+      );
+    }
 
-      if (amount > 0) {
-        setHistory(() =>
-          addHistoryEntry({
-            id: generateUUID(),
-            type: "progress",
-            label: "Progress update",
-            detail: `Exploration advanced by ${amount}%`,
-            timestamp: new Date().toISOString(),
-          })
-        );
-      }
-
-      return {
-        ...current,
-        progress: nextProgress,
-      };
-    });
+    setExplorerProfile((current) => ({
+      ...current,
+      progress: updateProgress(current.progress, amount),
+    }));
   };
 
   const registerDiscovery = (moduleId?: string) => {
+    if (moduleId && explorerProfile.discoveredModules.includes(moduleId)) {
+      return;
+    }
+
+    const reward = getDiscoveryProgressReward(moduleId);
+    const discoveryLabel = moduleId ? `${moduleId} discovered` : "New system discovery";
+    const registered = registerDiscoveryRecord(undefined, discoveryLabel, "ferro-core");
+
+    if (registered) {
+      setDiscoveries(getDiscoveryRecords());
+      setHistory(() =>
+        addHistoryEntry({
+          id: generateUUID(),
+          type: "module",
+          label: moduleId ?? "System event",
+          detail: "Module discovered",
+          timestamp: new Date().toISOString(),
+        })
+      );
+    }
+
     setExplorerProfile((current) => {
       if (moduleId && current.discoveredModules.includes(moduleId)) {
         return current;
@@ -223,24 +241,6 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
       const nextDiscoveredModules = moduleId
         ? [...current.discoveredModules, moduleId]
         : current.discoveredModules;
-
-      const reward = getDiscoveryProgressReward(moduleId);
-      const discoveryLabel = moduleId ? `${moduleId} discovered` : "New system discovery";
-      const registered = registerDiscoveryRecord(undefined, discoveryLabel, "ferro-core");
-
-      if (registered) {
-        setDiscoveries(getDiscoveryRecords());
-        setHistory((current) => {
-          const next = addHistoryEntry({
-            id: generateUUID(),
-            type: "module",
-            label: moduleId ?? "System event",
-            detail: "Module discovered",
-            timestamp: new Date().toISOString(),
-          });
-          return next;
-        });
-      }
 
       return {
         ...current,
@@ -252,65 +252,68 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
   };
 
   const registerHiddenDiscovery = (fileId: string) => {
-    let wasRegistered = false;
+    if (explorerProfile.discoveredHiddenFiles.includes(fileId)) {
+      return false;
+    }
+
+    const fileDefinition = getHiddenFileDefinition(fileId);
+    const reward = fileDefinition?.reward ?? 3;
+    const discoveryLabel = `${fileId} uncovered`;
+    const registered = registerDiscoveryRecord(undefined, discoveryLabel, "hidden-files");
+
+    if (registered) {
+      setDiscoveries(getDiscoveryRecords());
+      setHistory(() =>
+        addHistoryEntry({
+          id: generateUUID(),
+          type: "event",
+          label: discoveryLabel,
+          detail: "Hidden file discovered",
+          timestamp: new Date().toISOString(),
+        })
+      );
+    }
+
+    if (fileDefinition?.unlocksWallpaper) {
+      unlockWallpaper(fileDefinition.unlocksWallpaper);
+    }
 
     setExplorerProfile((current) => {
       if (current.discoveredHiddenFiles.includes(fileId)) {
         return current;
       }
 
-      const fileDefinition = getHiddenFileDefinition(fileId);
-      const reward = fileDefinition?.reward ?? 3;
-      const nextDiscoveredHiddenFiles = [...current.discoveredHiddenFiles, fileId];
-      const discoveryLabel = `${fileId} uncovered`;
-      const registered = registerDiscoveryRecord(undefined, discoveryLabel, "hidden-files");
-
-      if (registered) {
-        wasRegistered = true;
-        setDiscoveries(getDiscoveryRecords());
-        setHistory((current) => {
-          const next = addHistoryEntry({
-            id: generateUUID(),
-            type: "event",
-            label: discoveryLabel,
-            detail: "Hidden file discovered",
-            timestamp: new Date().toISOString(),
-          });
-          return next;
-        });
-      }
-
-      if (fileDefinition?.unlocksWallpaper) {
-        unlockWallpaper(fileDefinition.unlocksWallpaper);
-      }
-
       return {
         ...current,
-        discoveredHiddenFiles: nextDiscoveredHiddenFiles,
+        discoveredHiddenFiles: [...current.discoveredHiddenFiles, fileId],
         progress: updateProgress(current.progress, reward),
       };
     });
 
-    return wasRegistered;
+    return registered;
   };
 
   const awardAchievement = (achievement: string) => {
+    if (explorerProfile.achievements.includes(achievement)) {
+      return;
+    }
+
     playSound("achievements", "unlock");
+
+    setHistory(() =>
+      addHistoryEntry({
+        id: generateUUID(),
+        type: "achievement",
+        label: achievement,
+        detail: "Achievement unlocked",
+        timestamp: new Date().toISOString(),
+      })
+    );
 
     setExplorerProfile((current) => {
       if (current.achievements.includes(achievement)) {
         return current;
       }
-
-      setHistory(() =>
-        addHistoryEntry({
-          id: generateUUID(),
-          type: "achievement",
-          label: achievement,
-          detail: "Achievement unlocked",
-          timestamp: new Date().toISOString(),
-        })
-      );
 
       return {
         ...current,
@@ -337,51 +340,61 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
   };
 
   const completeMission = (missionId: string) => {
+    if (explorerProfile.missionProgress[missionId]) {
+      return;
+    }
+
+    const missionDef = missionDefinitions.find((mission) => mission.id === missionId);
+    const missionTitle = missionDef?.title ?? "Mission";
+
+    setHistory(() =>
+      addHistoryEntry({
+        id: generateUUID(),
+        type: "mission",
+        label: missionTitle,
+        detail: "Mission completed",
+        timestamp: new Date().toISOString(),
+      })
+    );
+
+    const shouldUnlockModule =
+      missionDef?.unlocksModule && !explorerProfile.unlockedModules.includes(missionDef.unlocksModule);
+
+    if (shouldUnlockModule && missionDef?.unlocksModule) {
+      setHistory(() =>
+        addHistoryEntry({
+          id: generateUUID(),
+          type: "module",
+          label: missionDef.unlocksModule as string,
+          detail: "Module unlocked",
+          timestamp: new Date().toISOString(),
+        })
+      );
+      setNotifications((current) => [
+        {
+          id: `unlock-${missionDef.unlocksModule}`,
+          type: "success" as const,
+          title: "Module unlocked",
+          body: `${missionDef.unlocksModule} is now accessible.`,
+        },
+        ...current,
+      ].slice(0, 3));
+    }
+
     setExplorerProfile((current) => {
       if (current.missionProgress[missionId]) {
         return current;
       }
-
-      const missionDef = missionDefinitions.find((mission) => mission.id === missionId);
-      const missionTitle = missionDef?.title ?? "Mission";
-
-      setHistory(() =>
-        addHistoryEntry({
-          id: generateUUID(),
-          type: "mission",
-          label: missionTitle,
-          detail: "Mission completed",
-          timestamp: new Date().toISOString(),
-        })
-      );
 
       const nextMissionProgress = {
         ...current.missionProgress,
         [missionId]: true,
       };
 
-      let nextUnlockedModules = current.unlockedModules;
-      if (missionDef?.unlocksModule && !current.unlockedModules.includes(missionDef.unlocksModule)) {
-        nextUnlockedModules = [...current.unlockedModules, missionDef.unlocksModule];
-        setHistory(() =>
-          addHistoryEntry({
-            id: generateUUID(),
-            type: "module",
-            label: missionDef.unlocksModule,
-            detail: "Module unlocked",
-            timestamp: new Date().toISOString(),
-          })
-        );
-        setNotifications((current) => [
-          {
-            id: `unlock-${missionDef.unlocksModule}`,
-            type: "success",
-            title: "Module unlocked",
-            body: `${missionDef.unlocksModule} is now accessible.`,
-          },
-          ...current,
-        ].slice(0, 3));
-      }
+      const nextUnlockedModules =
+        missionDef?.unlocksModule && !current.unlockedModules.includes(missionDef.unlocksModule)
+          ? [...current.unlockedModules, missionDef.unlocksModule]
+          : current.unlockedModules;
 
       return {
         ...current,

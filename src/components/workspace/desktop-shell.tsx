@@ -15,9 +15,11 @@ import { useWindowManager } from "@/features/window-system/hooks/use-window-mana
 import { useAudio } from "@/features/audio-engine";
 import { createMotionProps } from "@/features/animation-engine";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
+import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 
 function WorkspaceContent() {
   useWindowManager();
+  useKeyboardShortcuts();
   const { resetFlow } = useFerroCore();
   const { resetWindowState, openWindow, focusWindow, bringToFront } = useWindowContext();
   const { playSound } = useAudio();

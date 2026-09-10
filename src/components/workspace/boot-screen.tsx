@@ -65,8 +65,6 @@ export function BootScreen({ onComplete }: { onComplete: () => void }) {
     }
   }, [phase, onComplete]);
 
-  if (phase === "done") return null;
-
   return (
     <motion.div
       initial={{ opacity: 1 }}
@@ -89,7 +87,7 @@ export function BootScreen({ onComplete }: { onComplete: () => void }) {
         </div>
       )}
 
-      {phase === "logo" && (
+      {(phase === "logo" || phase === "done") && (
         <div className="flex flex-col items-center gap-8">
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
