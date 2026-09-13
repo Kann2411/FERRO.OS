@@ -152,7 +152,7 @@ export function registerBuiltInCommands() {
         const opened = context.openWindow("aiLab");
 
         if (opened) {
-          context.completeMission("unlock-ai-lab");
+          context.completeMission("visit-ai-lab");
           return "AI Lab unlocking... The hidden laboratory is now opening.";
         }
 

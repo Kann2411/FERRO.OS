@@ -1,7 +1,7 @@
 ---
 Phase: 12
 Name: Hidden Content
-Status: Pending
+Status: Completed
 Priority: Medium
 Estimated Milestones: 8
 Dependencies:

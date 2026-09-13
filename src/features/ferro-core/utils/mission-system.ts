@@ -1,11 +1,4 @@
-export interface MissionDefinition {
-  id: string;
-  title: string;
-  description: string;
-  reward: number;
-  prerequisite: string | null;
-  unlocksModule?: string;
-}
+import type { MissionDefinition } from "@/features/ferro-core/types";
 
 export const missionDefinitions: MissionDefinition[] = [
   {

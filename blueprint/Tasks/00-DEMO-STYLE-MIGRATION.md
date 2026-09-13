@@ -60,23 +60,19 @@ Estas decisiones resuelven las inconsistencias detectadas en la auditoría de FE
 
 **Por qué:** es la causa raíz de "no sigue ningún patrón". Sin esto, portar el HUD/mapa de señal solo esparce el bug a más lugares.
 
-- [ ] Eliminar la duplicidad de `MissionDefinition`: dejar **un solo** tipo en `src/features/ferro-core/types.ts`, con el campo `unlocksModule` (el que sí se usa en runtime), y borrar la interfaz duplicada de `mission-system.ts`.
-- [ ] Convertir `missions` a un **array ordenado** (como el demo), donde el orden del array define la cadena (`prerequisite` pasa a ser implícito por índice, o se mantiene explícito pero debe coincidir 1:1 con el índice — elegir uno y purgar el otro).
-- [ ] Normalizar **todos** los IDs de módulo a kebab-case en: `mission-system.ts`, `explorer-progress.ts`, `achievement-system.ts`, `windowRegistry`, `desktop-icons.tsx`, `dock.tsx`, `command-engine.ts`. Buscar y unificar: `audioPlayer→audio-player`, `aiLab→ai-lab`, `debugConsole→debug-console`.
-- [ ] Corregir el bug de `code-studio`: agregar su entrada faltante a `windowRegistry` (ver también Milestone 3).
-- [ ] Corregir el ID de misión fantasma: `command-engine.ts` debe llamar `completeMission("visit-ai-lab")`, no `"unlock-ai-lab"`.
-- [ ] Reescribir `completeMission` siguiendo el patrón del demo:
-  - [ ] Idempotente (`if already completed, return`).
-  - [ ] Aplica `missionDef.reward` real (eliminar el `+5` hardcodeado que ignora el campo `reward`).
-  - [ ] Valida que el `missionId` exista en `missionDefinitions` antes de escribir estado (evita entradas huérfanas).
-  - [ ] Genera notificación (toast) como efecto del completar.
-  - [ ] Si existe una misión de "cierre de cadena" (equivalente a `lock` del demo), auto-completarla vía `queueMicrotask` cuando todas las previas estén hechas, y disparar el modal final (Milestone 7).
-- [ ] Portar los helpers puros `progressOf(completed)` y `activeMission(completed)` — deben ser las únicas fuentes de "cuál es el % de progreso" y "cuál es la misión activa" (nada de recalcular esto en cada componente).
-- [ ] Migrar `FerroCoreContext` (misiones, logros, progreso, notificaciones) a un store Zustand con `persist` y `partialize`, siguiendo el mismo patrón que ya usan `theme-store.ts`/`wallpaper-store.ts` en este proyecto — eliminando el manejo manual de `localStorage`/`sessionStorage` duplicado en el propio contexto. **Alcance acotado a `ferro-core`**: esto no implica tocar `WindowContext` (Milestone 3 lo deja intacto).
-- [ ] Migrar `discovery-registry.ts` y `history-log.ts` de singletons mutables a estado dentro del mismo store de misiones (o slices separados), eliminando las variables globales de módulo (son inseguras en SSR/hot-reload).
-- [ ] Actualizar `blueprint/agent/PHASE12.md`: el front-matter dice `Status: Pending` pero los milestones 12.1–12.7 ya están implementados según el historial de git — corregir el estado para que el blueprint deje de estar desincronizado del código.
+- [x] Eliminada la duplicidad de `MissionDefinition`: queda **un solo** tipo en `src/features/ferro-core/types.ts` con el campo `unlocksModule` (el que sí se usa en runtime); `mission-system.ts` ahora importa ese tipo en vez de redeclararlo. También se movieron `DiscoveryRecord` y `ExplorerHistoryEntry` (antes definidos inline/en los utils eliminados) a `types.ts` como tipos nombrados.
+- [x] **Corrección respecto al plan original sobre el casing de IDs:** al auditar el código real se confirmó que `audioPlayer`/`aiLab`/`debugConsole` (camelCase) SÍ son consistentes entre sí en los ~8 archivos que los usan (registry, desktop-icons, dock, achievement-system, explorer-progress, mission-system, hidden-files, command-engine, window-shell) — no hay una mezcla real que rompa nada ahí. El único problema real de "casing" es que `code-studio` (kebab-case) usado en desktop-icons/dock/mission-system/window-shell **no tiene entrada en `windowRegistry`** — eso es un hueco puntual, no una mezcla de convenciones. Se decidió **no renombrar** `audioPlayer`/`aiLab`/`debugConsole` (sería puro churn cosmético en ~8 archivos sin corregir ningún bug) y dejar el fix de `code-studio` para el Milestone 3, que es donde realmente se toca el registry.
+- [x] Corregido el ID de misión fantasma: `command-engine.ts` ahora llama `completeMission("visit-ai-lab")` (antes `"unlock-ai-lab"`, un id que no existía en `missionDefinitions` y por tanto nunca contaba para el progreso).
+- [x] `completeMission` reescrito en el nuevo store (ver abajo): valida que el `missionId` exista en `missionDefinitions` antes de escribir nada (evita entradas huérfanas), y aplica `missionDef.reward` real en vez del `+5` hardcodeado que ignoraba por completo ese campo.
+- [ ] **Diferido:** no se introdujo una misión explícita de "cierre de cadena" tipo `lock` del demo ni `progressOf`/`activeMission` como helpers puros separados — FERRO.OS ya tenía `getActiveMission()`/`getMissionProgressValue()` en `mission-system.ts` cumpliendo ese rol (se mantienen tal cual, sin duplicarlos). La mecánica de "modal final al completar todo" se aborda en el Milestone 8 (cierre narrativo), no aquí.
+- [x] **Consolidación de estado (el punto central de este milestone):** se creó `src/store/ferro-core-store.ts`, un store Zustand con `persist`, siguiendo el mismo patrón que `theme-store.ts`/`wallpaper-store.ts` ya usan en este proyecto. `src/features/ferro-core/context/ferro-core-context.tsx` pasó de ser el dueño del estado (Context + `useState`) a una envoltura delgada de ~65 líneas que solo expone `useFerroCore()` y `FerroCoreProvider` con **exactamente la misma forma pública** (`FerroCoreContextValue`) — los 15 archivos consumidores (`mission-board.tsx`, `explorer-profile-card.tsx`, `desktop-icons.tsx`, `terminal-module.tsx`, etc.) no necesitaron ningún cambio.
+- [x] Eliminados `discovery-registry.ts` y `history-log.ts` (singletons mutables a nivel de módulo, inseguros en SSR/hot-reload) y `explorer-profile-storage.ts` (persistencia manual en sessionStorage duplicada) — su lógica vive ahora dentro del store único, con una sola persistencia vía `zustand/persist` en localStorage (clave `ferro-os-explorer-profile`, migrando de forma perezosa la clave legacy `ferro.os.ferro-core` si existe).
+- [x] **Bug de hidratación SSR detectado y corregido durante la migración:** `persist` de Zustand rehidrata sincrónicamente desde `localStorage` al crear el store en cliente, lo que generaba mismatch de hidratación de React contra el HTML renderizado en servidor (siempre con el perfil por defecto). Solucionado con `skipHydration: true` + una llamada explícita a `useFerroCoreStore.persist.rehydrate()` dentro de un `useEffect` en `FerroCoreProvider` — replica el mismo patrón "cargar después del montaje" que ya usaba el código original, pero ahora sin la lógica de storage duplicada.
+- [x] Puente de sonido: como los stores de Zustand no pueden llamar hooks de React (`useAudio()`), se agregó `setSoundBridge()` en el store, que `FerroCoreProvider` invoca una vez con la función `playSound` real — así `pushMessage`/`pushNotification`/`awardAchievement` conservan el mismo sonido que reproducían antes, sin acoplar el store a React Context.
+- [x] Actualizado `blueprint/agent/PHASE12.md`: el front-matter decía `Status: Pending` pero los milestones 12.1–12.8 ya están implementados según el historial de git y la lectura del código — corregido a `Status: Completed`.
+- [x] Verificado con `tsc --noEmit`, `pnpm build` (limpios) y una prueba manual con `pnpm dev` + curl: el HTML servido incluye correctamente las 11 misiones, el HUD y el conteo de progreso; se confirmó que el fix de hidratación elimina el error que aparecía antes de aplicar `skipHydration`.
 
-**Criterio de cierre:** un solo lugar (`missionDefinitions` + store) define el flujo de misiones; ningún componente mantiene su propia copia de "qué misión sigue" o "cuánto progreso hay".
+**Criterio de cierre:** un solo lugar (`missionDefinitions` + `useFerroCoreStore`) define el flujo de misiones; ningún componente mantiene su propia copia de "qué misión sigue" o "cuánto progreso hay". ✅ Cumplido. El bug de `code-studio` queda intencionalmente para el Milestone 3 (es un fix de registry, no de modelo de datos).
 
 ---
 
@@ -199,8 +195,8 @@ Reestructurar `src/features/settings/` para que deje de ser un único componente
 | Contexto de misiones/progreso | `src/features/ferro-core/context/ferro-core-context.tsx` |
 | Progreso de exploración | `src/features/ferro-core/utils/explorer-progress.ts` |
 | Logros | `src/features/ferro-core/utils/achievement-system.ts` |
-| Persistencia perfil | `src/features/ferro-core/utils/explorer-profile-storage.ts` |
-| Singletons a migrar | `discovery-registry.ts`, `history-log.ts` |
+| Store unificado de misiones/exploración (nuevo, M2) | `src/store/ferro-core-store.ts` |
+| ~~Persistencia perfil~~ / ~~Singletons~~ | Eliminados en M2 (`explorer-profile-storage.ts`, `discovery-registry.ts`, `history-log.ts`) — lógica movida a `ferro-core-store.ts` |
 | Registro de ventanas (agregar `code-studio`) | `src/features/window-system/registry/index.ts` |
 | Render de ventana (if/else — **se mantiene, no tocar**) | `src/features/window-system/components/window-shell.tsx` |
 | Contexto de ventanas (**se mantiene, no tocar**) | `src/features/window-system/context/window-context.tsx` |

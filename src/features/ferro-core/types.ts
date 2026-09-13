@@ -21,7 +21,7 @@ export interface MissionDefinition {
   description: string;
   reward: number;
   prerequisite: string | null;
-  targetModule?: string;
+  unlocksModule?: string;
 }
 
 export interface CoreMessage {
@@ -38,6 +38,21 @@ export interface CoreNotification {
   body: string;
 }
 
+export interface DiscoveryRecord {
+  id: string;
+  label: string;
+  source: string;
+  timestamp: string;
+}
+
+export interface ExplorerHistoryEntry {
+  id: string;
+  type: "module" | "achievement" | "progress" | "mission" | "event";
+  label: string;
+  detail: string;
+  timestamp: string;
+}
+
 export interface FerroCoreContextValue {
   coreName: string;
   logo: string;
@@ -48,8 +63,8 @@ export interface FerroCoreContextValue {
   completedMissions: string[];
   messages: CoreMessage[];
   notifications: CoreNotification[];
-  discoveries: Array<{ id: string; label: string; source: string; timestamp: string }>;
-  history: Array<{ id: string; type: "module" | "achievement" | "progress" | "mission" | "event"; label: string; detail: string; timestamp: string }>;
+  discoveries: DiscoveryRecord[];
+  history: ExplorerHistoryEntry[];
   activeMission: MissionDefinition | null;
   setExplorerName: (name: string) => void;
   advanceProgress: (amount: number) => void;
