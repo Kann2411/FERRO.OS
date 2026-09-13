@@ -11,7 +11,6 @@ import { WindowManager } from "@/features/window-system/components/window-manage
 import { useWindowContext, WindowProvider } from "@/features/window-system/context/window-context";
 import { resolveWindowDefinition } from "@/features/window-system/utils/open-module";
 import { useFerroCore } from "@/features/ferro-core/context/ferro-core-context";
-import { useWindowManager } from "@/features/window-system/hooks/use-window-manager";
 import { useAudio } from "@/features/audio-engine";
 import { createMotionProps } from "@/features/animation-engine";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
@@ -20,7 +19,6 @@ import { panelVariants } from "@/components/ui/panel";
 import { cn } from "@/lib/cn";
 
 function WorkspaceContent() {
-  useWindowManager();
   useKeyboardShortcuts();
   const { resetFlow } = useFerroCore();
   const { resetWindowState, openWindow, focusWindow, bringToFront } = useWindowContext();

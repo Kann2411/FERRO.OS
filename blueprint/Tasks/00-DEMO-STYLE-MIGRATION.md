@@ -80,13 +80,13 @@ Estas decisiones resuelven las inconsistencias detectadas en la auditoría de FE
 
 **El window system funciona y no se rediseña.** Este milestone es deliberadamente pequeño: corrige solo los defectos concretos que impiden que lo ya construido funcione bien, sin introducir un patrón nuevo.
 
-- [ ] Agregar la entrada faltante de `code-studio` a `windowRegistry` (`src/features/window-system/registry/index.ts`) con la convención kebab-case — verificar en el navegador que el ícono ahora sí abre la ventana. Esto es un bug fix de una línea/entrada, no un rediseño del registry.
-- [ ] Unificar `allItems` (`desktop-icons.tsx`) y `allApps` (`dock.tsx`): hoy son dos arrays hardcodeados casi idénticos que ya están desincronizados (causa raíz del bug de `code-studio`). Extraer un único array fuente (puede vivir en el propio `windowRegistry` o en un archivo de configuración compartido junto a él) y que ambos componentes lo consuman filtrando por `unlockedModules` — sin cambiar cómo `desktop-icons`/`dock` renderizan ni cómo abren ventanas.
-- [ ] Normalizar los IDs camelCase→kebab-case en estos mismos archivos (`audioPlayer→audio-player`, `aiLab→ai-lab`, `debugConsole→debug-console`), consistente con la decisión 3 de la sección 0.
-- [ ] Revisar `use-window-manager.ts` (hook wrapper vacío que hoy no aporta nada): si no tiene un propósito claro, eliminarlo y usar `useWindowContext()` directo — es limpieza menor, no arquitectura.
-- [ ] El if/else de render en `window-shell.tsx` **se deja como está**. No es un milestone para refactorizarlo; si en el futuro se vuelve un problema real de mantenibilidad se evalúa aparte, fuera de esta migración.
+- [x] Agregada la entrada faltante de `code-studio` a `windowRegistry` (`src/features/window-system/registry/index.ts`, icono `⌬`, 620×420). Confirmado con `pnpm build` + smoke test en `pnpm dev` que ya no queda huérfana.
+- [x] Unificados `allItems` (`desktop-icons.tsx`) y `allApps` (`dock.tsx`) en una sola fuente nueva: `src/components/workspace/launcher-items.ts`. Además se fue un paso más allá de "copiar un array a un archivo compartido": el nuevo `launcherItems` solo declara `{ windowId, accent, description }` (los campos que de verdad son propios de cada componente de UI); **`label` e `icon` ahora se resuelven en tiempo de render desde `resolveWindowDefinition(windowId)`** (el propio `windowRegistry`), en vez de repetirse una tercera vez a mano. Esto hace que `windowRegistry` sea la única fuente de verdad para título/ícono, y que un módulo sin entrada en el registry directamente **no se renderice** (falla visible) en vez de renderizarse pero no abrir nada al hacer click (el bug original de `code-studio`).
+- [ ] **No se normalizaron** `audioPlayer`/`aiLab`/`debugConsole` a kebab-case — ver nota en Milestone 2: es un cambio cosmético en ~8 archivos que no corrige ningún bug adicional; se dejó explícitamente fuera para no generar churn innecesario.
+- [x] Eliminado `use-window-manager.ts`: era un hook que solo reenviaba `openWindow` de `useWindowContext()` sin agregar lógica, y se invocaba en `desktop-shell.tsx` descartando el valor de retorno (`useWindowManager();`) — confirmado que no aportaba nada. Se eliminó el archivo, su llamada en `desktop-shell.tsx`, y su re-export en `window-system/index.ts`.
+- [x] El if/else de render en `window-shell.tsx` **se dejó como está**, sin tocar, tal como estaba decidido.
 
-**Criterio de cierre:** abrir cualquier módulo desbloqueado desde dock o desktop funciona sin excepciones silenciosas (incluido Code Studio); las listas de apps de dock y desktop nunca vuelven a desincronizarse porque comparten una única fuente.
+**Criterio de cierre:** abrir cualquier módulo desbloqueado desde dock o desktop funciona sin excepciones silenciosas (incluido Code Studio, ya con entrada real en el registry); las listas de apps de dock y desktop no pueden volver a desincronizarse entre sí (una sola fuente) ni respecto al registry (label/icon derivados, no copiados). Verificado con `tsc --noEmit`, `pnpm lint` (sin errores nuevos) y `pnpm build` limpios, más smoke test en `pnpm dev`.
 
 ---
 
@@ -197,11 +197,13 @@ Reestructurar `src/features/settings/` para que deje de ser un único componente
 | Logros | `src/features/ferro-core/utils/achievement-system.ts` |
 | Store unificado de misiones/exploración (nuevo, M2) | `src/store/ferro-core-store.ts` |
 | ~~Persistencia perfil~~ / ~~Singletons~~ | Eliminados en M2 (`explorer-profile-storage.ts`, `discovery-registry.ts`, `history-log.ts`) — lógica movida a `ferro-core-store.ts` |
-| Registro de ventanas (agregar `code-studio`) | `src/features/window-system/registry/index.ts` |
+| Registro de ventanas (✅ `code-studio` agregado en M3) | `src/features/window-system/registry/index.ts` |
 | Render de ventana (if/else — **se mantiene, no tocar**) | `src/features/window-system/components/window-shell.tsx` |
 | Contexto de ventanas (**se mantiene, no tocar**) | `src/features/window-system/context/window-context.tsx` |
 | Resolver ventana | `src/features/window-system/utils/open-module.ts` |
-| Iconos escritorio / dock (listas duplicadas a unificar) | `src/components/workspace/desktop-icons.tsx`, `dock.tsx` |
+| Fuente única de ítems del launcher (nuevo, M3) | `src/components/workspace/launcher-items.ts` |
+| Iconos escritorio / dock (✅ unificados en M3, derivan label/icon del registry) | `src/components/workspace/desktop-icons.tsx`, `dock.tsx` |
+| ~~Hook vacío~~ | Eliminado en M3 (`window-system/hooks/use-window-manager.ts`) |
 | Terminal (ID de misión roto) | `src/features/terminal/utils/command-engine.ts` |
 | Estilos globales | `src/app/globals.css` |
 | Tokens JS duplicados | `src/lib/theme.ts` |

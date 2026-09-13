@@ -113,4 +113,12 @@ export const windowRegistry: Record<string, WindowDefinition> = {
     initialHeight: 380,
     defaultPosition: { x: 420, y: 260 },
   },
+  "code-studio": {
+    id: "code-studio",
+    title: "Code Studio",
+    icon: "⌬",
+    initialWidth: 620,
+    initialHeight: 420,
+    defaultPosition: { x: 360, y: 220 },
+  },
 };

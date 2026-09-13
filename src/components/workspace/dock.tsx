@@ -8,20 +8,7 @@ import { useFerroCore } from "@/features/ferro-core/context/ferro-core-context";
 import { createMotionProps } from "@/features/animation-engine";
 import { useHighContrast } from "@/hooks/use-high-contrast";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
-
-const allApps = [
-  { icon: "⌘", windowId: "projects", label: "Projects", moduleId: "projects" },
-  { icon: "◫", windowId: "resume", label: "Resume", moduleId: "resume" },
-  { icon: "◌", windowId: "skills", label: "Skills", moduleId: "skills" },
-  { icon: ">", windowId: "terminal", label: "Terminal", moduleId: "terminal" },
-  { icon: "♫", windowId: "studio", label: "Studio", moduleId: "studio" },
-  { icon: "◈", windowId: "discography", label: "Discography", moduleId: "discography" },
-  { icon: "♪", windowId: "audioPlayer", label: "Audio Player", moduleId: "audioPlayer" },
-  { icon: "⚙", windowId: "equipment", label: "Equipment", moduleId: "equipment" },
-  { icon: "⧉", windowId: "timeline", label: "Timeline", moduleId: "timeline" },
-  { icon: "⌬", windowId: "code-studio", label: "Code Studio", moduleId: "code-studio" },
-  { icon: "◎", windowId: "aiLab", label: "AI Lab", moduleId: "aiLab" },
-];
+import { launcherItems } from "@/components/workspace/launcher-items";
 
 export function Dock() {
   const { openWindow, focusWindow, bringToFront } = useWindowContext();
@@ -30,7 +17,13 @@ export function Dock() {
   const prefersHighContrast = useHighContrast();
   const prefersReducedMotion = useReducedMotion();
 
-  const unlockedApps = allApps.filter((app) => explorerProfile.unlockedModules.includes(app.moduleId));
+  const unlockedApps = launcherItems
+    .filter((item) => explorerProfile.unlockedModules.includes(item.windowId))
+    .map((item) => {
+      const definition = resolveWindowDefinition(item.windowId);
+      return definition ? { windowId: item.windowId, label: definition.title, icon: definition.icon } : null;
+    })
+    .filter((app): app is NonNullable<typeof app> => app !== null);
 
   const handleOpen = (windowId: string) => {
     const definition = resolveWindowDefinition(windowId);
