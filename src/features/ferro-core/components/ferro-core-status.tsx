@@ -2,6 +2,8 @@
 
 import { motion } from "framer-motion";
 import { useFerroCore } from "@/features/ferro-core/context/ferro-core-context";
+import { panelVariants } from "@/components/ui/panel";
+import { cn } from "@/lib/cn";
 
 export function FerroCoreStatus() {
   const { explorerProfile } = useFerroCore();
@@ -12,7 +14,7 @@ export function FerroCoreStatus() {
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
-      className="rounded-3xl border border-white/10 bg-surface/80 p-5 shadow-[0_24px_80px_rgba(0,0,0,0.22)] backdrop-blur-xl"
+      className={cn(panelVariants({ tone: "surface", size: "lg", elevated: true }))}
       aria-label={`FERRO CORE status: ${explorerProfile.name}, ${progress}% progress`}
     >
       <div className="flex items-center justify-between gap-4">

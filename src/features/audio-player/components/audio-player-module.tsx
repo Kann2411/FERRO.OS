@@ -5,6 +5,8 @@ import { useEffect, useMemo, useState } from "react";
 import { MusicVisualizer } from "@/features/audio-player/components/music-visualizer";
 import { MusicModuleShell } from "@/features/music/components/music-module-shell";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
+import { panelVariants } from "@/components/ui/panel";
+import { cn } from "@/lib/cn";
 
 interface TrackData {
   id: number;
@@ -173,7 +175,7 @@ export function AudioPlayerModule() {
         initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: prefersReducedMotion ? 0 : 0.22 }}
-        className="rounded-3xl border border-white/10 bg-[#121212]/80 p-4"
+        className={cn(panelVariants({ tone: "surface", size: "md" }))}
       >
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center">
           <div className={`flex h-24 w-24 shrink-0 items-center justify-center rounded-[22px] bg-linear-to-br ${currentTrack.accent} text-3xl text-primary`}>

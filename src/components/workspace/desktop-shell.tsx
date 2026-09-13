@@ -16,6 +16,8 @@ import { useAudio } from "@/features/audio-engine";
 import { createMotionProps } from "@/features/animation-engine";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
+import { panelVariants } from "@/components/ui/panel";
+import { cn } from "@/lib/cn";
 
 function WorkspaceContent() {
   useWindowManager();
@@ -102,7 +104,7 @@ function WorkspaceContent() {
             <div className="hidden items-end justify-between gap-4 sm:flex">
               <motion.div
                 {...createMotionProps("panel", { reducedMotion: prefersReducedMotion })}
-                className="rounded-3xl border border-white/10 bg-surface/70 p-4 shadow-[0_20px_80px_rgba(0,0,0,0.25)] backdrop-blur-xl"
+                className={cn(panelVariants({ tone: "surface", size: "md", elevated: true }))}
                 role="status"
                 aria-label="Current mission hint"
               >

@@ -1,6 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { Panel, panelVariants } from "@/components/ui/panel";
+import { cn } from "@/lib/cn";
 
 interface StudioStat {
   label: string;
@@ -52,7 +54,7 @@ export function CodeStudioModule() {
       </div>
 
       <div className="grid gap-4 xl:grid-cols-[0.8fr_1.2fr]">
-        <div className="rounded-3xl border border-white/10 bg-[#121212]/80 p-4">
+        <Panel tone="surface" size="md">
           <p className="text-[10px] uppercase tracking-[0.28em] text-muted">Studio metrics</p>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             {stats.map((stat, index) => (
@@ -61,14 +63,14 @@ export function CodeStudioModule() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.04, duration: 0.2 }}
-                className="rounded-[18px] border border-white/10 bg-white/5 p-3"
+                className={cn(panelVariants({ tone: "subtle", size: "sm" }))}
               >
                 <p className="text-[10px] uppercase tracking-[0.28em] text-muted">{stat.label}</p>
                 <p className="mt-2 text-sm font-medium text-white">{stat.value}</p>
               </motion.div>
             ))}
           </div>
-        </div>
+        </Panel>
 
         <div className="rounded-3xl border border-primary/20 bg-primary/10 p-4">
           <p className="text-[10px] uppercase tracking-[0.28em] text-primary">Operating context</p>

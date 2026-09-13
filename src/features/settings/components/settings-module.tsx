@@ -3,6 +3,8 @@
 import { useAudio } from "@/features/audio-engine";
 import { getAllWallpaperDefinitions } from "@/lib/wallpapers";
 import { useWallpaperStore } from "@/store/wallpaper-store";
+import { Panel, panelVariants } from "@/components/ui/panel";
+import { cn } from "@/lib/cn";
 
 function formatPercent(value: number) {
   return `${Math.round(value * 100)}%`;
@@ -17,16 +19,16 @@ export function SettingsModule() {
 
   return (
     <div className="flex h-full flex-col gap-6 overflow-auto px-4 py-4">
-      <div className="rounded-3xl border border-white/10 bg-[#121212]/90 p-5 shadow-[0_20px_80px_rgba(0,0,0,0.24)]">
+      <Panel tone="surface" size="lg" elevated>
         <p className="text-[10px] uppercase tracking-[0.32em] text-muted">Settings</p>
         <h2 className="mt-3 text-2xl font-semibold text-white">Audio Controls</h2>
         <p className="mt-2 text-sm leading-6 text-secondary">
           Manage the audio experience for the workspace: enable or disable sound, tune volumes, and preview category samples.
         </p>
-      </div>
+      </Panel>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <section className="rounded-3xl border border-white/10 bg-[#101010]/90 p-5 shadow-[0_20px_80px_rgba(0,0,0,0.18)]">
+        <section className={cn(panelVariants({ tone: "surface", size: "lg", elevated: true }))}>
           <label className="flex items-center gap-3 text-sm font-medium text-white">
             <input
               type="checkbox"
@@ -41,7 +43,7 @@ export function SettingsModule() {
           </p>
         </section>
 
-        <section className="rounded-3xl border border-white/10 bg-[#101010]/90 p-5 shadow-[0_20px_80px_rgba(0,0,0,0.18)]">
+        <section className={cn(panelVariants({ tone: "surface", size: "lg", elevated: true }))}>
           <p className="text-sm font-medium text-white">Master volume</p>
           <div className="mt-4 flex items-center gap-4">
             <input
@@ -58,7 +60,7 @@ export function SettingsModule() {
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <section className="rounded-3xl border border-white/10 bg-[#101010]/90 p-5 shadow-[0_20px_80px_rgba(0,0,0,0.18)]">
+        <section className={cn(panelVariants({ tone: "surface", size: "lg", elevated: true }))}>
           <p className="text-sm font-medium text-white">Effects volume</p>
           <div className="mt-4 flex items-center gap-4">
             <input
@@ -73,7 +75,7 @@ export function SettingsModule() {
           </div>
         </section>
 
-        <section className="rounded-3xl border border-white/10 bg-[#101010]/90 p-5 shadow-[0_20px_80px_rgba(0,0,0,0.18)]">
+        <section className={cn(panelVariants({ tone: "surface", size: "lg", elevated: true }))}>
           <p className="text-sm font-medium text-white">Ambient volume</p>
           <div className="mt-4 flex items-center gap-4">
             <input
@@ -90,7 +92,7 @@ export function SettingsModule() {
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3">
-        <section className="rounded-3xl border border-white/10 bg-[#101010]/90 p-5 shadow-[0_20px_80px_rgba(0,0,0,0.18)]">
+        <section className={cn(panelVariants({ tone: "surface", size: "lg", elevated: true }))}>
           <p className="text-sm font-medium text-white">UI preview</p>
           <button
             type="button"
@@ -101,7 +103,7 @@ export function SettingsModule() {
           </button>
         </section>
 
-        <section className="rounded-3xl border border-white/10 bg-[#101010]/90 p-5 shadow-[0_20px_80px_rgba(0,0,0,0.18)]">
+        <section className={cn(panelVariants({ tone: "surface", size: "lg", elevated: true }))}>
           <p className="text-sm font-medium text-white">Terminal preview</p>
           <button
             type="button"
@@ -112,7 +114,7 @@ export function SettingsModule() {
           </button>
         </section>
 
-        <section className="rounded-3xl border border-white/10 bg-[#101010]/90 p-5 shadow-[0_20px_80px_rgba(0,0,0,0.18)]">
+        <section className={cn(panelVariants({ tone: "surface", size: "lg", elevated: true }))}>
           <p className="text-sm font-medium text-white">Ambient preview</p>
           <button
             type="button"
@@ -124,7 +126,7 @@ export function SettingsModule() {
         </section>
       </div>
 
-      <div className="rounded-3xl border border-white/10 bg-[#101010]/90 p-5 shadow-[0_20px_80px_rgba(0,0,0,0.18)]">
+      <Panel tone="surface" size="lg" elevated>
         <p className="text-sm font-medium text-white">Hidden wallpapers</p>
         <p className="mt-2 text-sm leading-6 text-secondary">
           Unlock secret wallpapers through exploration. Selected wallpapers remain available once discovered.
@@ -169,14 +171,14 @@ export function SettingsModule() {
             );
           })}
         </div>
-      </div>
+      </Panel>
 
-      <div className="rounded-3xl border border-white/10 bg-[#101010]/90 p-5 shadow-[0_20px_80px_rgba(0,0,0,0.18)]">
+      <Panel tone="surface" size="lg" elevated>
         <p className="text-sm font-medium text-white">Audio state</p>
         <p className="mt-2 text-sm leading-6 text-secondary">
           Audio settings persist between sessions and update immediately as you adjust the sliders.
         </p>
-      </div>
+      </Panel>
     </div>
   );
 }

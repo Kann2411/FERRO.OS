@@ -4,6 +4,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import { createMotionProps, createTransition } from "@/features/animation-engine";
 import { useFerroCore } from "@/features/ferro-core/context/ferro-core-context";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
+import { panelVariants } from "@/components/ui/panel";
+import { cn } from "@/lib/cn";
 
 export function MissionBoard() {
   const { missions, completedMissions, explorerProfile } = useFerroCore();
@@ -14,7 +16,7 @@ export function MissionBoard() {
   return (
     <motion.section
       {...createMotionProps("panel", { reducedMotion: prefersReducedMotion })}
-      className="rounded-3xl border border-white/10 bg-[#101010]/90 p-4 shadow-[0_20px_80px_rgba(0,0,0,0.22)] backdrop-blur-xl"
+      className={cn(panelVariants({ tone: "surface", size: "md", elevated: true }))}
       aria-label={`Mission system: ${missionCount} of ${totalMissions} missions completed`}
     >
       <div className="flex items-center justify-between gap-3">

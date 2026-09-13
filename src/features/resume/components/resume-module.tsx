@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { Panel } from "@/components/ui/panel";
 
 interface ExperienceItem {
   role: string;
@@ -101,13 +102,13 @@ export function ResumeModule() {
         </button>
       </div>
 
-      <div className="rounded-3xl border border-white/10 bg-[#121212]/80 p-4 text-sm leading-7 text-secondary">
+      <Panel tone="surface" size="md" className="text-sm leading-7 text-secondary">
         <p className="text-[10px] uppercase tracking-[0.28em] text-muted">Summary</p>
         <p className="mt-2 text-white">{profile.summary}</p>
-      </div>
+      </Panel>
 
       <div className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
-        <div className="rounded-3xl border border-white/10 bg-[#121212]/80 p-4">
+        <Panel tone="surface" size="md">
           <p className="text-[10px] uppercase tracking-[0.28em] text-muted">Experience</p>
           <div className="mt-4 space-y-3">
             {experience.map((item, index) => (
@@ -116,7 +117,7 @@ export function ResumeModule() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05, duration: 0.2 }}
-                className="rounded-[18px] border border-white/10 bg-white/5 p-3"
+                className="rounded-2xl border border-border bg-white/5 p-3"
               >
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <h3 className="text-sm font-semibold text-white">{item.role}</h3>
@@ -126,34 +127,34 @@ export function ResumeModule() {
               </motion.div>
             ))}
           </div>
-        </div>
+        </Panel>
 
         <div className="space-y-4">
-          <div className="rounded-3xl border border-white/10 bg-[#121212]/80 p-4">
+          <Panel tone="surface" size="md">
             <p className="text-[10px] uppercase tracking-[0.28em] text-muted">Education</p>
             <div className="mt-3 space-y-3">
               {education.map((item) => (
-                <div key={item.title} className="rounded-[18px] border border-white/10 bg-white/5 p-3">
+                <div key={item.title} className="rounded-2xl border border-border bg-white/5 p-3">
                   <p className="text-sm font-semibold text-white">{item.title}</p>
                   <p className="mt-1 text-sm text-secondary">{item.institution}</p>
                   <p className="mt-2 text-[11px] uppercase tracking-[0.28em] text-primary">{item.period}</p>
                 </div>
               ))}
             </div>
-          </div>
+          </Panel>
 
-          <div className="rounded-3xl border border-white/10 bg-[#121212]/80 p-4">
+          <Panel tone="surface" size="md">
             <p className="text-[10px] uppercase tracking-[0.28em] text-muted">Certifications</p>
             <div className="mt-3 flex flex-wrap gap-2">
               {certifications.map((item) => (
-                <span key={item} className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] text-secondary">
+                <span key={item} className="rounded-full border border-border bg-white/5 px-2.5 py-1 text-[11px] text-secondary">
                   {item}
                 </span>
               ))}
             </div>
-          </div>
+          </Panel>
 
-          <div className="rounded-3xl border border-white/10 bg-[#121212]/80 p-4">
+          <Panel tone="surface" size="md">
             <p className="text-[10px] uppercase tracking-[0.28em] text-muted">Languages</p>
             <div className="mt-3 flex flex-wrap gap-2">
               {languages.map((item) => (
@@ -162,7 +163,7 @@ export function ResumeModule() {
                 </span>
               ))}
             </div>
-          </div>
+          </Panel>
         </div>
       </div>
     </div>

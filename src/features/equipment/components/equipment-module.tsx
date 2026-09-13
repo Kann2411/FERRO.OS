@@ -3,6 +3,8 @@
 import { motion } from "framer-motion";
 import { MusicModuleShell } from "@/features/music/components/music-module-shell";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
+import { panelVariants } from "@/components/ui/panel";
+import { cn } from "@/lib/cn";
 
 interface EquipmentItem {
   name: string;
@@ -88,7 +90,7 @@ export function EquipmentModule() {
             initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: prefersReducedMotion ? 0 : index * 0.04, duration: prefersReducedMotion ? 0 : 0.2 }}
-            className="rounded-3xl border border-white/10 bg-[#121212]/80 p-4"
+            className={cn(panelVariants({ tone: "surface", size: "md" }))}
           >
             <div className="flex items-center justify-between gap-3">
               <h3 className="text-base font-semibold text-white">{category}</h3>
@@ -97,7 +99,7 @@ export function EquipmentModule() {
 
             <div className="mt-4 grid gap-3 lg:grid-cols-2">
               {items.map((item) => (
-                <article key={item.name} className="rounded-[18px] border border-white/10 bg-white/5 p-3">
+                <article key={item.name} className={cn(panelVariants({ tone: "subtle", size: "sm" }))}>
                   <div className="flex items-start gap-3">
                     <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-primary/20 bg-primary/10 text-xl text-primary">
                       {item.icon}

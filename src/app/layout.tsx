@@ -1,18 +1,20 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Outfit, IBM_Plex_Mono } from "next/font/google";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { FerroCoreProvider } from "@/features/ferro-core";
 import { AudioProvider } from "@/features/audio-engine";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const outfit = Outfit({
+  variable: "--font-display-sans",
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const ibmPlexMono = IBM_Plex_Mono({
+  variable: "--font-display-mono",
   subsets: ["latin"],
+  weight: ["400", "500", "600"],
 });
 
 export const metadata: Metadata = {
@@ -27,8 +29,8 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      lang="es"
+      className={`${outfit.variable} ${ibmPlexMono.variable} h-full antialiased`}
     >
       <body className="min-h-full bg-background text-foreground transition-colors duration-300">
         <ThemeProvider>

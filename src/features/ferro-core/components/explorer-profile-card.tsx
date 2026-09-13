@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import { createMotionProps, createTransition } from "@/features/animation-engine";
 import { useFerroCore } from "@/features/ferro-core/context/ferro-core-context";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
+import { panelVariants } from "@/components/ui/panel";
+import { cn } from "@/lib/cn";
 
 function formatExplorationTime(totalSeconds: number) {
   const hours = Math.floor(totalSeconds / 3600);
@@ -91,19 +93,19 @@ export function ExplorerProfileCard() {
       </div>
 
       <div className="relative mt-4 grid grid-cols-2 gap-3 text-sm text-secondary">
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-3">
+        <div className={cn(panelVariants({ tone: "subtle", size: "sm" }))}>
           <p className="text-[10px] uppercase tracking-[0.28em] text-muted">Progress</p>
           <p className="mt-2 text-white">{progress}%</p>
         </div>
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-3">
+        <div className={cn(panelVariants({ tone: "subtle", size: "sm" }))}>
           <p className="text-[10px] uppercase tracking-[0.28em] text-muted">Mission</p>
           <p className="mt-2 text-white">{missionCount}/{totalMissions}</p>
         </div>
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-3">
+        <div className={cn(panelVariants({ tone: "subtle", size: "sm" }))}>
           <p className="text-[10px] uppercase tracking-[0.28em] text-muted">Modules</p>
           <p className="mt-2 text-white">{explorerProfile.modulesDiscovered}</p>
         </div>
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-3">
+        <div className={cn(panelVariants({ tone: "subtle", size: "sm" }))}>
           <p className="text-[10px] uppercase tracking-[0.28em] text-muted">Achievements</p>
           <p className="mt-2 text-white">{achievementsCount}</p>
         </div>

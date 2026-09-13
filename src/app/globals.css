@@ -4,10 +4,17 @@
   --background: #090909;
   --surface: #141414;
   --surface-strong: #1f1f1f;
+  --surface-2: #17171a;
+  --surface-3: #1f1f24;
   --primary: #d90429;
   --text-primary: #f8f8f8;
   --text-secondary: #b5b5b5;
   --muted: #6f6f6f;
+  --subtle: #4a4a4f;
+  --signal: #3d9b84;
+  --signal-foreground: #e7faf4;
+  --border: rgb(248 248 248 / 0.1);
+  --border-strong: rgb(248 248 248 / 0.18);
   --success: #00c853;
   --warning: #ffb300;
   --error: #ff1744;
@@ -21,15 +28,28 @@
   --color-foreground: var(--text-primary);
   --color-surface: var(--surface);
   --color-surface-strong: var(--surface-strong);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
   --color-primary: var(--primary);
   --color-secondary: var(--text-secondary);
   --color-muted: var(--muted);
+  --color-subtle: var(--subtle);
+  --color-signal: var(--signal);
+  --color-signal-foreground: var(--signal-foreground);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-error: var(--error);
   --color-focus-ring: var(--focus-ring);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-display-sans);
+  --font-mono: var(--font-display-mono);
+}
+
+@theme {
+  --shadow-window: 0 24px 80px rgb(0 0 0 / 0.45), 0 0 0 1px rgb(248 248 248 / 0.08);
+  --shadow-dock: 0 8px 32px rgb(0 0 0 / 0.45), 0 0 0 1px rgb(248 248 248 / 0.08);
+  --ease-out-smooth: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 * {
@@ -46,7 +66,7 @@ body {
   min-height: 100vh;
   background: var(--background);
   color: var(--text-primary);
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  font-family: var(--font-display-sans), ui-sans-serif, system-ui, Arial, Helvetica, sans-serif;
 }
 
 button {
@@ -95,6 +115,76 @@ button:focus-visible {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* Film grain overlay — used by AmbientBackground for atmospheric texture */
+.grain {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  mix-blend-mode: overlay;
+  opacity: 0.18;
+}
+
+/* Signal chain effects — pulsing "current step" marker used by mission HUD / signal map */
+@keyframes signal-pulse {
+  0%, 100% {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+.signal-dot {
+  animation: signal-pulse 1.8s ease-in-out infinite;
+}
+
+/* Boot screen blinking cursor */
+@keyframes boot-caret {
+  0%, 49% {
+    opacity: 1;
+  }
+  50%, 100% {
+    opacity: 0;
+  }
+}
+
+.boot-caret {
+  animation: boot-caret 1s steps(1) infinite;
+}
+
+/* Entry animations for toasts and modal/window-style overlays */
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+    filter: blur(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+.toast-in {
+  animation: toast-in 0.3s var(--ease-out-smooth) both;
+}
+
+@keyframes window-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.window-in {
+  animation: window-in 0.25s var(--ease-out-smooth) both;
 }
 
 /* High Contrast Mode */
