@@ -29,24 +29,40 @@ export function BootScreen({ onComplete }: { onComplete: () => void }) {
   useEffect(() => {
     if (phase !== "bios") return;
 
+    // Runs the whole typewriter loop with its own local counters instead of driving it off
+    // `currentLine`/`currentChar` state — those were also this effect's dependencies, so every
+    // keystroke re-ran the effect and queued a second, overlapping chain of timers on top of
+    // the first (no cleanup ever cancelled the previous one), racing the state forward and
+    // making every line after the first appear to "jump" in all at once.
+    let lineIndex = 0;
+    let charIndex = 0;
+    let timer: ReturnType<typeof setTimeout>;
+
     const typeNextChar = () => {
-      if (currentLine < biosLines.length) {
-        const line = biosLines[currentLine];
-        if (currentChar < line.length) {
-          setCurrentChar((c) => c + 1);
-          setTimeout(typeNextChar, 15);
-        } else {
-          setCurrentLine((l) => l + 1);
-          setCurrentChar(0);
-          setTimeout(typeNextChar, line === "" ? 100 : 300);
-        }
-      } else {
+      if (lineIndex >= biosLines.length) {
         setPhase("logo");
+        return;
+      }
+
+      const line = biosLines[lineIndex];
+      if (charIndex < line.length) {
+        charIndex += 1;
+        setCurrentLine(lineIndex);
+        setCurrentChar(charIndex);
+        timer = setTimeout(typeNextChar, 28);
+      } else {
+        lineIndex += 1;
+        charIndex = 0;
+        setCurrentLine(lineIndex);
+        setCurrentChar(0);
+        timer = setTimeout(typeNextChar, line === "" ? 180 : 380);
       }
     };
 
-    setTimeout(typeNextChar, 500);
-  }, [phase, currentLine, currentChar, biosLines]);
+    timer = setTimeout(typeNextChar, 500);
+
+    return () => clearTimeout(timer);
+  }, [phase, biosLines]);
 
   useEffect(() => {
     if (phase !== "logo") return;
@@ -83,13 +99,11 @@ export function BootScreen({ onComplete }: { onComplete: () => void }) {
     >
       {phase === "bios" && (
         <div className="font-mono text-sm text-primary/90 whitespace-pre max-w-xl">
-          {biosLines.slice(0, currentLine).join("\n")}
-          {currentLine < biosLines.length && (
-            <>
-              {biosLines[currentLine].slice(0, currentChar)}
-              <span className="animate-pulse">_</span>
-            </>
-          )}
+          {[
+            ...biosLines.slice(0, currentLine),
+            ...(currentLine < biosLines.length ? [biosLines[currentLine].slice(0, currentChar)] : []),
+          ].join("\n")}
+          {currentLine < biosLines.length && <span className="animate-pulse">_</span>}
         </div>
       )}
 
@@ -114,7 +128,7 @@ export function BootScreen({ onComplete }: { onComplete: () => void }) {
               transition={{ duration: 0.1 }}
               className="h-full rounded-full bg-primary relative"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-pulse" />
+              <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/30 to-transparent animate-pulse" />
             </motion.div>
           </div>
 

@@ -48,7 +48,7 @@ export function RecognizedModal() {
     >
       <motion.div
         {...createPopoverMotion("window", { reducedMotion: prefersReducedMotion })}
-        className="relative w-full max-w-lg overflow-hidden rounded-[32px] border border-primary/30 bg-[#0b0b0f]/95 p-8 text-center shadow-[0_40px_140px_rgba(217,4,41,0.28)] backdrop-blur-xl"
+        className="relative w-full max-w-lg overflow-hidden rounded-4xl border border-primary/30 bg-[#0b0b0f]/95 p-8 text-center shadow-[0_40px_140px_rgba(217,4,41,0.28)] backdrop-blur-xl"
       >
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(217,4,41,0.2),transparent_55%)]" />
 
