@@ -1,9 +1,9 @@
 ---
 Document: 06-GAMEPLAY
 Project: FERRO.OS
-Version: 1.0.0
+Version: 1.1.0
 Status: Active
-Last Updated: 2026-07-22
+Last Updated: 2026-09-15
 Author: Kristian Kamilo Ferrin
 ---
 
@@ -243,63 +243,62 @@ Most visitors will never discover all of them.
 
 # Secret Commands
 
-Terminal contains hidden commands.
+> **Implementation note (2026-09-15):** the actual command set (`src/features/terminal/utils/command-engine.ts`)
+> diverged from the original examples below as the terminal grew alongside the hidden-files
+> and mission systems. Current commands:
 
-Examples
+Visible (listed by `help`)
 
-help
+help, clear, about, status, projects, skills, resume, music, studio, explorer, hidden-files, read, ai-lab, version
 
-whoami
+Hidden (undocumented, discovered through exploration)
 
-skills
+`neon` — Easter egg, reveals a hidden file the first time it's run.
 
-projects
+`debug-console` — opens the Debug Console, but only after discovering the hidden "Debug Console key" file.
 
-music
-
-resume
-
-status
-
-explorer
-
-unlock ai
-
-clear
-
-version
-
-future
-
-Some commands only work after reaching certain exploration percentages.
+Some commands only work after discovering the hidden file that unlocks them (`read <file>`, `ai-lab`, `debug-console`) rather than after reaching a raw exploration percentage.
 
 ---
 
 # Unlock System
 
-Some modules remain locked.
+> **Implementation note (2026-09-15):** the independent percentage thresholds originally
+> envisioned here were superseded by a single ordered **mission chain** (`missionDefinitions`
+> in `src/features/ferro-core/utils/mission-system.ts`) once the demo-style migration
+> unified FERRO.OS's exploration model. Each mission has a `prerequisite` (the previous
+> mission's id) and an optional `unlocksModule` — a module unlocks the instant its mission
+> completes, not at an arbitrary global percentage. This is more legible for the Explorer
+> (cause and effect are direct) and impossible to drift out of sync, since it's the same
+> chain that drives the HUD, the signal map, and the terminal.
 
-Unlock examples
+Default modules (unlocked from the first visit)
 
-25%
+Projects, Resume, Skills, Terminal
 
-Music Studio
+Mission chain → module unlocks
 
-50%
+Explore the desktop → *(no unlock, first mission)*
 
-Timeline
+Open your first module → Studio
 
-75%
+Discover Projects → Timeline
 
-AI Lab
+Visit Studio → Code Studio
 
-90%
+Discover Skills → Discography
 
-Legacy Archive
+Read the Resume → Equipment
 
-100%
+Explore Timeline → Audio Player
 
-Final Message
+Listen to Discography → *(no unlock)*
+
+Visit AI Lab → AI Lab *(also requires discovering the hidden "AI Lab invitation" file and running the `ai-lab` terminal command — see Secret Commands)*
+
+Master Explorer → *(no unlock, milestone mission)*
+
+Full Exploration → triggers the closing "Signal recognized" experience (see Final Experience)
 
 Unlocking feels like installing new software.
 
@@ -406,6 +405,18 @@ The operating system grows over time.
 ---
 
 # Final Experience
+
+> **Implementation note (2026-09-15):** implemented as `RecognizedModal`
+> (`src/features/ferro-core/components/recognized-modal.tsx`), triggered when the
+> `full-exploration` mission completes. It shows a summary (missions, achievements,
+> modules discovered, time explored) and a button to return to the workspace — deliberately
+> a focused overlay rather than the full cinematic below (closing every window, fading music,
+> darkening the wallpaper). Orchestrating window/audio/wallpaper state from the mission
+> system would cross into territory the window system and audio engine own themselves;
+> the overlay achieves the same narrative beat without reaching into other subsystems.
+> The separate "FERRO CORE Final Message" hidden file (`src/features/hidden-files/utils/hidden-files.ts`,
+> unlocked at 100% progress, read via the terminal's `read final-message.txt`) still carries
+> the personal closing note below.
 
 At 100% exploration
 

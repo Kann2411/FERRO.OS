@@ -2,9 +2,11 @@
 
 import { motion } from "framer-motion";
 import { useFerroCore } from "@/features/ferro-core/context/ferro-core-context";
+import { useUi } from "@/hooks/use-lang";
 
 export function FerroCoreBrand() {
   const { logo, coreName, tagline } = useFerroCore();
+  const tUi = useUi();
 
   return (
     <motion.div
@@ -18,7 +20,7 @@ export function FerroCoreBrand() {
       <div className="flex items-center gap-3 text-primary">
         <span className="text-3xl" aria-hidden="true">{logo}</span>
         <div>
-          <p className="text-xs uppercase tracking-[0.32em] text-muted">Core</p>
+          <p className="text-xs uppercase tracking-[0.32em] text-muted">{tUi("coreKicker")}</p>
           <h1 className="mt-2 text-3xl font-semibold text-white">{coreName}</h1>
         </div>
       </div>

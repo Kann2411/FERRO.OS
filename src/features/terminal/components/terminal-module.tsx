@@ -5,8 +5,9 @@ import { useAudio } from "@/features/audio-engine";
 import { useFerroCore } from "@/features/ferro-core/context/ferro-core-context";
 import { useWindowContext } from "@/features/window-system/context/window-context";
 import { resolveWindowDefinition } from "@/features/window-system/utils/open-module";
-import { executeCommand, getCommandDefinitions, registerBuiltInCommands, type TerminalCommandContext } from "@/features/terminal/utils/command-engine";
+import { executeCommand, getCommandDefinitions, registerBuiltInCommands, UNRECOGNIZED_COMMAND_PREFIXES, type TerminalCommandContext } from "@/features/terminal/utils/command-engine";
 import { generateUUID } from "@/lib/uuid";
+import { useLang } from "@/hooks/use-lang";
 
 type TerminalEntry = {
   id: string;
@@ -14,22 +15,22 @@ type TerminalEntry = {
   text: string;
 };
 
+const BOOT_ENTRIES_ES: TerminalEntry[] = [
+  { id: "boot-1", kind: "system", text: "FERRO.OS Terminal v0.1" },
+  { id: "boot-2", kind: "system", text: "Sesión inicializada. Escribe 'help' para ver los comandos disponibles." },
+];
+
+const BOOT_ENTRIES_EN: TerminalEntry[] = [
+  { id: "boot-1", kind: "system", text: "FERRO.OS Terminal v0.1" },
+  { id: "boot-2", kind: "system", text: "Session initialized. Type 'help' to inspect the available commands." },
+];
+
 export function TerminalModule() {
   const { explorerProfile, activeMission, completeMission, advanceProgress, registerDiscovery, registerHiddenDiscovery } = useFerroCore();
   const { openWindow, focusWindow, bringToFront } = useWindowContext();
   const { playSound } = useAudio();
-  const [entries, setEntries] = useState<TerminalEntry[]>([
-    {
-      id: "boot-1",
-      kind: "system",
-      text: "FERRO.OS Terminal v0.1",
-    },
-    {
-      id: "boot-2",
-      kind: "system",
-      text: "Session initialized. Type 'help' to inspect the available commands.",
-    },
-  ]);
+  const lang = useLang();
+  const [entries, setEntries] = useState<TerminalEntry[]>(lang === "es" ? BOOT_ENTRIES_ES : BOOT_ENTRIES_EN);
   const [inputValue, setInputValue] = useState("");
   const [history, setHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState<number | null>(null);
@@ -53,8 +54,9 @@ export function TerminalModule() {
   const commandContext = useMemo<TerminalCommandContext>(() => ({
     explorerProfile,
     activeMission,
+    lang,
     openWindow: (windowId: string) => {
-      const definition = resolveWindowDefinition(windowId);
+      const definition = resolveWindowDefinition(windowId, lang);
       if (!definition) {
         return false;
       }
@@ -72,7 +74,7 @@ export function TerminalModule() {
     },
     registerHiddenDiscovery,
     completeMission,
-  }), [activeMission, advanceProgress, bringToFront, completeMission, explorerProfile, focusWindow, openWindow, registerDiscovery, registerHiddenDiscovery]);
+  }), [activeMission, advanceProgress, bringToFront, completeMission, explorerProfile, focusWindow, lang, openWindow, registerDiscovery, registerHiddenDiscovery]);
 
   useEffect(() => {
     if (!inputValue.trim()) {
@@ -112,24 +114,13 @@ export function TerminalModule() {
 
       if (command.toLowerCase() === "clear") {
         playSound("terminal", "clear");
-        return [
-          {
-            id: "boot-1",
-            kind: "system" as const,
-            text: "FERRO.OS Terminal v0.1",
-          },
-          {
-            id: "boot-2",
-            kind: "system" as const,
-            text: "Session initialized. Type 'help' to inspect the available commands.",
-          },
-        ];
+        return lang === "es" ? BOOT_ENTRIES_ES : BOOT_ENTRIES_EN;
       }
 
       return nextEntries;
     });
 
-    if (response.startsWith("Command not recognized:")) {
+    if (UNRECOGNIZED_COMMAND_PREFIXES.some((prefix) => response.startsWith(prefix))) {
       playSound("terminal", "error");
     }
 
@@ -195,9 +186,9 @@ export function TerminalModule() {
       <div className="flex items-center justify-between border-b border-white/10 bg-black/20 px-3 py-2">
         <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.28em] text-muted">
           <span className="h-2 w-2 rounded-full bg-primary" />
-          <span>Terminal Session</span>
+          <span>{lang === "es" ? "Sesión de terminal" : "Terminal Session"}</span>
         </div>
-        <span className="text-[11px] uppercase tracking-[0.28em] text-secondary">live</span>
+        <span className="text-[11px] uppercase tracking-[0.28em] text-secondary">{lang === "es" ? "en vivo" : "live"}</span>
       </div>
 
       <div ref={outputRef} className="flex-1 space-y-2 overflow-y-auto px-4 py-4 font-mono">
@@ -210,7 +201,7 @@ export function TerminalModule() {
 
       <form onSubmit={handleSubmit} className="border-t border-white/10 bg-black/20 px-3 py-3">
         <label htmlFor="terminal-input" className="sr-only">
-          Terminal input
+          {lang === "es" ? "Entrada de terminal" : "Terminal input"}
         </label>
         <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-[#111111]/80 px-3 py-2">
           <span className="text-primary">{prompt}</span>
@@ -222,12 +213,12 @@ export function TerminalModule() {
               onKeyDown={handleKeyDown}
               autoComplete="off"
               spellCheck={false}
-              placeholder="Type a command"
+              placeholder={lang === "es" ? "Escribe un comando" : "Type a command"}
               className="w-full bg-transparent text-sm text-white outline-none placeholder:text-muted"
               autoFocus
             />
             {suggestion ? (
-              <span className="mt-1 text-xs text-secondary">Suggestion: {suggestion}</span>
+              <span className="mt-1 text-xs text-secondary">{lang === "es" ? "Sugerencia" : "Suggestion"}: {suggestion}</span>
             ) : null}
           </div>
           <span className="h-2.5 w-2.5 rounded-full bg-primary/80" style={{ animation: "blink 1s step-end infinite" }} />

@@ -1,7 +1,9 @@
+import type { Bilingual } from "@/lib/i18n/types";
+
 export interface LauncherItem {
   windowId: string;
   accent: string;
-  description: string;
+  description: Bilingual;
 }
 
 /**
@@ -11,15 +13,59 @@ export interface LauncherItem {
  * and a module missing from the registry fails visibly instead of silently opening nothing.
  */
 export const launcherItems: LauncherItem[] = [
-  { windowId: "projects", accent: "bg-primary/20 text-primary", description: "View Kristian's portfolio projects" },
-  { windowId: "resume", accent: "bg-white/10 text-foreground", description: "Professional resume and experience" },
-  { windowId: "skills", accent: "bg-white/10 text-foreground", description: "Technical skills and proficiencies" },
-  { windowId: "terminal", accent: "bg-primary/20 text-primary", description: "Interactive terminal for system commands" },
-  { windowId: "studio", accent: "bg-white/10 text-foreground", description: "Music production environment" },
-  { windowId: "discography", accent: "bg-white/10 text-foreground", description: "Artist releases and catalog" },
-  { windowId: "audioPlayer", accent: "bg-white/10 text-foreground", description: "Music player controls and queue" },
-  { windowId: "equipment", accent: "bg-white/10 text-foreground", description: "Studio gear and production tools" },
-  { windowId: "timeline", accent: "bg-white/10 text-foreground", description: "Career timeline and milestones" },
-  { windowId: "code-studio", accent: "bg-white/10 text-foreground", description: "Developer laboratory and architecture" },
-  { windowId: "aiLab", accent: "bg-primary/20 text-primary", description: "Hidden AI experiments and research" },
+  {
+    windowId: "projects",
+    accent: "bg-primary/20 text-primary",
+    description: { es: "Ver los proyectos del portafolio de Kristian", en: "View Kristian's portfolio projects" },
+  },
+  {
+    windowId: "resume",
+    accent: "bg-white/10 text-foreground",
+    description: { es: "Currículum profesional y experiencia", en: "Professional resume and experience" },
+  },
+  {
+    windowId: "skills",
+    accent: "bg-white/10 text-foreground",
+    description: { es: "Habilidades técnicas y competencias", en: "Technical skills and proficiencies" },
+  },
+  {
+    windowId: "terminal",
+    accent: "bg-primary/20 text-primary",
+    description: { es: "Terminal interactiva para comandos del sistema", en: "Interactive terminal for system commands" },
+  },
+  {
+    windowId: "studio",
+    accent: "bg-white/10 text-foreground",
+    description: { es: "Entorno de producción musical", en: "Music production environment" },
+  },
+  {
+    windowId: "discography",
+    accent: "bg-white/10 text-foreground",
+    description: { es: "Lanzamientos y catálogo del artista", en: "Artist releases and catalog" },
+  },
+  {
+    windowId: "audioPlayer",
+    accent: "bg-white/10 text-foreground",
+    description: { es: "Controles y cola del reproductor de música", en: "Music player controls and queue" },
+  },
+  {
+    windowId: "equipment",
+    accent: "bg-white/10 text-foreground",
+    description: { es: "Equipo de estudio y herramientas de producción", en: "Studio gear and production tools" },
+  },
+  {
+    windowId: "timeline",
+    accent: "bg-white/10 text-foreground",
+    description: { es: "Línea de tiempo profesional e hitos", en: "Career timeline and milestones" },
+  },
+  {
+    windowId: "code-studio",
+    accent: "bg-white/10 text-foreground",
+    description: { es: "Laboratorio y arquitectura de desarrollo", en: "Developer laboratory and architecture" },
+  },
+  {
+    windowId: "aiLab",
+    accent: "bg-primary/20 text-primary",
+    description: { es: "Experimentos e investigación oculta de IA", en: "Hidden AI experiments and research" },
+  },
 ];

@@ -6,7 +6,7 @@ import { Dock } from "@/components/workspace/dock";
 import { DesktopIcons } from "@/components/workspace/desktop-icons";
 import { StatusPanel } from "@/components/workspace/status-panel";
 import { AmbientBackground } from "@/components/workspace/ambient-background";
-import { CoreMessages, CoreNotifications, ExplorerProfileCard, MissionBoard } from "@/features/ferro-core";
+import { CoreMessages, CoreNotifications, ExplorerProfileCard, MissionBoard, RecognizedModal, SignalMap } from "@/features/ferro-core";
 import { WindowManager } from "@/features/window-system/components/window-manager";
 import { useWindowContext, WindowProvider } from "@/features/window-system/context/window-context";
 import { resolveWindowDefinition } from "@/features/window-system/utils/open-module";
@@ -15,30 +15,27 @@ import { useAudio } from "@/features/audio-engine";
 import { createMotionProps } from "@/features/animation-engine";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
+import { useLang, useToggleLang, useUi } from "@/hooks/use-lang";
 import { panelVariants } from "@/components/ui/panel";
 import { cn } from "@/lib/cn";
 
 function WorkspaceContent() {
   useKeyboardShortcuts();
-  const { resetFlow } = useFerroCore();
-  const { resetWindowState, openWindow, focusWindow, bringToFront } = useWindowContext();
+  const { setMapOpen } = useFerroCore();
+  const { openWindow, focusWindow, bringToFront } = useWindowContext();
   const { playSound } = useAudio();
   const prefersReducedMotion = useReducedMotion();
+  const lang = useLang();
+  const toggleLang = useToggleLang();
+  const tUi = useUi();
 
-  const handleReset = () => {
+  const handleToggleLang = () => {
     playSound("ui", "click");
-
-    const confirmed = window.confirm("Reset the entire workspace flow and return to zero?");
-    if (!confirmed) {
-      return;
-    }
-
-    resetFlow();
-    resetWindowState();
+    toggleLang();
   };
 
   const handleOpenSettings = () => {
-    const definition = resolveWindowDefinition("settings");
+    const definition = resolveWindowDefinition("settings", lang);
     if (!definition) {
       return;
     }
@@ -62,25 +59,26 @@ function WorkspaceContent() {
           <div className="flex items-center gap-2 sm:gap-3">
             <div className="h-2 w-2 rounded-full bg-primary sm:h-2.5 sm:w-2.5" aria-hidden="true" />
             <span className="text-xs font-medium uppercase tracking-[0.3em] text-secondary sm:text-sm">
-              FERRO.OS / workspace
+              {tUi("brandLine")}
             </span>
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
             <button
               type="button"
               onPointerEnter={() => playSound("ui", "hover")}
-              onClick={handleOpenSettings}
+              onClick={handleToggleLang}
+              aria-label={tUi("languageToggleLabel")}
               className="rounded-full border border-white/10 bg-surface/10 px-2.5 py-1.5 text-[11px] font-medium uppercase tracking-[0.25em] text-white transition hover:border-primary/40 hover:bg-surface/20"
             >
-              Settings
+              {lang === "es" ? "ES" : "EN"}
             </button>
             <button
               type="button"
               onPointerEnter={() => playSound("ui", "hover")}
-              onClick={handleReset}
-              className="rounded-full border border-rose-400/30 bg-rose-500/10 px-2.5 py-1.5 text-[11px] font-medium uppercase tracking-[0.25em] text-rose-200 transition hover:border-rose-300/50 hover:bg-rose-500/20"
+              onClick={handleOpenSettings}
+              className="rounded-full border border-white/10 bg-surface/10 px-2.5 py-1.5 text-[11px] font-medium uppercase tracking-[0.25em] text-white transition hover:border-primary/40 hover:bg-surface/20"
             >
-              Reset flow
+              {tUi("settings")}
             </button>
             <StatusPanel />
             <ThemeToggle />
@@ -90,10 +88,10 @@ function WorkspaceContent() {
         <main id="main-content" role="main" className="flex-1 p-3 sm:p-6 lg:p-8">
           <div className="flex h-full flex-col justify-between gap-4 sm:gap-6">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-              <section aria-label="Desktop applications" className="w-full lg:w-auto">
+              <section aria-label={tUi("desktopApplications")} className="w-full lg:w-auto">
                 <DesktopIcons />
               </section>
-              <aside aria-label="Explorer information" className="w-full space-y-3 sm:max-w-85">
+              <aside aria-label={tUi("explorerInformation")} className="w-full space-y-3 sm:max-w-85">
                 <ExplorerProfileCard />
                 <MissionBoard />
                 <CoreMessages />
@@ -104,14 +102,14 @@ function WorkspaceContent() {
                 {...createMotionProps("panel", { reducedMotion: prefersReducedMotion })}
                 className={cn(panelVariants({ tone: "surface", size: "md", elevated: true }))}
                 role="status"
-                aria-label="Current mission hint"
+                aria-label={tUi("currentMissionHint")}
               >
-                <p className="text-xs uppercase tracking-[0.3em] text-muted">Mission</p>
+                <p className="text-xs uppercase tracking-[0.3em] text-muted">{tUi("missionHintLabel")}</p>
                 <p className="mt-2 max-w-md text-sm leading-7 text-secondary">
-                  Explore the desktop, unlock the hidden signals, and begin shaping the operating system.
+                  {tUi("missionHintText")}
                 </p>
               </motion.div>
-              <nav aria-label="Application dock">
+              <nav aria-label={tUi("applicationDock")}>
                 <Dock />
               </nav>
             </div>
@@ -119,8 +117,22 @@ function WorkspaceContent() {
         </main>
       </div>
 
+      <button
+        type="button"
+        onClick={() => {
+          playSound("ui", "open");
+          setMapOpen(true);
+        }}
+        aria-label={tUi("openSignalMap")}
+        className="fixed bottom-6 left-6 z-40 hidden h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-surface/80 text-lg text-secondary shadow-window backdrop-blur-xl transition hover:border-primary/40 hover:text-primary sm:flex"
+      >
+        <span aria-hidden="true">⌖</span>
+      </button>
+
       <WindowManager />
       <CoreNotifications />
+      <SignalMap />
+      <RecognizedModal />
     </div>
   );
 }

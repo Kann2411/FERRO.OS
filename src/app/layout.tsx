@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Outfit, IBM_Plex_Mono } from "next/font/google";
 import { ThemeProvider } from "@/providers/theme-provider";
+import { LangProvider } from "@/providers/lang-provider";
+import { AccessibilityProvider } from "@/providers/accessibility-provider";
 import { FerroCoreProvider } from "@/features/ferro-core";
 import { AudioProvider } from "@/features/audio-engine";
 import "./globals.css";
@@ -19,7 +21,7 @@ const ibmPlexMono = IBM_Plex_Mono({
 
 export const metadata: Metadata = {
   title: "FERRO.OS",
-  description: "A cinematic operating system experience for the future of the portfolio.",
+  description: "Una experiencia de sistema operativo cinemático para el futuro del portafolio.",
 };
 
 export default function RootLayout({
@@ -34,9 +36,13 @@ export default function RootLayout({
     >
       <body className="min-h-full bg-background text-foreground transition-colors duration-300">
         <ThemeProvider>
-          <AudioProvider>
-            <FerroCoreProvider>{children}</FerroCoreProvider>
-          </AudioProvider>
+          <LangProvider>
+            <AccessibilityProvider>
+              <AudioProvider>
+                <FerroCoreProvider>{children}</FerroCoreProvider>
+              </AudioProvider>
+            </AccessibilityProvider>
+          </LangProvider>
         </ThemeProvider>
       </body>
     </html>

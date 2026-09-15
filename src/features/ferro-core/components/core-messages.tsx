@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { createMotionProps, createTransition } from "@/features/animation-engine";
 import { useFerroCore } from "@/features/ferro-core/context/ferro-core-context";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
+import { useT, useUi } from "@/hooks/use-lang";
 import { panelVariants } from "@/components/ui/panel";
 import { cn } from "@/lib/cn";
 
@@ -19,6 +20,8 @@ const messageStyles: Record<string, string> = {
 export function CoreMessages() {
   const { messages } = useFerroCore();
   const prefersReducedMotion = useReducedMotion();
+  const t = useT();
+  const tUi = useUi();
 
   if (messages.length === 0) {
     return null;
@@ -28,9 +31,9 @@ export function CoreMessages() {
     <motion.section
       {...createMotionProps("panel", { reducedMotion: prefersReducedMotion })}
       className={cn(panelVariants({ tone: "surface", size: "md", elevated: true }))}
-      aria-label="FERRO CORE messages"
+      aria-label={tUi("ferroCoreMessages")}
     >
-      <p className="text-[10px] uppercase tracking-[0.32em] text-muted">FERRO CORE</p>
+      <p className="text-[10px] uppercase tracking-[0.32em] text-muted">{tUi("ferroCoreKicker")}</p>
       <div className="mt-3 space-y-2" role="log" aria-live="polite">
         <AnimatePresence initial={false}>
           {messages.map((message) => (
@@ -43,10 +46,10 @@ export function CoreMessages() {
               transition={createTransition("window", { reducedMotion: prefersReducedMotion })}
               className={`rounded-2xl border px-3 py-3 ${messageStyles[message.type]}`}
               role="article"
-              aria-label={`${message.type} message: ${message.title}`}
+              aria-label={`${message.type} message: ${t(message.title)}`}
             >
-              <p className="text-sm font-medium text-white">{message.title}</p>
-              <p className="mt-1 text-sm leading-6 text-secondary">{message.body}</p>
+              <p className="text-sm font-medium text-white">{t(message.title)}</p>
+              <p className="mt-1 text-sm leading-6 text-secondary">{t(message.body)}</p>
             </motion.div>
           ))}
         </AnimatePresence>

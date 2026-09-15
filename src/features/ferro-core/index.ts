@@ -6,3 +6,5 @@ export * from "./components/explorer-profile-card";
 export * from "./components/mission-board";
 export * from "./components/core-messages";
 export * from "./components/core-notifications";
+export * from "./components/signal-map";
+export * from "./components/recognized-modal";

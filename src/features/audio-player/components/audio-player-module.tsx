@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { MusicVisualizer } from "@/features/audio-player/components/music-visualizer";
 import { MusicModuleShell } from "@/features/music/components/music-module-shell";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
+import { useLang } from "@/hooks/use-lang";
 import { panelVariants } from "@/components/ui/panel";
 import { cn } from "@/lib/cn";
 
@@ -46,6 +47,8 @@ const tracks: TrackData[] = [
 
 export function AudioPlayerModule() {
   const prefersReducedMotion = useReducedMotion();
+  const lang = useLang();
+  const es = lang === "es";
   const [currentTrackIndex, setCurrentTrackIndex] = useState(() => {
     if (typeof window === "undefined") {
       return 0;
@@ -170,7 +173,11 @@ export function AudioPlayerModule() {
   };
 
   return (
-    <MusicModuleShell eyebrow="Media player" title="Audio Player" badge={isPlaying ? "Playing" : "Paused"}>
+    <MusicModuleShell
+      eyebrow={es ? "Reproductor multimedia" : "Media player"}
+      title={es ? "Reproductor de audio" : "Audio Player"}
+      badge={es ? (isPlaying ? "Reproduciendo" : "Pausado") : isPlaying ? "Playing" : "Paused"}
+    >
       <motion.div
         initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
@@ -183,7 +190,7 @@ export function AudioPlayerModule() {
           </div>
 
           <div className="min-w-0 flex-1">
-            <p className="text-[10px] uppercase tracking-[0.28em] text-muted">Now playing</p>
+            <p className="text-[10px] uppercase tracking-[0.28em] text-muted">{es ? "Reproduciendo ahora" : "Now playing"}</p>
             <h3 className="mt-2 text-lg font-semibold text-white">{currentTrack.title}</h3>
             <p className="mt-1 text-sm text-secondary">{currentTrack.artist} · {currentTrack.album}</p>
           </div>
@@ -195,7 +202,7 @@ export function AudioPlayerModule() {
             <span>{formattedTime.total}</span>
           </div>
           <input
-            aria-label="Playback progress"
+            aria-label={es ? "Progreso de reproducción" : "Playback progress"}
             type="range"
             min="0"
             max={currentTrack.duration}
@@ -209,7 +216,7 @@ export function AudioPlayerModule() {
           <div className="flex items-center gap-2">
             <button
               type="button"
-              aria-label="Previous track"
+              aria-label={es ? "Pista anterior" : "Previous track"}
               onClick={handlePrevious}
               className="rounded-full border border-white/10 bg-white/5 px-3 py-2 text-sm text-secondary transition hover:border-primary/40 hover:text-primary"
             >
@@ -217,15 +224,15 @@ export function AudioPlayerModule() {
             </button>
             <button
               type="button"
-              aria-label={isPlaying ? "Pause playback" : "Play playback"}
+              aria-label={es ? (isPlaying ? "Pausar reproducción" : "Reproducir") : isPlaying ? "Pause playback" : "Play playback"}
               onClick={() => setIsPlaying((prev) => !prev)}
               className="rounded-full border border-primary/30 bg-primary/15 px-4 py-2 text-sm font-semibold text-primary transition hover:bg-primary/20"
             >
-              {isPlaying ? "Pause" : "Play"}
+              {es ? (isPlaying ? "Pausar" : "Reproducir") : isPlaying ? "Pause" : "Play"}
             </button>
             <button
               type="button"
-              aria-label="Next track"
+              aria-label={es ? "Pista siguiente" : "Next track"}
               onClick={handleNext}
               className="rounded-full border border-white/10 bg-white/5 px-3 py-2 text-sm text-secondary transition hover:border-primary/40 hover:text-primary"
             >
@@ -236,7 +243,7 @@ export function AudioPlayerModule() {
           <div className="flex min-w-45 items-center gap-2 text-sm text-secondary">
             <span aria-hidden="true">🔊</span>
             <input
-              aria-label="Volume"
+              aria-label={es ? "Volumen" : "Volume"}
               type="range"
               min="0"
               max="100"
@@ -252,7 +259,7 @@ export function AudioPlayerModule() {
       <MusicVisualizer isPlaying={isPlaying} />
 
       <div className="rounded-[22px] border border-white/10 bg-white/5 p-4">
-        <p className="text-[10px] uppercase tracking-[0.28em] text-muted">Queue</p>
+        <p className="text-[10px] uppercase tracking-[0.28em] text-muted">{es ? "Cola de reproducción" : "Queue"}</p>
         <div className="mt-3 space-y-2">
           {tracks.map((track, index) => (
             <button

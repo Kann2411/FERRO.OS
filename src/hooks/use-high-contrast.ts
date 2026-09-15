@@ -1,6 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
+import { useAccessibilityStore } from "@/store/accessibility-store";
 
 function subscribe(callback: () => void) {
   const mediaQuery = window.matchMedia("(prefers-contrast: high)");
@@ -17,5 +18,10 @@ function getServerSnapshot() {
 }
 
 export function useHighContrast() {
-  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const systemPreference = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const preference = useAccessibilityStore((state) => state.highContrast);
+
+  if (preference === "on") return true;
+  if (preference === "off") return false;
+  return systemPreference;
 }

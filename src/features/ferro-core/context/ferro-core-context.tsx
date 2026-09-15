@@ -5,6 +5,7 @@ import { useAudio } from "@/features/audio-engine";
 import type { FerroCoreContextValue } from "@/features/ferro-core/types";
 import { getActiveMission } from "@/features/ferro-core/utils/mission-system";
 import { useFerroCoreStore } from "@/store/ferro-core-store";
+import { useUi } from "@/hooks/use-lang";
 
 export function FerroCoreProvider({ children }: { children: ReactNode }) {
   const { playSound } = useAudio();
@@ -40,11 +41,12 @@ export function FerroCoreProvider({ children }: { children: ReactNode }) {
 
 export function useFerroCore(): FerroCoreContextValue {
   const state = useFerroCoreStore();
+  const tUi = useUi();
 
   return {
     coreName: "FERRO CORE",
     logo: "╫",
-    tagline: "The operating system's inner mind.",
+    tagline: tUi("coreTagline"),
     explorerProfile: state.explorerProfile,
     initialized: state.initialized,
     missions: state.missions,
@@ -56,6 +58,10 @@ export function useFerroCore(): FerroCoreContextValue {
     discoveries: state.discoveries,
     history: state.history,
     activeMission: getActiveMission(state.explorerProfile.missionProgress),
+    mapOpen: state.mapOpen,
+    setMapOpen: state.setMapOpen,
+    recognizedOpen: state.recognizedOpen,
+    setRecognizedOpen: state.setRecognizedOpen,
     setExplorerName: state.setExplorerName,
     advanceProgress: state.advanceProgress,
     registerDiscovery: state.registerDiscovery,

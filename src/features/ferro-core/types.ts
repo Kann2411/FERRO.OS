@@ -1,3 +1,5 @@
+import type { Bilingual } from "@/lib/i18n/types";
+
 export interface ExplorerProfile {
   name: string;
   progress: number;
@@ -17,8 +19,8 @@ export interface ExplorerProfile {
 
 export interface MissionDefinition {
   id: string;
-  title: string;
-  description: string;
+  title: Bilingual;
+  description: Bilingual;
   reward: number;
   prerequisite: string | null;
   unlocksModule?: string;
@@ -27,15 +29,15 @@ export interface MissionDefinition {
 export interface CoreMessage {
   id: string;
   type: "info" | "tip" | "lore" | "welcome" | "warning" | "achievement";
-  title: string;
-  body: string;
+  title: Bilingual;
+  body: Bilingual;
 }
 
 export interface CoreNotification {
   id: string;
   type: "success" | "info" | "achievement" | "mission" | "warning";
-  title: string;
-  body: string;
+  title: Bilingual;
+  body: Bilingual;
 }
 
 export interface DiscoveryRecord {
@@ -48,8 +50,8 @@ export interface DiscoveryRecord {
 export interface ExplorerHistoryEntry {
   id: string;
   type: "module" | "achievement" | "progress" | "mission" | "event";
-  label: string;
-  detail: string;
+  label: Bilingual;
+  detail: Bilingual;
   timestamp: string;
 }
 
@@ -66,6 +68,10 @@ export interface FerroCoreContextValue {
   discoveries: DiscoveryRecord[];
   history: ExplorerHistoryEntry[];
   activeMission: MissionDefinition | null;
+  mapOpen: boolean;
+  setMapOpen: (open: boolean) => void;
+  recognizedOpen: boolean;
+  setRecognizedOpen: (open: boolean) => void;
   setExplorerName: (name: string) => void;
   advanceProgress: (amount: number) => void;
   registerDiscovery: (moduleId?: string) => void;

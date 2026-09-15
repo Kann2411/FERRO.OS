@@ -1,9 +1,9 @@
 ---
 Document: 05-DESIGN-SYSTEM
 Project: FERRO.OS
-Version: 1.0.0
+Version: 1.1.0
 Status: Active
-Last Updated: 2026-07-22
+Last Updated: 2026-09-15
 Author: Kristian Kamilo Ferrin
 ---
 
@@ -147,6 +147,37 @@ Settings
 
 ---
 
+## Surface Tiers (implemented)
+
+> **Implementation note (2026-09-15):** the shipped token set (`src/lib/theme.ts`,
+> `src/app/globals.css`) is more granular than the single "Surface"/"Secondary Surface"
+> pair above — panels needed a middle tier between flat surfaces and raised/elevated ones.
+
+Surface 2
+
+`#17171a` (dark) · used for slightly raised panels between Surface and Surface 3.
+
+Surface 3
+
+`#1f1f24` (dark) · used for the most elevated/raised panel tone (`panelVariants({ tone: "raised" })`).
+
+Signal
+
+`#3d9b84` (dark) · the "completed" color across the mission HUD and signal map — deliberately
+not FERRO RED, so completed progress reads as distinct from the brand's "active/attention" red.
+
+Muted / Subtle
+
+Two additional text-and-fill tiers below Secondary Text, used for kickers, timestamps, and
+inactive signal-map nodes.
+
+Border / Border Strong
+
+Two border-opacity tiers (`rgb(248 248 248 / 0.1)` and `/ 0.18`) replacing ad hoc `border-white/10`
+literals with named tokens.
+
+---
+
 ## Accent
 
 PURE WHITE
@@ -195,11 +226,32 @@ Disabled
 
 ---
 
+# Theme Modes
+
+> **Implementation note (2026-09-15):** this document was originally written entirely in
+> terms of a single dark palette, with no light variant ever mentioned. FERRO.OS ships with
+> both a dark mode (the palette above, and the default) and a light mode, toggled from the
+> shell header and persisted (`src/store/theme-store.ts`, `src/lib/theme.ts`). This is a
+> deliberate divergence, not an oversight: a portfolio is judged in whatever lighting and
+> display conditions a recruiter or client happens to be in, and forcing dark-only would
+> fight readability for some visitors instead of serving the "premium software" feeling this
+> document asks for. Every token in the Color Palette above has a light-mode counterpart —
+> same names, same roles, inverted luminance — so the rest of this design system (radii,
+> shadows, blur, motion) applies unchanged in both modes.
+
+---
+
 # Typography
+
+> **Implementation note (2026-09-15):** shipped with Outfit + IBM Plex Mono instead of the
+> Inter pairing originally envisioned below — both are variable Google Fonts loaded via
+> `next/font/google` in `src/app/layout.tsx` (`--font-display-sans`, `--font-display-mono`),
+> chosen for the same "precise, technical, premium" feel this document calls for, with
+> better variable-weight range for the display sizes used across the HUD and welcome sequence.
 
 Primary Font
 
-Inter
+Outfit
 
 Purpose
 
@@ -209,7 +261,7 @@ Entire interface.
 
 Secondary Font
 
-JetBrains Mono
+IBM Plex Mono
 
 Purpose
 
@@ -225,7 +277,7 @@ Logs
 
 Display Font
 
-Inter ExtraBold
+Outfit (600–700 weight)
 
 Only used for
 

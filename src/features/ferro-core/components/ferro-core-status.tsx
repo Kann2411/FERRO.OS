@@ -2,11 +2,13 @@
 
 import { motion } from "framer-motion";
 import { useFerroCore } from "@/features/ferro-core/context/ferro-core-context";
+import { useUi } from "@/hooks/use-lang";
 import { panelVariants } from "@/components/ui/panel";
 import { cn } from "@/lib/cn";
 
 export function FerroCoreStatus() {
   const { explorerProfile } = useFerroCore();
+  const tUi = useUi();
   const progress = Math.round(explorerProfile.progress);
 
   return (
@@ -15,29 +17,29 @@ export function FerroCoreStatus() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
       className={cn(panelVariants({ tone: "surface", size: "lg", elevated: true }))}
-      aria-label={`FERRO CORE status: ${explorerProfile.name}, ${progress}% progress`}
+      aria-label={`FERRO CORE — ${explorerProfile.name}, ${progress}%`}
     >
       <div className="flex items-center justify-between gap-4">
         <div>
-          <p className="text-xs uppercase tracking-[0.32em] text-muted">Explorer</p>
+          <p className="text-xs uppercase tracking-[0.32em] text-muted">{tUi("explorer")}</p>
           <p className="mt-1 text-lg font-semibold text-white">{explorerProfile.name}</p>
         </div>
-        <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs uppercase text-muted" aria-label="Level 0">
-          Level 0
+        <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs uppercase text-muted" aria-label={`${tUi("level")} 0`}>
+          {tUi("level")} 0
         </span>
       </div>
 
-      <div className="mt-6 rounded-3xl bg-white/5 p-1" role="progressbar" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100} aria-label={`Progress: ${progress}%`}>
+      <div className="mt-6 rounded-3xl bg-white/5 p-1" role="progressbar" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100} aria-label={`${tUi("progress")}: ${progress}%`}>
         <div className="h-3 rounded-3xl bg-primary transition-all" style={{ width: `${progress}%` }} />
       </div>
 
       <div className="mt-4 grid grid-cols-2 gap-3 text-sm text-secondary">
         <div>
-          <p className="text-xs uppercase tracking-[0.3em] text-muted">Progress</p>
+          <p className="text-xs uppercase tracking-[0.3em] text-muted">{tUi("progress")}</p>
           <p className="mt-1 text-white">{progress}%</p>
         </div>
         <div>
-          <p className="text-xs uppercase tracking-[0.3em] text-muted">Discovered</p>
+          <p className="text-xs uppercase tracking-[0.3em] text-muted">{tUi("discovered")}</p>
           <p className="mt-1 text-white">{explorerProfile.modulesDiscovered}</p>
         </div>
       </div>

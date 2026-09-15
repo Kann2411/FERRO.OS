@@ -11,15 +11,20 @@ import type {
   MissionDefinition,
 } from "@/features/ferro-core/types";
 import { missionDefinitions } from "@/features/ferro-core/utils/mission-system";
-import { evaluateAchievements } from "@/features/ferro-core/utils/achievement-system";
+import { evaluateAchievements, getAchievementDefinition } from "@/features/ferro-core/utils/achievement-system";
 import { getDiscoveryProgressReward, updateProgress } from "@/features/ferro-core/utils/explorer-progress";
 import { getHiddenFileDefinition } from "@/features/hidden-files/utils/hidden-files";
 import { useWallpaperStore } from "@/store/wallpaper-store";
 import { generateUUID } from "@/lib/uuid";
 import type { AudioCategory } from "@/features/audio-engine/types";
+import type { Bilingual } from "@/lib/i18n/types";
 
 export const FERRO_CORE_STORAGE_KEY = "ferro-os-explorer-profile";
 const LEGACY_PROFILE_KEY = "ferro.os.ferro-core";
+
+function bi(es: string, en: string): Bilingual {
+  return { es, en };
+}
 
 const defaultProfile: ExplorerProfile = {
   name: "Explorer",
@@ -70,6 +75,10 @@ interface FerroCoreState {
   notifications: CoreNotification[];
   discoveries: DiscoveryRecord[];
   history: ExplorerHistoryEntry[];
+  mapOpen: boolean;
+  setMapOpen: (open: boolean) => void;
+  recognizedOpen: boolean;
+  setRecognizedOpen: (open: boolean) => void;
   onSound: ((category: AudioCategory, name: string) => void) | null;
   setSoundBridge: (playSound: (category: AudioCategory, name: string) => void) => void;
   initializeSession: () => void;
@@ -108,21 +117,22 @@ export const useFerroCoreStore = create<FerroCoreState>()(
           completedMissions: Object.values(profile.missionProgress).filter(Boolean).length,
         });
 
-        const missingTitles = unlockedAchievements
-          .map((achievement) => achievement.title)
-          .filter((title) => !profile.achievements.includes(title));
+        const missingIds = unlockedAchievements
+          .map((achievement) => achievement.id)
+          .filter((id) => !profile.achievements.includes(id));
 
-        if (missingTitles.length > 0) {
+        if (missingIds.length > 0) {
+          const firstDefinition = getAchievementDefinition(missingIds[0]);
           set((current) => ({
             explorerProfile: {
               ...current.explorerProfile,
-              achievements: [...current.explorerProfile.achievements, ...missingTitles],
+              achievements: [...current.explorerProfile.achievements, ...missingIds],
             },
             history: addEntry(current.history, {
               id: generateUUID(),
               type: "achievement",
-              label: missingTitles[0],
-              detail: "Achievement unlocked",
+              label: firstDefinition?.title ?? bi(missingIds[0], missingIds[0]),
+              detail: bi("Logro desbloqueado", "Achievement unlocked"),
               timestamp: new Date().toISOString(),
             }),
           }));
@@ -134,14 +144,20 @@ export const useFerroCoreStore = create<FerroCoreState>()(
             get().pushNotification({
               id: "final-message-unlocked",
               type: "success",
-              title: "Final message unlocked",
-              body: "FERRO CORE has prepared a closing message for reaching 100% exploration.",
+              title: bi("Mensaje final desbloqueado", "Final message unlocked"),
+              body: bi(
+                "FERRO CORE preparó un mensaje de cierre al alcanzar el 100% de exploración.",
+                "FERRO CORE has prepared a closing message for reaching 100% exploration."
+              ),
             });
             get().pushMessage({
               id: "final-message",
               type: "info",
-              title: "FERRO CORE final message",
-              body: "A special closing note has been added to your hidden files.",
+              title: bi("Mensaje final de FERRO CORE", "FERRO CORE final message"),
+              body: bi(
+                "Se agregó una nota de cierre especial a tus archivos ocultos.",
+                "A special closing note has been added to your hidden files."
+              ),
             });
           }
         }
@@ -155,8 +171,12 @@ export const useFerroCoreStore = create<FerroCoreState>()(
         notifications: [],
         discoveries: [],
         history: [],
+        mapOpen: false,
+        recognizedOpen: false,
         onSound: null,
 
+        setMapOpen: (open) => set({ mapOpen: open }),
+        setRecognizedOpen: (open) => set({ recognizedOpen: open }),
         setSoundBridge: (bridge) => set({ onSound: bridge }),
 
         initializeSession: () => {
@@ -182,8 +202,11 @@ export const useFerroCoreStore = create<FerroCoreState>()(
                     {
                       id: "welcome-core",
                       type: "welcome",
-                      title: "FERRO CORE online",
-                      body: "The system has begun to remember your first steps.",
+                      title: bi("FERRO CORE en línea", "FERRO CORE online"),
+                      body: bi(
+                        "El sistema comenzó a recordar tus primeros pasos.",
+                        "The system has begun to remember your first steps."
+                      ),
                     },
                   ],
             notifications:
@@ -193,8 +216,11 @@ export const useFerroCoreStore = create<FerroCoreState>()(
                     {
                       id: "welcome-notification",
                       type: "info",
-                      title: "System initialized",
-                      body: "FERRO CORE is now observing your exploration.",
+                      title: bi("Sistema inicializado", "System initialized"),
+                      body: bi(
+                        "FERRO CORE ahora está observando tu exploración.",
+                        "FERRO CORE is now observing your exploration."
+                      ),
                     },
                   ],
           }));
@@ -219,8 +245,11 @@ export const useFerroCoreStore = create<FerroCoreState>()(
               history: addEntry(current.history, {
                 id: generateUUID(),
                 type: "progress",
-                label: "Progress update",
-                detail: `Exploration advanced by ${amount}%`,
+                label: bi("Actualización de progreso", "Progress update"),
+                detail: bi(
+                  `La exploración avanzó un ${amount}%`,
+                  `Exploration advanced by ${amount}%`
+                ),
                 timestamp: new Date().toISOString(),
               }),
             }));
@@ -255,8 +284,8 @@ export const useFerroCoreStore = create<FerroCoreState>()(
             history: addEntry(state.history, {
               id: generateUUID(),
               type: "module",
-              label: moduleId ?? "System event",
-              detail: "Module discovered",
+              label: bi(moduleId ?? "Evento del sistema", moduleId ?? "System event"),
+              detail: bi("Módulo descubierto", "Module discovered"),
               timestamp: new Date().toISOString(),
             }),
           }));
@@ -291,6 +320,7 @@ export const useFerroCoreStore = create<FerroCoreState>()(
           const fileDefinition = getHiddenFileDefinition(fileId);
           const reward = fileDefinition?.reward ?? 3;
           const discoveryLabel = `${fileId} uncovered`;
+          const historyLabel = fileDefinition?.label ?? bi(fileId, fileId);
 
           set((state) => ({
             discoveries: addEntry(state.discoveries, {
@@ -302,8 +332,8 @@ export const useFerroCoreStore = create<FerroCoreState>()(
             history: addEntry(state.history, {
               id: generateUUID(),
               type: "event",
-              label: discoveryLabel,
-              detail: "Hidden file discovered",
+              label: historyLabel,
+              detail: bi("Archivo oculto descubierto", "Hidden file discovered"),
               timestamp: new Date().toISOString(),
             }),
           }));
@@ -331,31 +361,34 @@ export const useFerroCoreStore = create<FerroCoreState>()(
           return true;
         },
 
-        awardAchievement: (achievement) => {
-          if (get().explorerProfile.achievements.includes(achievement)) {
+        awardAchievement: (achievementId) => {
+          if (get().explorerProfile.achievements.includes(achievementId)) {
             return;
           }
 
           playSound("achievements", "unlock");
 
+          const definition = getAchievementDefinition(achievementId);
+          const label = definition?.title ?? bi(achievementId, achievementId);
+
           set((state) => ({
             history: addEntry(state.history, {
               id: generateUUID(),
               type: "achievement",
-              label: achievement,
-              detail: "Achievement unlocked",
+              label,
+              detail: bi("Logro desbloqueado", "Achievement unlocked"),
               timestamp: new Date().toISOString(),
             }),
           }));
 
           set((state) => {
-            if (state.explorerProfile.achievements.includes(achievement)) {
+            if (state.explorerProfile.achievements.includes(achievementId)) {
               return state;
             }
             return {
               explorerProfile: {
                 ...state.explorerProfile,
-                achievements: [...state.explorerProfile.achievements, achievement],
+                achievements: [...state.explorerProfile.achievements, achievementId],
               },
             };
           });
@@ -395,7 +428,7 @@ export const useFerroCoreStore = create<FerroCoreState>()(
               id: generateUUID(),
               type: "mission",
               label: missionDef.title,
-              detail: "Mission completed",
+              detail: bi("Misión completada", "Mission completed"),
               timestamp: new Date().toISOString(),
             }),
           }));
@@ -404,20 +437,21 @@ export const useFerroCoreStore = create<FerroCoreState>()(
             missionDef.unlocksModule && !current.unlockedModules.includes(missionDef.unlocksModule);
 
           if (shouldUnlockModule && missionDef.unlocksModule) {
+            const unlockedModuleId = missionDef.unlocksModule;
             set((state) => ({
               history: addEntry(state.history, {
                 id: generateUUID(),
                 type: "module",
-                label: missionDef.unlocksModule as string,
-                detail: "Module unlocked",
+                label: bi(unlockedModuleId, unlockedModuleId),
+                detail: bi("Módulo desbloqueado", "Module unlocked"),
                 timestamp: new Date().toISOString(),
               }),
               notifications: [
                 {
-                  id: `unlock-${missionDef.unlocksModule}`,
+                  id: `unlock-${unlockedModuleId}`,
                   type: "success" as const,
-                  title: "Module unlocked",
-                  body: `${missionDef.unlocksModule} is now accessible.`,
+                  title: bi("Módulo desbloqueado", "Module unlocked"),
+                  body: bi(`${unlockedModuleId} ya está disponible.`, `${unlockedModuleId} is now accessible.`),
                 },
                 ...state.notifications,
               ].slice(0, 3),
@@ -446,6 +480,10 @@ export const useFerroCoreStore = create<FerroCoreState>()(
           });
 
           checkDerivedEffects();
+
+          if (missionId === "full-exploration") {
+            set({ recognizedOpen: true });
+          }
         },
 
         unlockMission: (missionId) => {
@@ -482,6 +520,8 @@ export const useFerroCoreStore = create<FerroCoreState>()(
             notifications: [],
             discoveries: [],
             history: [],
+            mapOpen: false,
+            recognizedOpen: false,
           });
 
           if (typeof window !== "undefined") {

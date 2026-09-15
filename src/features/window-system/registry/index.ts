@@ -93,9 +93,9 @@ export const windowRegistry: Record<string, WindowDefinition> = {
     id: "settings",
     title: "Settings",
     icon: "◎",
-    initialWidth: 460,
-    initialHeight: 320,
-    defaultPosition: { x: 380, y: 240 },
+    initialWidth: 640,
+    initialHeight: 560,
+    defaultPosition: { x: 260, y: 100 },
   },
   aiLab: {
     id: "aiLab",

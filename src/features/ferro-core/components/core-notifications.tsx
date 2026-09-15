@@ -6,6 +6,7 @@ import { createPopoverMotion } from "@/features/animation-engine";
 import { useAudio } from "@/features/audio-engine";
 import { useFerroCore } from "@/features/ferro-core/context/ferro-core-context";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
+import { useT, useUi } from "@/hooks/use-lang";
 
 const AUTO_DISMISS_MS = 6000;
 
@@ -17,10 +18,20 @@ const notificationStyles: Record<string, string> = {
   warning: "border-amber-400/30 bg-amber-400/10 text-secondary",
 };
 
+const notificationIcons: Record<string, string> = {
+  success: "✓",
+  info: "◌",
+  achievement: "✦",
+  mission: "▸",
+  warning: "!",
+};
+
 export function CoreNotifications() {
   const { notifications, dismissNotification } = useFerroCore();
   const { playSound } = useAudio();
   const prefersReducedMotion = useReducedMotion();
+  const t = useT();
+  const tUi = useUi();
   const scheduledDismissals = useRef<Set<string>>(new Set());
 
   useEffect(() => {
@@ -39,7 +50,7 @@ export function CoreNotifications() {
   }
 
   return (
-    <div className="fixed right-4 top-20 z-70 flex w-[320px] flex-col gap-3" role="region" aria-label="Notifications">
+    <div className="fixed right-4 top-20 z-70 flex w-[320px] flex-col gap-3" role="region" aria-label={tUi("notificationsRegion")}>
       <AnimatePresence>
         {notifications.map((notification) => (
           <motion.div
@@ -51,13 +62,21 @@ export function CoreNotifications() {
             aria-live="polite"
           >
             <div className="flex items-start justify-between gap-3">
-              <div>
-                <p className="text-sm font-medium text-white">{notification.title}</p>
-                <p className="mt-1 text-sm leading-6 text-secondary">{notification.body}</p>
+              <div className="flex items-start gap-3">
+                <span
+                  className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white/10 text-[11px] text-white"
+                  aria-hidden="true"
+                >
+                  {notificationIcons[notification.type] ?? "•"}
+                </span>
+                <div>
+                  <p className="text-sm font-medium text-white">{t(notification.title)}</p>
+                  <p className="mt-1 text-sm leading-6 text-secondary">{t(notification.body)}</p>
+                </div>
               </div>
               <button
                 type="button"
-                aria-label={`Dismiss notification: ${notification.title}`}
+                aria-label={`${tUi("dismissNotification")}: ${t(notification.title)}`}
                 onClick={() => {
                   playSound("notifications", "dismiss");
                   dismissNotification(notification.id);

@@ -3,13 +3,15 @@
 import { motion } from "framer-motion";
 import { EmptyState } from "@/components/ui/empty-state";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
+import { useLang, useT } from "@/hooks/use-lang";
+import type { Bilingual } from "@/lib/i18n/types";
 
 interface ReleaseCardData {
   title: string;
   year: string;
   genre: string;
-  status: string;
-  description: string;
+  status: Bilingual;
+  description: Bilingual;
   cover: string;
 }
 
@@ -18,48 +20,64 @@ const releases: ReleaseCardData[] = [
     title: "Midnight Pulse",
     year: "2024",
     genre: "Deep House",
-    status: "Released",
-    description: "A cinematic release built around atmospheric textures, pulse-driven rhythm and nocturnal tension.",
+    status: { es: "Publicado", en: "Released" },
+    description: {
+      es: "Un lanzamiento cinemático construido a partir de texturas atmosféricas, ritmos pulsantes y tensión nocturna.",
+      en: "A cinematic release built around atmospheric textures, pulse-driven rhythm and nocturnal tension.",
+    },
     cover: "◉",
   },
   {
     title: "Neon Drift",
     year: "2022",
     genre: "Progressive House",
-    status: "Featured",
-    description: "An immersive journey balancing melodic movement and polished club energy.",
+    status: { es: "Destacado", en: "Featured" },
+    description: {
+      es: "Un viaje inmersivo que equilibra el movimiento melódico con una energía de club pulida.",
+      en: "An immersive journey balancing melodic movement and polished club energy.",
+    },
     cover: "◌",
   },
   {
     title: "Velvet Circuit",
     year: "2020",
     genre: "Electronic / Ambient",
-    status: "Archived",
-    description: "A more introspective body of work focused on soundscapes, emotion and minimal design.",
+    status: { es: "Archivado", en: "Archived" },
+    description: {
+      es: "Una obra más introspectiva centrada en paisajes sonoros, emoción y un diseño minimalista.",
+      en: "A more introspective body of work focused on soundscapes, emotion and minimal design.",
+    },
     cover: "◎",
   },
 ];
 
 export function DiscographyModule() {
   const prefersReducedMotion = useReducedMotion();
+  const lang = useLang();
+  const t = useT();
+  const es = lang === "es";
 
   return (
     <div className="flex h-full flex-col gap-4 overflow-auto">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <p className="text-[10px] uppercase tracking-[0.32em] text-muted">Music catalog</p>
-          <h2 className="mt-1 text-xl font-semibold text-white">Discography</h2>
+          <p className="text-[10px] uppercase tracking-[0.32em] text-muted">{es ? "Catálogo musical" : "Music catalog"}</p>
+          <h2 className="mt-1 text-xl font-semibold text-white">{es ? "Discografía" : "Discography"}</h2>
         </div>
         <div className="rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs uppercase tracking-[0.28em] text-primary">
-          {releases.length} releases
+          {releases.length} {es ? "lanzamientos" : "releases"}
         </div>
       </div>
 
       {releases.length === 0 ? (
         <EmptyState
           icon="♫"
-          title="No releases yet"
-          message="A full discography will appear here when production data is connected."
+          title={es ? "Aún no hay lanzamientos" : "No releases yet"}
+          message={
+            es
+              ? "La discografía completa aparecerá aquí cuando se conecten los datos de producción."
+              : "A full discography will appear here when production data is connected."
+          }
         />
       ) : (
         <div className="grid gap-4 xl:grid-cols-2">
@@ -79,10 +97,10 @@ export function DiscographyModule() {
                   <div className="flex flex-wrap items-center gap-2">
                     <h3 className="text-base font-semibold text-white">{release.title}</h3>
                     <span className="rounded-full border border-primary/20 bg-primary/10 px-2.5 py-1 text-[10px] uppercase tracking-[0.28em] text-primary">
-                      {release.status}
+                      {t(release.status)}
                     </span>
                   </div>
-                  <p className="mt-2 text-sm text-secondary">{release.description}</p>
+                  <p className="mt-2 text-sm text-secondary">{t(release.description)}</p>
                 </div>
               </div>
 
@@ -96,9 +114,11 @@ export function DiscographyModule() {
       )}
 
       <div className="rounded-[22px] border border-white/10 bg-white/5 p-4 text-sm text-secondary">
-        <p className="text-[10px] uppercase tracking-[0.28em] text-muted">Data ready</p>
+        <p className="text-[10px] uppercase tracking-[0.28em] text-muted">{es ? "Datos listos" : "Data ready"}</p>
         <p className="mt-2 leading-7">
-          The module already follows a structure ready to consume release data from an API later without changing the interface.
+          {es
+            ? "El módulo ya sigue una estructura lista para consumir datos de lanzamientos desde una API más adelante sin cambiar la interfaz."
+            : "The module already follows a structure ready to consume release data from an API later without changing the interface."}
         </p>
       </div>
     </div>

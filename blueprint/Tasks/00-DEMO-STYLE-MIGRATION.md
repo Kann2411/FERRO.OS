@@ -92,76 +92,90 @@ Estas decisiones resuelven las inconsistencias detectadas en la auditoría de FE
 
 ## Milestone 4 — Flujo de misiones: UI (HUD, notificaciones, badges)
 
-Con el modelo de datos ya saneado (Milestone 2), portar la capa visual del demo:
+Con el modelo de datos ya saneado (Milestone 2), se auditó lo que YA existe en FERRO.OS antes de portar nada del demo — resultó que buena parte de este milestone ya estaba construido, solo con gaps puntuales:
 
-- [ ] **HUD lateral** (equivalente a `Hud.tsx`): panel colapsable solo desktop, con barra de "fuerza de señal" (gradiente accent→signal), grid de stats (progreso/misión activa/módulos/logros), lista completa de la cadena de misiones con 3 estados visuales (completada=verde, actual=rojo destacado, pendiente=gris). Adaptar al `mission-board.tsx` existente o reemplazarlo.
-- [ ] **Versión mobile compacta del HUD** (solo misión actual + %).
-- [ ] **Notificaciones/toasts** (`Notifications.tsx` del demo): cola de máx. 4, auto-dismiss ~4200ms, iconos distintos para logro vs misión, animación `.toast-in`. Verificar si ya existe un sistema de notificaciones en FERRO.OS y decidir si se reemplaza o se adapta.
-- [ ] **Badges de "sin explorar"** en dock/desktop-icons: punto rojo sobre el ícono de módulos cuya misión asociada aún no se completó.
-- [ ] **Píldora de progreso en la barra superior** (equivalente a `MenuBar`): `● {pct}% · {done}/{total}`, click abre el mapa de señal (Milestone 5).
-- [ ] Resolver el doble gating de boot/welcome (`page.tsx` + `welcome-sequence.tsx` chequean lo mismo por separado) — dejar un único gate basado en el store.
-- [ ] `BootScreen`: no debe reproducirse en cada carga si el usuario ya lo completó (salvo `resetFlow`), y debe saltarse directo si `reduceMotion` está activo (falta hoy).
+- [x] **HUD lateral — ya existía, no se reconstruyó.** `ExplorerProfileCard` (barra de "fuerza de señal" con gradiente, grid de 4 stats, misión activa + tiempo explorado, historial reciente) + `MissionBoard` (lista completa de misiones con 3 estados visuales: completada/actual/bloqueada) ya cumplen exactamente el rol de `Hud.tsx` del demo. No se tocó su estructura — solo se beneficiaron de los tokens del Milestone 1 y del store saneado del Milestone 2.
+- [x] **Versión mobile — ya existía, no hacía falta una "compacta" aparte.** El `aside` que contiene `ExplorerProfileCard`/`MissionBoard` ya es `w-full` en mobile y `sm:max-w-85` en desktop (responsive real, no oculto/colapsado). Construir una segunda variante "compacta" solo para mobile hubiera sido duplicar UI que ya funciona bien en pantallas chicas — se descartó esa tarea.
+- [x] **Notificaciones/toasts — ya existía (`CoreNotifications`), se mejoró en vez de reemplazar.** Ya tenía cola con auto-dismiss (6000ms, el demo usa 4200ms — se deja el valor propio de FERRO.OS), `AnimatePresence`, botón de descarte. Lo que faltaba de verdad: **íconos distintos por tipo** (el demo diferencia logro/misión con Award/Radio) — se agregó un glifo unicode por tipo (`✓ ✦ ▸ ! ◌`), consistente con el resto de la app que no usa ninguna librería de íconos (no se instaló `lucide-react` ni similar solo por esto).
+- [x] **Badge de "sin explorar"** — ya existía en `desktop-icons.tsx` (punto rojo pulsante en módulos desbloqueados-pero-no-descubiertos) pero **faltaba en `dock.tsx`**, la asimetría real que había que corregir. Agregado el mismo badge al dock (desktop y mobile).
+- [ ] **Diferido a Milestone 5:** píldora de progreso clickeable que abra el mapa de señal — `StatusPanel` (equivalente a la píldora de `MenuBar`) ya muestra `{pct}% • {done}/{total} missions • {tiempo}`, pero no tiene sentido cablear el click hasta que el mapa exista.
+- [x] **Bug real encontrado y corregido: doble gating de boot/welcome.** `page.tsx` mostraba el `BootScreen` completo en **cada carga de página**, sin memoria de visitas previas (`showBoot` arrancaba en `true` siempre) — contradice directamente el propio blueprint ("Returning visitors continue exactly where they left"). Se corrigió gateando en `explorerProfile.welcomeCompleted` (ya persistido) + `useReducedMotion()`, sin agregar un campo nuevo al perfil.
+- [x] **Regresión propia detectada y corregida en el camino:** el primer intento de este fix (`if (!initialized) return null`) rompía el first paint — el servidor ya no podía saber si es visitante nuevo, así que el HTML SSR quedaba completamente vacío hasta que la rehidratación terminaba en el cliente (confirmado con curl: el body SSR era literalmente un comentario vacío). Corregido: el estado por defecto (servidor y primer render de cliente) sigue asumiendo "visitante nuevo" y muestra el boot igual que antes (evita el blank flash y coincide con el HTML del servidor), y en cuanto la rehidratación confirma que es un visitante recurrente o que `prefers-reduced-motion` está activo, el boot se corta de inmediato en vez de esperar a que termine solo. Verificado con curl que el SSR vuelve a incluir el contenido del boot y que no hay errores de hidratación en el log de `next dev`.
 
-**Criterio de cierre:** completar acciones normales de exploración (abrir apps, leer el resume, usar la terminal) actualiza visiblemente el HUD/badges/notificaciones sin refrescar la página.
+**Criterio de cierre:** completar acciones normales de exploración (abrir apps, leer el resume, usar la terminal) actualiza visiblemente el HUD/badges/notificaciones sin refrescar la página — ya era así antes de este milestone gracias al store reactivo del Milestone 2; lo que este milestone cerró fueron las asimetrías puntuales (badge del dock, íconos de notificación) y el bug de boot repetido. Verificado con `tsc --noEmit`, `pnpm lint` (sin errores nuevos) y `pnpm build` limpios.
 
 ---
 
 ## Milestone 5 — Mapa de señal (Signal Map)
 
-- [ ] Portar `SignalMap.tsx` tal cual: SVG `viewBox="0 0 100 100"`, nodos con coordenadas fijas 1:1 con los IDs de `missions`, path de fondo tenue conectando todos los nodos en orden, segmentos "encendidos" en verde solo cuando ambos extremos de un tramo están completados.
-- [ ] Definir las coordenadas de nodos para la cadena de misiones **real** de FERRO.OS (no copiar las del demo, que corresponden a otras misiones) — mapear 1:1 con los IDs kebab-case unificados en Milestone 2.
-- [ ] Estados visuales de nodo: completado (verde sólido), actual (rojo pulsante, clase `.signal-dot`), pendiente (gris).
-- [ ] Modal overlay con el mismo patrón que el resto (backdrop + `stopPropagation`, animación `.window-in`), no una `WindowFrame` del sistema de ventanas.
-- [ ] Puntos de entrada: botón brújula flotante, botón en barra superior, píldora de progreso, botón "Abrir mapa" en el HUD, y apertura automática al completar la cadena completa.
-- [ ] Efecto meta: abrir el mapa por primera vez cuenta como su propia misión/logro (igual que en el demo) — decidir si aplica al flujo de FERRO.OS.
+- [x] Creado `src/features/ferro-core/components/signal-map.tsx`: SVG `viewBox="0 0 100 100"`, path de fondo tenue conectando los 11 nodos en orden, segmentos "encendidos" en verde (`text-signal`) solo cuando ambos extremos de un tramo están en `completedMissions`. No es un port literal 1:1 del JSX del demo — la estructura visual es equivalente, pero implementada con los componentes/patrones de FERRO.OS (`createPopoverMotion` de `animation-engine`, no la clase CSS cruda `.window-in`; ver nota más abajo).
+- [x] Coordenadas de nodos definidas para la cadena **real** de FERRO.OS (`explore-desktop → open-first-module → discover-projects → visit-studio → discover-skills → read-resume → explore-timeline → listen-discography → visit-ai-lab → master-explorer → full-exploration`), no las del demo. Verificado programáticamente que los 11 ids del mapa coinciden 1:1 y en el mismo orden con `missionDefinitions` (evita que un id mal escrito deje un nodo "mudo").
+- [x] Estados visuales de nodo: completado (verde sólido, `bg-signal`), actual (rojo pulsante, reutiliza la clase `.signal-dot` creada en el Milestone 1), pendiente (gris, `bg-subtle`).
+- [x] Modal overlay con el mismo patrón que el resto de overlays de FERRO.OS (backdrop + `stopPropagation`) — **corrección sobre el plan original:** en vez de la clase CSS cruda `.window-in` del demo, se usa `createPopoverMotion("window", { reducedMotion })` de `@/features/animation-engine`, el helper que ya usan `CoreNotifications` y otros overlays existentes — mantiene reduced-motion consistente con el resto de la app en vez de introducir un segundo mecanismo de animación paralelo.
+- [x] Puntos de entrada conectados, los 4 previstos:
+  - Botón brújula flotante (`⌖`), fijo abajo-a-la-izquierda, solo desktop (`hidden sm:flex`) en `desktop-shell.tsx`.
+  - `StatusPanel` (la píldora de progreso de la barra superior) ahora es un botón clickeable — se dejó preparado en el Milestone 4, se conectó aquí.
+  - Botón "Open signal map" agregado al header de `MissionBoard` (el HUD).
+  - Apertura automática: `completeMission` en el store dispara `setMapOpen(true)` cuando la misión completada es `full-exploration` (la última de la cadena) — no se necesitó un helper `progressOf`/`activeMission` nuevo porque `mission-system.ts` ya tenía `getActiveMission`/`getMissionProgressValue` cumpliendo ese rol desde antes del Milestone 2.
+- [x] Efecto meta aplicado: abrir el mapa por primera vez otorga el logro ad hoc `"Signal map opened"` vía `awardAchievement()` — mismo mecanismo ya usado por otros logros puntuales del código existente (ej. "Projects discovered" en `desktop-icons.tsx`), no se tocó el sistema de logros basado en reglas (`achievementDefinitions`).
+- [x] Estado del modal (`mapOpen`) agregado al store de misiones (`ferro-core-store.ts`) y expuesto vía `useFerroCore()` (`mapOpen`/`setMapOpen`), no persistido (se resetea al recargar, correcto para un modal) y limpiado explícitamente en `resetFlow()`.
 
-**Criterio de cierre:** el mapa refleja en tiempo real el estado de `completedMissions` sin duplicar esa lógica (usa los mismos helpers `progressOf`/`activeMission` de Milestone 2).
-
----
-
-## Milestone 6 — i18n y selector de idioma
-
-- [ ] Decidir el mecanismo: **no** usar routing por idioma (`/es`, `/en`) para mantener paridad simple con el demo — usar el mismo patrón de store global (`lang: "es" | "en"`) + objetos `{ es, en }` para contenido de dominio.
-- [ ] Crear `src/lib/i18n/` (o ubicación equivalente a `content.ts`/`types.ts` del demo) con:
-  - [ ] Tipo `Lang = "es" | "en"`.
-  - [ ] Diccionario de **strings de UI cortos** centralizado (`ui.ts`, `{ clave: { es, en } }`) — **mejora sobre el demo**, que los tenía en ternarios dispersos por cada componente.
-  - [ ] Hook `useT()` que devuelve una función `t(pair)` para contenido de dominio, y `useUi()`/`tUi(key)` para strings de interfaz.
-- [ ] Traducir **todo el contenido existente de FERRO.OS** (títulos/descripciones de misiones, módulos, proyectos, terminal, logros, textos de settings, etc.) a la estructura bilingüe `{ es, en }`, con **español como idioma por defecto** (`lang: "es"` inicial en el store, y `<html lang="es">` server-rendered por defecto en `layout.tsx`).
-- [ ] Efecto sobre `<html lang>`: actualizar `document.documentElement.lang` al cambiar de idioma (client-side), igual que el demo.
-- [ ] **Botón de cambio de idioma**: el demo solo lo pone dentro de Settings — el usuario pidió explícitamente "el cambio de idioma con un botón", así que además de tenerlo en Settings, agregar un botón visible de acceso rápido (barra superior o dock) que alterne ES↔EN con un solo click (mostrando el idioma actual, ej. "ES"/"EN").
-- [ ] Revisar accesibilidad: `aria-label` del botón de idioma debe también estar traducido.
-
-**Criterio de cierre:** cambiar el idioma desde el botón rápido o desde Settings traduce instantáneamente toda la UI visible, sin recargar la página, y persiste entre sesiones.
+**Criterio de cierre:** el mapa refleja en tiempo real el estado de `completedMissions`/`activeMission` sin duplicar esa lógica (usa `useFerroCore()` directo, cero estado derivado propio). Verificado con `tsc --noEmit`, `pnpm lint` (sin errores nuevos), `pnpm build` limpio, y una comprobación programática de que los ids de nodo coinciden exactamente con `missionDefinitions`.
 
 ---
 
-## Milestone 7 — Settings completo
+## Milestone 6 — i18n y selector de idioma ✅
 
-Reestructurar `src/features/settings/` para que deje de ser un único componente monolítico y siga el patrón de carpetas del resto de features (`components/`, `context|store/`, `types.ts`):
+- [x] Mecanismo: **sin** routing por idioma — store Zustand dedicado (`src/store/lang-store.ts`, `lang: "es" | "en"`, `persist` con `skipHydration: true` + rehydrate manual en `src/providers/lang-provider.tsx`, mismo patrón anti-mismatch que `ferro-core-store.ts` de M2) + objetos `{ es, en }` para contenido de dominio.
+- [x] `src/lib/i18n/` creado:
+  - [x] `types.ts` — `Lang`, `Bilingual<T = string>`.
+  - [x] `ui.ts` — diccionario centralizado de strings de UI cortos y reutilizables (`ui.settings`, `ui.missionSystem`, `ui.bootLine1`... ~90 claves) + `windowTitles` (títulos traducidos de cada ventana del registry).
+  - [x] `src/hooks/use-lang.ts` — `useLang()`, `useT()` (`t(pair)` para contenido de dominio), `useUi()` (`tUi(key)` para el diccionario), `useSetLang()`, `useToggleLang()`.
+- [x] Traducido **todo el contenido**: `MissionDefinition`/`AchievementDefinition` (title/description → `Bilingual`), `CoreMessage`/`CoreNotification`/`ExplorerHistoryEntry` (los textos que `ferro-core-store.ts` construye dinámicamente — desbloqueos, bienvenida, logros — ahora usan un helper `bi(es, en)`), `HiddenFileDefinition` (label/description/content, incluye las "lore notes" largas), `WallpaperDefinition` (name/description), todos los módulos de escritorio (proyectos, currículum, habilidades, línea de tiempo, discografía, equipo, reproductor de audio, música, estudio, code-studio, laboratorio de IA, consola de depuración), terminal (todos los comandos y sus salidas vía `TerminalCommandContext.lang`), y todo el chrome (shell, dock, iconos, mapa de señal, boot screen, welcome sequence, HUD del explorador, ajustes, ventanas). Español es el idioma por defecto (`lang: "es"` en el store, `<html lang="es">` en `layout.tsx`).
+- [x] `document.documentElement.lang` se actualiza reactivamente en `LangProvider` (`useEffect` sobre `lang`).
+- [x] Botón de cambio de idioma: acceso rápido en la barra superior de `desktop-shell.tsx` (pastilla "ES"/"EN" junto a Ajustes) + selector de dos botones (Español/English) dentro de `settings-module.tsx` — ambos escriben al mismo store, cambio instantáneo en toda la UI.
+- [x] `aria-label` del botón de idioma traducido (`ui.languageToggleLabel`), igual que el resto de aria-labels de la app (dock, iconos, ventanas — incluido `window-shell.tsx`, tocado solo a nivel de texto en aria-labels, sin alterar su lógica de renderizado según la directiva de no restructurar el sistema de ventanas).
 
-- [ ] **Idioma**: dos botones (Español/English) con variante activa, igual patrón visual que el demo.
-- [ ] **Tema**: mantener el toggle día/noche ya existente, integrarlo visualmente al nuevo panel de Settings.
-- [ ] **Wallpaper**: lista de wallpapers desbloqueados (ya existe `wallpaper-store.ts` — conectar aquí en vez de tenerlo aparte).
-- [ ] **Audio**: mantener lo ya implementado (enable/disable, volúmenes master/effects/ambient).
-- [ ] **Accesibilidad**: exponer aquí los hooks ya existentes pero no conectados a UI (`useReducedMotion`, `useHighContrast`) como toggles reales — hoy existen pero Settings no los expone.
-- [ ] **"Reiniciar flujo de exploración"**: botón que limpia todo el progreso (misiones, logros, notificaciones, apps visitadas, ventanas) y vuelve a mostrar el boot — mover aquí el botón que hoy vive suelto en `desktop-shell.tsx`.
-- [ ] Verificar tamaño/posición de la ventana de Settings en el registry (Milestone 3).
+**Corrección sobre el plan original:** los logros ad hoc (`awardAchievement("Signal map opened")`, `"Projects discovered"`) usaban el **título en inglés como identidad** (clave de deduplicación en `explorerProfile.achievements: string[]`). Traducir el título habría roto esa deduplicación entre idiomas. Se promovieron a entradas reales de `achievementDefinitions` con `id` estable (`signal-map-opened`, `projects-discovered`, condición `() => false` ya que se otorgan manualmente) y `awardAchievement()` ahora recibe un `id`, no un título — la identidad persistida es estable sin importar el idioma activo.
 
-**Criterio de cierre:** Settings es un feature autocontenido, sin lógica de audio/wallpaper/reset dispersa en `desktop-shell.tsx` o en otros componentes.
+**División del trabajo:** infraestructura, núcleo de misiones/logros/store, chrome (shell/dock/iconos/mapa/boot/welcome/HUD), terminal, ajustes, archivos ocultos, wallpapers y ventanas hechos directamente; los módulos de contenido más largos (currículum, habilidades, línea de tiempo, discografía, equipo, reproductor, música, estudio, code-studio, laboratorio de IA) se delegaron en 3 agentes en paralelo siguiendo `projects-module.tsx` como referencia, para evitar conflictos se les pidió preferir objetos `Bilingual` locales o el patrón `const es = lang === "es"` en vez de tocar el `ui.ts` compartido salvo que la clave fuera genuinamente reutilizable.
+
+**Criterio de cierre:** verificado — `tsc --noEmit` limpio, `pnpm lint` sin regresiones (11 problemas, todos preexistentes en archivos no tocados: `desktop-icons.tsx`, `audio-context.tsx`, `audio-player-module.tsx`, `music-visualizer.tsx`, `terminal-module.tsx`, `window-context.tsx`, `uuid.ts`), `pnpm build` limpio, y smoke test con `pnpm dev`: SSR devuelve `<html lang="es">` con todo el contenido en español por defecto, sin errores de hidratación, y el botón rápido "ES" se renderiza correctamente en el servidor.
 
 ---
 
-## Milestone 8 — Cierre narrativo, pulido y QA final
+## Milestone 7 — Settings completo ✅
 
-- [ ] **Modal "señal reconocida"** (equivalente a `Recognized.tsx`): se muestra al completar toda la cadena de misiones, resumen final (conteo de misiones/logros), botón para volver al workspace.
-- [ ] **(Opcional, valorar con el usuario)** Spotlight / buscador Cmd+K: overlay de búsqueda rápida sobre apps y proyectos, atajo `/` y `Cmd/Ctrl+K`.
-- [ ] Actualizar `blueprint/05-DESIGN-SYSTEM.md` para reflejar: tipografía real (Outfit + IBM Plex Mono), tokens nuevos (surface-2/3, signal, muted/subtle), y la decisión consciente de mantener tema claro/oscuro (documentar el porqué de la divergencia respecto al blueprint original "solo oscuro").
-- [ ] Actualizar `blueprint/04-MODULES.md` / `06-GAMEPLAY.md` si los umbrales de desbloqueo cambian al unificar con la cadena de misiones tipo demo.
-- [ ] QA manual completo del flujo: boot → explorar cada módulo → completar cada misión → abrir mapa de señal → completar cadena → modal final — en español y en inglés, en desktop y mobile.
-- [ ] Verificar `prefers-reduced-motion` y el toggle manual de "menos movimiento" en todas las animaciones nuevas (grain, stars, signal-pulse, boot-caret, toasts, window-in).
-- [ ] Revisar consistencia de nomenclatura de archivos de fase en `blueprint/agent/` (`PHASE-03.md`...`PHASE-11.md` vs `PHASE12.md`) y unificar el patrón.
+Reestructurado `src/features/settings/components/` en 6 secciones autocontenidas compuestas por un shell (`settings-module.tsx`), en vez de un único componente monolítico. No se creó `context/`/`store/` propio del feature porque Settings no posee estado propio — solo lee/escribe en los stores que ya existen (`lang-store`, `theme-store`, `wallpaper-store`, `audio-context`, `ferro-core-store`, y el nuevo `accessibility-store`), consistente con "no diseñar para necesidades hipotéticas".
 
-**Criterio de cierre:** experiencia completa jugable de punta a punta, en paridad visual con el demo, en español por defecto, sin los bugs identificados en la auditoría inicial.
+- [x] **Idioma** (`language-section.tsx`): dos botones (Español/English) con variante activa — movido tal cual desde el M6, sin cambios de comportamiento.
+- [x] **Tema** (`theme-section.tsx`): envuelve el `ThemeToggle` ya existente en un panel con label/descripción del modo activo, sin tocar `theme-store.ts` ni `use-theme.ts`.
+- [x] **Wallpaper** (`wallpaper-section.tsx`): conectado directo a `wallpaper-store.ts` (ya existía, solo se movió de archivo).
+- [x] **Audio** (`audio-section.tsx`): enable/disable + volúmenes master/effects/ambient + previews — movido tal cual.
+- [x] **Accesibilidad** (`accessibility-section.tsx`) — **gap real resuelto, no solo movido**: `useReducedMotion()`/`useHighContrast()` (`src/hooks/`) leían *únicamente* `matchMedia` del SO, sin ningún override posible; no había nada que "conectar" a UI. Se creó `src/store/accessibility-store.ts` (patrón `skipHydration: true` + rehydrate manual en `AccessibilityProvider`, igual que `lang-store`/`ferro-core-store`, para evitar el mismatch de hidratación ya corregido dos veces antes en este proyecto) con preferencia de tres estados (`system`/`on`/`off`) para reduced-motion y high-contrast. Los dos hooks ahora superponen ese override sobre la detección del SO **sin cambiar su firma ni ningún call-site** de los ~20 componentes que ya los usan — la superficie pública es idéntica, solo cambió la implementación interna.
+- [x] **"Reiniciar flujo de exploración"** (`reset-section.tsx`): movido desde `desktop-shell.tsx`. **Corrección de un bug real descubierto al mover el botón**: la implementación original (`resetFlow()` + `resetWindowState()` sin recarga) nunca hacía reaparecer el boot screen prometido — `resetFlow()` pone `initialized: false` en el store, pero nada volvía a invocar `initializeSession()` después del primer montaje, así que `initialized` quedaba en `false` para siempre y ni el boot ni la `WelcomeSequence` volvían a mostrarse. Se cambió a `resetFlow()` + `resetWindowState()` + `window.location.reload()`: ambos stores persistidos quedan limpios en `localStorage` antes de recargar, y la recarga entera reproduce exactamente el flujo de un visitante nuevo sin necesidad de sincronizar estado entre `page.tsx` y `desktop-shell.tsx`.
+- [x] Ventana de Settings redimensionada en el registry: `460×320` → `640×560` (posición `{260,100}`) para acomodar las 6 secciones sin depender solo del scroll interno.
+
+**Criterio de cierre:** Settings es un feature autocontenido — `desktop-shell.tsx` ya no contiene lógica de reset (verificado: solo conserva el toggle de idioma rápido, que es intencionalmente un acceso duplicado, no lógica de settings). Verificado con `tsc --noEmit` limpio, `pnpm lint` sin regresiones (11 problemas, todos preexistentes, igual que en M6), `pnpm build` limpio, y smoke test con `pnpm dev` sin errores de hidratación.
+
+---
+
+## Milestone 8 — Cierre narrativo, pulido y QA final ✅
+
+- [x] **Modal "señal reconocida"** — `src/features/ferro-core/components/recognized-modal.tsx` (nuevo), overlay con el mismo patrón que `SignalMap`/`WelcomeSequence` (`createPopoverMotion`), resumen final (misiones, logros, módulos descubiertos, tiempo explorado) y dos botones (volver al workspace / ver mapa de señal). Se dispara al completar la misión `full-exploration` — se reemplazó el `set({ mapOpen: true })` de ese trigger (Milestone 5) por `set({ recognizedOpen: true })`, un estado nuevo (`recognizedOpen`/`setRecognizedOpen`) agregado a `ferro-core-store.ts`, `types.ts` y `ferro-core-context.tsx` con el mismo patrón que `mapOpen`, incluido el reset en `resetFlow()`. **Decisión documentada:** no se orquesta el cierre de ventanas/audio/wallpaper desde el store de misiones (lo que pedía la visión original en `06-GAMEPLAY.md`) porque eso cruzaría hacia territorio que el window system y el audio engine ya poseen — el overlay logra el mismo remate narrativo sin tocar esos subsistemas.
+- [x] **Spotlight/Cmd+K: descartado.** Preguntado explícitamente al usuario — decidió no incluirlo en este milestone.
+- [x] **`blueprint/05-DESIGN-SYSTEM.md` actualizado**: tipografía real (Outfit + IBM Plex Mono, con nota de implementación), tokens nuevos documentados (Surface 2/3, Signal, Muted/Subtle, Border/Border Strong), y sección nueva "Theme Modes" explicando por qué FERRO.OS soporta claro+oscuro pese a que el documento original nunca mencionó un modo claro.
+- [x] **`blueprint/06-GAMEPLAY.md` actualizado**: la sección "Unlock System" (umbrales de % independientes) se reemplazó por la cadena real de misiones (`missionDefinitions`) con sus `unlocksModule`; "Secret Commands" se corrigió a la lista real de `command-engine.ts` (varios comandos del documento original — `whoami`, `unlock ai`, `future` — nunca existieron); "Final Experience" ahora documenta el `RecognizedModal` como implementación real y su alcance reducido frente a la visión original. `blueprint/04-MODULES.md` recibió una nota de implementación aclarando que el desbloqueo real es la cadena de misiones (no los porcentajes por módulo listados) y que "Secret Vault"/"Visualizer" nunca se construyeron como ventanas propias (cumplidos por el sistema de archivos ocultos y por `music-visualizer.tsx` respectivamente).
+- [x] **QA manual — con una limitación honesta:** este entorno no tiene navegador interactivo disponible, así que la "QA manual" fue: (1) trazado de código de cada ruta del flujo (boot → misiones → mapa → modal final → terminal → hidden files) verificando que los triggers y condiciones encajan; (2) `tsc --noEmit`, `pnpm lint` y `pnpm build` limpios en cada paso; (3) smoke tests repetidos con `pnpm dev` + `curl`, revisando el HTML servido y el log del dev server en busca de errores de hidratación — confirmado limpio en español (`lang="es"` + contenido en español) en cada milestone. No se realizó una sesión de clicks real en un navegador ni en inglés ni en mobile — si querés, puedo guiarte por una pasada manual real o delegarla a un agente con navegador si está disponible.
+- [x] **Auditoría de `prefers-reduced-motion` — gaps reales encontrados y corregidos:**
+  - `useReducedMotion()`/`useHighContrast()` ahora combinan la preferencia del SO con el override manual agregado en el Milestone 7 (antes solo miraban `matchMedia`).
+  - Tres badges "recién desbloqueado" (dock ×2, desktop-icons) no respetaban ninguna señal de reduced-motion — corregidos con clase condicional.
+  - **Revertido tras feedback del usuario:** se había gateado también el cursor parpadeante y los glows del boot screen (y separado `skipBoot` de reduced-motion en `page.tsx`), pero el usuario pidió explícitamente conservar el efecto de tipeo y el cursor parpadeante siempre activos — "le da un toque más único". Se mantiene el fix de `skipBoot` (visitante que regresa ya no se mezcla con reduced-motion), pero el boot screen vuelve a animar el cursor/glows sin condición; la red de seguridad para accesibilidad real sigue siendo el bloque global `@media (prefers-reduced-motion: reduce)` de `globals.css`, que ya neutraliza estas animaciones para usuarios con esa preferencia del sistema operativo sin necesitar lógica condicional en el componente.
+  - `.signal-dot` (CSS `signal-pulse`) en `signal-map.tsx` y el nuevo `recognized-modal.tsx` se aplicaba sin condición — corregido.
+  - `.grain`, `.boot-caret`, `.toast-in`, `.window-in`: código CSS muerto desde el Milestone 1 (nunca referenciado por ningún componente — el boot screen usa `animate-pulse` de Tailwind, y notificaciones/ventanas usan `createPopoverMotion`/framer-motion). Eliminado de `globals.css` en vez de forzar su uso.
+- [x] **Nomenclatura de `blueprint/agent/` unificada**: `PHASE12.md` → `PHASE-12.md` (con `git mv`, preservando historial), ahora consistente con `PHASE-03.md`...`PHASE-11.md`. Verificado que ningún otro documento lo referenciaba por el nombre viejo.
+
+**Criterio de cierre:** experiencia jugable de punta a punta, en español por defecto, sin los bugs identificados en la auditoría inicial de este proyecto — cumplido y verificado con las herramientas disponibles en este entorno (tipos, lint, build, smoke test de hidratación); la verificación visual/interactiva real queda pendiente de una pasada del usuario en el navegador.
 
 ---
 

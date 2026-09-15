@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
+import { useLang } from "@/hooks/use-lang";
 
 interface MusicVisualizerProps {
   isPlaying: boolean;
@@ -14,6 +15,8 @@ function buildInitialLevels(count: number) {
 
 export function MusicVisualizer({ isPlaying }: MusicVisualizerProps) {
   const prefersReducedMotion = useReducedMotion();
+  const lang = useLang();
+  const es = lang === "es";
   const [levels, setLevels] = useState<number[]>(() => buildInitialLevels(28));
 
   useEffect(() => {
@@ -50,11 +53,13 @@ export function MusicVisualizer({ isPlaying }: MusicVisualizerProps) {
     <div className="rounded-[22px] border border-white/10 bg-black/20 p-4">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-[10px] uppercase tracking-[0.28em] text-muted">Visualizer</p>
-          <p className="mt-1 text-sm text-secondary">Bars, waveform and spectrum in motion.</p>
+          <p className="text-[10px] uppercase tracking-[0.28em] text-muted">{es ? "Visualizador" : "Visualizer"}</p>
+          <p className="mt-1 text-sm text-secondary">
+            {es ? "Barras, forma de onda y espectro en movimiento." : "Bars, waveform and spectrum in motion."}
+          </p>
         </div>
         <div className="rounded-full border border-primary/20 bg-primary/10 px-2.5 py-1 text-[10px] uppercase tracking-[0.24em] text-primary">
-          {isPlaying ? "Live" : "Standby"}
+          {es ? (isPlaying ? "En vivo" : "En espera") : isPlaying ? "Live" : "Standby"}
         </div>
       </div>
 

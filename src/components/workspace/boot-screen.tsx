@@ -1,20 +1,26 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
-
-const biosLines = [
-  "FERRO SYSTEMS INC.",
-  "",
-  "Initializing kernel...",
-  "Loading core modules...",
-  "Mounting workspace...",
-  "Starting FERRO CORE...",
-  "",
-  "System ready.",
-];
+import { useLang, useUi } from "@/hooks/use-lang";
+import { ui } from "@/lib/i18n/ui";
 
 export function BootScreen({ onComplete }: { onComplete: () => void }) {
+  const lang = useLang();
+  const tUi = useUi();
+  const biosLines = useMemo(
+    () => [
+      ui.bootLine1[lang],
+      "",
+      ui.bootLine2[lang],
+      ui.bootLine3[lang],
+      ui.bootLine4[lang],
+      ui.bootLine5[lang],
+      "",
+      ui.bootLine6[lang],
+    ],
+    [lang]
+  );
   const [phase, setPhase] = useState<"bios" | "logo" | "done">("bios");
   const [currentLine, setCurrentLine] = useState(0);
   const [currentChar, setCurrentChar] = useState(0);
@@ -40,7 +46,7 @@ export function BootScreen({ onComplete }: { onComplete: () => void }) {
     };
 
     setTimeout(typeNextChar, 500);
-  }, [phase, currentLine, currentChar]);
+  }, [phase, currentLine, currentChar, biosLines]);
 
   useEffect(() => {
     if (phase !== "logo") return;
@@ -73,7 +79,7 @@ export function BootScreen({ onComplete }: { onComplete: () => void }) {
       transition={{ duration: 0.5 }}
       className="fixed inset-0 z-80 flex items-center justify-center bg-black px-4 py-8"
       role="status"
-      aria-label="Booting FERRO.OS"
+      aria-label={tUi("bootingAria")}
     >
       {phase === "bios" && (
         <div className="font-mono text-sm text-primary/90 whitespace-pre max-w-xl">

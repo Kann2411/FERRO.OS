@@ -22,6 +22,7 @@ import { clamp, getViewportSafePosition } from "@/features/window-system/utils";
 import { createTransition } from "@/features/animation-engine";
 import { SkeletonCard, SkeletonList } from "@/components/ui/skeleton";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
+import { useLang } from "@/hooks/use-lang";
 
 const MIN_WINDOW_WIDTH = 320;
 const MIN_WINDOW_HEIGHT = 240;
@@ -43,6 +44,8 @@ export function WindowShell({ window, onClose, onFocus, onBringToFront }: Window
   const [isContentReady, setIsContentReady] = useState(false);
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prefersReducedMotion = useReducedMotion();
+  const lang = useLang();
+  const es = lang === "es";
   const motionTransition = createTransition("window", { reducedMotion: prefersReducedMotion });
 
   if (position.x !== window.x || position.y !== window.y) {
@@ -162,7 +165,7 @@ export function WindowShell({ window, onClose, onFocus, onBringToFront }: Window
       className={`pointer-events-auto absolute z-10 overflow-hidden rounded-[18px] border bg-[#141414]/90 backdrop-blur-xl ${window.focused ? "border-primary/40" : "border-white/10"}`}
       role="dialog"
       aria-modal="true"
-      aria-label={`${window.title} window`}
+      aria-label={es ? `Ventana ${window.title}` : `${window.title} window`}
       style={{
         left: position.x,
         top: position.y,
@@ -180,7 +183,7 @@ export function WindowShell({ window, onClose, onFocus, onBringToFront }: Window
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         role="toolbar"
-        aria-label="Window controls"
+        aria-label={es ? "Controles de ventana" : "Window controls"}
       >
         <div className="flex items-center gap-2">
           <span className="text-sm text-primary" aria-hidden="true">{window.icon}</span>
@@ -189,7 +192,7 @@ export function WindowShell({ window, onClose, onFocus, onBringToFront }: Window
         <div className="flex items-center gap-1.5">
           <button
             type="button"
-            aria-label={`Minimize ${window.title} window`}
+            aria-label={es ? `Minimizar ventana ${window.title}` : `Minimize ${window.title} window`}
             onPointerDown={(event) => {
               event.stopPropagation();
               event.preventDefault();
@@ -205,7 +208,15 @@ export function WindowShell({ window, onClose, onFocus, onBringToFront }: Window
           </button>
           <button
             type="button"
-            aria-label={window.isMaximized ? `Restore ${window.title} window` : `Maximize ${window.title} window`}
+            aria-label={
+              es
+                ? window.isMaximized
+                  ? `Restaurar ventana ${window.title}`
+                  : `Maximizar ventana ${window.title}`
+                : window.isMaximized
+                  ? `Restore ${window.title} window`
+                  : `Maximize ${window.title} window`
+            }
             onPointerDown={(event) => {
               event.stopPropagation();
               event.preventDefault();
@@ -221,7 +232,7 @@ export function WindowShell({ window, onClose, onFocus, onBringToFront }: Window
           </button>
           <button
             type="button"
-            aria-label={`Close ${window.title} window`}
+            aria-label={es ? `Cerrar ventana ${window.title}` : `Close ${window.title} window`}
             onPointerDown={(event) => {
               event.stopPropagation();
               event.preventDefault();
@@ -238,7 +249,7 @@ export function WindowShell({ window, onClose, onFocus, onBringToFront }: Window
         </div>
       </div>
 
-      <div className="h-[calc(100%-44px)] bg-[#0d0d0d]/70 p-4 text-sm text-secondary" role="region" aria-label={`${window.title} content`}>
+      <div className="h-[calc(100%-44px)] bg-[#0d0d0d]/70 p-4 text-sm text-secondary" role="region" aria-label={es ? `Contenido de ${window.title}` : `${window.title} content`}>
         {!isContentReady ? (
           <motion.div
             initial={{ opacity: 0.5 }}
@@ -288,7 +299,11 @@ export function WindowShell({ window, onClose, onFocus, onBringToFront }: Window
             ) : window.id === "code-studio" ? (
               <CodeStudioModule />
             ) : (
-              <p className="text-sm leading-7">{window.title} module placeholder. The window engine is now ready for future modules.</p>
+              <p className="text-sm leading-7">
+                {es
+                  ? `Marcador de posición del módulo ${window.title}. El motor de ventanas ya está listo para futuros módulos.`
+                  : `${window.title} module placeholder. The window engine is now ready for future modules.`}
+              </p>
             )}
           </motion.div>
         )}
@@ -301,7 +316,7 @@ export function WindowShell({ window, onClose, onFocus, onBringToFront }: Window
           onPointerUp={handleResizePointerUp}
           className="absolute bottom-0 right-0 z-10 h-4 w-4 cursor-nwse-resize touch-none rounded-tl-md transition hover:bg-white/10"
           role="separator"
-          aria-label={`Resize ${window.title} window`}
+          aria-label={es ? `Redimensionar ventana ${window.title}` : `Resize ${window.title} window`}
           aria-orientation="horizontal"
         >
           <div className="absolute bottom-1 right-1 h-2 w-2 border-b-2 border-r-2 border-white/25" aria-hidden="true" />

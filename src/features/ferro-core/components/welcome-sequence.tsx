@@ -2,9 +2,11 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useFerroCore } from "@/features/ferro-core/context/ferro-core-context";
+import { useUi } from "@/hooks/use-lang";
 
 export function WelcomeSequence() {
   const { explorerProfile, initialized, coreName, logo, completeWelcome, recordVisit, advanceProgress } = useFerroCore();
+  const tUi = useUi();
 
   if (!initialized || explorerProfile.welcomeCompleted) {
     return null;
@@ -25,7 +27,7 @@ export function WelcomeSequence() {
         className="fixed inset-0 z-60 flex items-center justify-center bg-[radial-gradient(circle_at_top,rgba(217,4,41,0.22),transparent_54%),rgba(2,2,2,0.92)] px-4 py-8 backdrop-blur-xl"
         role="dialog"
         aria-modal="true"
-        aria-label="Welcome to FERRO.OS"
+        aria-label={tUi("welcomeDialogLabel")}
       >
         <motion.div
           initial={{ y: 24, opacity: 0, scale: 0.97 }}
@@ -42,20 +44,19 @@ export function WelcomeSequence() {
                 {logo}
               </div>
               <div>
-                <p className="text-xs uppercase tracking-[0.38em] text-muted">Welcome</p>
-                <h1 className="mt-1 text-2xl font-semibold text-white sm:text-3xl">{coreName} awakened</h1>
+                <p className="text-xs uppercase tracking-[0.38em] text-muted">{tUi("welcomeKicker")}</p>
+                <h1 className="mt-1 text-2xl font-semibold text-white sm:text-3xl">{coreName} {tUi("welcomeAwakened")}</h1>
               </div>
             </div>
 
             <div className="mt-8 grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
               <div>
-                <p className="text-sm uppercase tracking-[0.35em] text-primary">Cinematic introduction</p>
+                <p className="text-sm uppercase tracking-[0.35em] text-primary">{tUi("cinematicIntro")}</p>
                 <h2 className="mt-3 text-4xl font-semibold text-white sm:text-5xl">
-                  The system is ready to remember you.
+                  {tUi("welcomeHeadline")}
                 </h2>
                 <p className="mt-5 max-w-2xl text-base leading-8 text-secondary">
-                  FERRO CORE opens as the quiet intelligence behind the experience. It observes your curiosity,
-                  learns from every interaction, and begins shaping a unique path through the operating system.
+                  {tUi("welcomeBody")}
                 </p>
 
                 <div className="mt-8 flex flex-wrap gap-3">
@@ -63,29 +64,29 @@ export function WelcomeSequence() {
                     type="button"
                     onClick={handleBegin}
                     className="rounded-full border border-primary/40 bg-primary px-5 py-3 text-sm font-medium text-white transition hover:bg-primary/90"
-                    aria-label="Begin exploring FERRO.OS"
+                    aria-label={tUi("beginExploringAria")}
                   >
-                    Begin exploration
+                    {tUi("beginExploration")}
                   </button>
-                  <div className="rounded-full border border-white/10 bg-white/5 px-4 py-3 text-sm text-secondary" aria-label="This is your first visit, local memory is enabled">
-                    First visit • local memory enabled
+                  <div className="rounded-full border border-white/10 bg-white/5 px-4 py-3 text-sm text-secondary" aria-label={tUi("firstVisitMemory")}>
+                    {tUi("firstVisitMemory")}
                   </div>
                 </div>
               </div>
 
-              <div className="rounded-[28px] border border-white/10 bg-[#0b0b0b]/80 p-6" aria-label="System state information">
-                <p className="text-xs uppercase tracking-[0.32em] text-muted">System state</p>
+              <div className="rounded-[28px] border border-white/10 bg-[#0b0b0b]/80 p-6" aria-label={tUi("systemStateInfoAria")}>
+                <p className="text-xs uppercase tracking-[0.32em] text-muted">{tUi("systemState")}</p>
                 <div className="mt-5 space-y-4 text-sm text-secondary">
                   <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
-                    <span>Explorer</span>
+                    <span>{tUi("explorer")}</span>
                     <span className="text-white">{explorerProfile.name}</span>
                   </div>
                   <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
-                    <span>Progress</span>
+                    <span>{tUi("progress")}</span>
                     <span className="text-white">{explorerProfile.progress}%</span>
                   </div>
                   <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
-                    <span>Modules</span>
+                    <span>{tUi("modules")}</span>
                     <span className="text-white">{explorerProfile.modulesDiscovered}</span>
                   </div>
                 </div>
