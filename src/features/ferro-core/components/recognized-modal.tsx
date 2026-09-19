@@ -1,42 +1,53 @@
 "use client";
 
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { useFerroCore } from "@/features/ferro-core/context/ferro-core-context";
 import { createPopoverMotion } from "@/features/animation-engine";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { useUi } from "@/hooks/use-lang";
-import { cn } from "@/lib/cn";
+import { Button } from "@/components/ui/button";
 
-function formatExplorationTime(totalSeconds: number) {
-  const hours = Math.floor(totalSeconds / 3600);
-  const minutes = Math.floor((totalSeconds % 3600) / 60);
-
-  if (hours > 0) {
-    return `${hours}h ${minutes}m`;
-  }
-
-  return `${minutes}m`;
+function Emblem() {
+  return (
+    <div
+      className="mx-auto flex size-24 items-center justify-center rounded-3xl border border-white/10 bg-[radial-gradient(circle_at_30%_20%,#3d3733,#141210_72%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_16px_40px_rgba(0,0,0,0.55)]"
+      aria-hidden="true"
+    >
+      <span className="bg-linear-to-b from-[#dcb994] via-[#9a5f3b] to-[#4b2a1a] bg-clip-text text-6xl leading-none font-black text-transparent drop-shadow-[0_2px_3px_rgba(0,0,0,0.7)]">
+        F
+      </span>
+    </div>
+  );
 }
 
 export function RecognizedModal() {
-  const { recognizedOpen, setRecognizedOpen, setMapOpen, missions, completedMissions, explorerProfile } = useFerroCore();
+  const { recognizedOpen, setRecognizedOpen, missions, completedMissions, explorerProfile } = useFerroCore();
   const prefersReducedMotion = useReducedMotion();
   const tUi = useUi();
+
+  useEffect(() => {
+    if (!recognizedOpen) {
+      return;
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setRecognizedOpen(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [recognizedOpen, setRecognizedOpen]);
 
   if (!recognizedOpen) {
     return null;
   }
 
-  const missionCount = completedMissions.length;
-  const totalMissions = missions.length;
-  const achievementsCount = explorerProfile.achievements.length;
-  const timeExplored = formatExplorationTime(explorerProfile.explorationSeconds);
-
   const stats = [
-    { label: tUi("recognizedMissionsLabel"), value: `${missionCount}/${totalMissions}` },
-    { label: tUi("recognizedAchievementsLabel"), value: `${achievementsCount}` },
-    { label: tUi("recognizedModulesLabel"), value: `${explorerProfile.modulesDiscovered}` },
-    { label: tUi("recognizedTimeLabel"), value: timeExplored },
+    { label: tUi("recognizedMissionsLabel"), value: `${completedMissions.length}/${missions.length}` },
+    { label: tUi("recognizedAchievementsLabel"), value: `${explorerProfile.achievements.length}` },
   ];
 
   return (
@@ -48,48 +59,26 @@ export function RecognizedModal() {
     >
       <motion.div
         {...createPopoverMotion("window", { reducedMotion: prefersReducedMotion })}
-        className="relative w-full max-w-lg overflow-hidden rounded-4xl border border-primary/30 bg-[#0b0b0f]/95 p-8 text-center shadow-[0_40px_140px_rgba(217,4,41,0.28)] backdrop-blur-xl"
+        className="w-full max-w-md rounded-3xl border border-border bg-surface/95 p-6 text-center shadow-window sm:p-8"
       >
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(217,4,41,0.2),transparent_55%)]" />
+        <Emblem />
 
-        <div className="relative">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-primary/40 bg-primary/10 text-3xl text-primary">
-            <span className={cn(!prefersReducedMotion && "signal-dot")} aria-hidden="true">◎</span>
-          </div>
+        <p className="mt-5 font-mono text-xs uppercase tracking-[0.3em] text-muted">{tUi("recognizedKicker")}</p>
+        <h2 className="mt-2 text-3xl font-semibold tracking-tight text-white">{tUi("recognizedHeadline")}</h2>
+        <p className="mt-3 text-sm leading-6 text-secondary">{tUi("recognizedBody")}</p>
 
-          <p className="mt-6 text-xs uppercase tracking-[0.38em] text-primary">{tUi("recognizedKicker")}</p>
-          <h2 className="mt-2 text-3xl font-semibold text-white">{tUi("recognizedHeadline")}</h2>
-          <p className="mx-auto mt-4 max-w-sm text-sm leading-7 text-secondary">{tUi("recognizedBody")}</p>
-
-          <div className="mt-8 grid grid-cols-2 gap-3">
-            {stats.map((stat) => (
-              <div key={stat.label} className="rounded-2xl border border-white/10 bg-white/5 p-3 text-left">
-                <p className="text-[10px] uppercase tracking-[0.24em] text-muted">{stat.label}</p>
-                <p className="mt-2 text-lg font-semibold text-white">{stat.value}</p>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <button
-              type="button"
-              onClick={() => setRecognizedOpen(false)}
-              className="rounded-full border border-primary/40 bg-primary px-5 py-3 text-sm font-medium text-white transition hover:bg-primary/90"
-            >
-              {tUi("returnToWorkspace")}
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setRecognizedOpen(false);
-                setMapOpen(true);
-              }}
-              className="rounded-full border border-white/10 bg-white/5 px-5 py-3 text-sm font-medium text-secondary transition hover:border-primary/40 hover:text-white"
-            >
-              {tUi("viewSignalMapAgain")}
-            </button>
-          </div>
+        <div className="mt-5 grid grid-cols-2 gap-2">
+          {stats.map((stat) => (
+            <div key={stat.label} className="rounded-2xl border border-border bg-surface-2 px-3 py-3">
+              <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted">{stat.label}</p>
+              <p className="mt-1 font-mono text-lg text-white tabular-nums">{stat.value}</p>
+            </div>
+          ))}
         </div>
+
+        <Button size="lg" className="mt-6 w-full rounded-2xl" onClick={() => setRecognizedOpen(false)} autoFocus>
+          {tUi("recognizedContinue")}
+        </Button>
       </motion.div>
     </div>
   );

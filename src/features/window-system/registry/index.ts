@@ -81,6 +81,14 @@ export const windowRegistry: Record<string, WindowDefinition> = {
     initialHeight: 320,
     defaultPosition: { x: 300, y: 200 },
   },
+  signal: {
+    id: "signal",
+    title: "Signal",
+    icon: "✉︎",
+    initialWidth: 480,
+    initialHeight: 470,
+    defaultPosition: { x: 380, y: 140 },
+  },
   explorer: {
     id: "explorer",
     title: "Explorer",

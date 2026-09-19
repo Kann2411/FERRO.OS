@@ -15,22 +15,29 @@ interface SignalNode {
 }
 
 /**
- * Node layout for FERRO.OS's real mission chain (see mission-system.ts) — not copied from
- * the demo, whose coordinates correspond to a different set of missions entirely.
+ * Node layout for FERRO.OS's mission chain (see mission-system.ts), in walking order.
+ * Coordinates are percentages of the map area; the zigzag keeps neighbouring labels apart.
  */
 const SIGNAL_NODES: SignalNode[] = [
-  { id: "explore-desktop", x: 8, y: 78 },
-  { id: "open-first-module", x: 18, y: 58 },
-  { id: "discover-projects", x: 30, y: 70 },
-  { id: "visit-studio", x: 40, y: 44 },
-  { id: "discover-skills", x: 50, y: 60 },
-  { id: "read-resume", x: 58, y: 30 },
-  { id: "explore-timeline", x: 68, y: 48 },
-  { id: "listen-discography", x: 76, y: 24 },
-  { id: "visit-ai-lab", x: 85, y: 42 },
-  { id: "master-explorer", x: 92, y: 20 },
-  { id: "full-exploration", x: 50, y: 92 },
+  { id: "boot-system", x: 12, y: 76 },
+  { id: "explore-desktop", x: 23, y: 50 },
+  { id: "open-first-module", x: 36, y: 68 },
+  { id: "discover-projects", x: 40, y: 32 },
+  { id: "inspect-project", x: 52, y: 50 },
+  { id: "read-resume", x: 58, y: 20 },
+  { id: "explore-timeline", x: 67, y: 40 },
+  { id: "discover-skills", x: 77, y: 22 },
+  { id: "talk-to-system", x: 84, y: 62 },
+  { id: "leave-signal", x: 90, y: 34 },
+  { id: "recognize-signal", x: 50, y: 86 },
 ];
+
+/** A node sitting above both neighbours would have the path run through a label placed below it. */
+function isLabelAbove(index: number) {
+  const node = SIGNAL_NODES[index];
+  const neighbours = [SIGNAL_NODES[index - 1], SIGNAL_NODES[index + 1]].filter(Boolean);
+  return neighbours.every((neighbour) => neighbour.y > node.y);
+}
 
 export function SignalMap() {
   const { mapOpen, setMapOpen, missions, completedMissions, activeMission, awardAchievement } = useFerroCore();
@@ -89,7 +96,7 @@ export function SignalMap() {
           </button>
         </div>
 
-        <div className="relative mt-8 aspect-video w-full">
+        <div className="relative mt-6 aspect-video w-full overflow-hidden rounded-2xl bg-background">
           <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 h-full w-full" aria-hidden="true">
             <path d={pathD} fill="none" className="text-border-strong" stroke="currentColor" strokeWidth="0.4" />
             {SIGNAL_NODES.slice(0, -1).map((node, index) => {
@@ -110,20 +117,22 @@ export function SignalMap() {
             })}
           </svg>
 
-          {SIGNAL_NODES.map((node) => {
+          {SIGNAL_NODES.map((node, index) => {
             const done = isDone(node.id);
             const isActive = !done && activeMission?.id === node.id;
             const mission = missions.find((item) => item.id === node.id);
+            const label = mission ? t(mission.title) : node.id;
 
             return (
               <div
                 key={node.id}
-                className="absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1.5"
+                className="absolute -translate-x-1/2 -translate-y-1/2"
                 style={{ left: `${node.x}%`, top: `${node.y}%` }}
+                title={label}
               >
                 <span
                   className={cn(
-                    "rounded-full",
+                    "block rounded-full",
                     done
                       ? "size-3 bg-signal"
                       : isActive
@@ -132,8 +141,14 @@ export function SignalMap() {
                   )}
                   aria-hidden="true"
                 />
-                <span className="hidden whitespace-nowrap font-mono text-[9px] uppercase tracking-[0.18em] text-muted sm:block">
-                  {mission ? t(mission.title) : node.id}
+                <span
+                  className={cn(
+                    "absolute left-1/2 hidden -translate-x-1/2 whitespace-nowrap font-mono text-xs md:block",
+                    isLabelAbove(index) ? "bottom-full mb-2" : "top-full mt-2",
+                    isActive ? "text-white" : "text-secondary"
+                  )}
+                >
+                  {label}
                 </span>
               </div>
             );

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import { WelcomeSequence } from "@/features/ferro-core";
 import { DesktopShell } from "@/modules/workspace";
@@ -8,7 +8,7 @@ import { BootScreen } from "@/components/workspace/boot-screen";
 import { useFerroCore } from "@/features/ferro-core/context/ferro-core-context";
 
 export default function Home() {
-  const { initialized, explorerProfile } = useFerroCore();
+  const { initialized, explorerProfile, completeMission } = useFerroCore();
   const [bootComplete, setBootComplete] = useState(false);
 
   // Assume a first-time visitor until the persisted profile has rehydrated (matches the
@@ -18,6 +18,15 @@ export default function Home() {
   // instead of animating when reduced motion is on.
   const skipBoot = initialized && explorerProfile.welcomeCompleted;
   const showBoot = !skipBoot && !bootComplete;
+
+  // The system counts as booted once the welcome card has been dismissed (returning visitors
+  // skip both), so the mission toast lands on the workspace rather than behind the overlay.
+  const booted = initialized && explorerProfile.welcomeCompleted;
+  useEffect(() => {
+    if (booted) {
+      completeMission("boot-system");
+    }
+  }, [booted, completeMission]);
 
   return (
     <>

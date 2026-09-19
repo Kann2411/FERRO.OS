@@ -4,6 +4,8 @@ export interface LauncherItem {
   windowId: string;
   accent: string;
   description: Bilingual;
+  /** Shown in the dock only, with no icon on the desktop grid. */
+  dockOnly?: boolean;
 }
 
 /**
@@ -32,6 +34,12 @@ export const launcherItems: LauncherItem[] = [
     windowId: "terminal",
     accent: "bg-primary/20 text-primary",
     description: { es: "Terminal interactiva para comandos del sistema", en: "Interactive terminal for system commands" },
+  },
+  {
+    windowId: "signal",
+    accent: "bg-primary/20 text-primary",
+    description: { es: "Deja un mensaje o copia el correo de contacto", en: "Leave a message or copy the contact email" },
+    dockOnly: true,
   },
   {
     windowId: "studio",

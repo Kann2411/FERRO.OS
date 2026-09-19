@@ -68,6 +68,13 @@ export const achievementDefinitions: AchievementDefinition[] = [
     condition: () => false,
   },
   {
+    id: "signal-recognized",
+    title: { es: "Señal reconocida", en: "Signal Recognized" },
+    description: { es: "Completa la cadena de señal.", en: "Complete the signal chain." },
+    icon: "◎",
+    condition: () => false,
+  },
+  {
     id: "projects-discovered",
     title: { es: "Proyectos descubiertos", en: "Projects Discovered" },
     description: { es: "Encuentra la señal de Proyectos.", en: "Discover the Projects signal." },

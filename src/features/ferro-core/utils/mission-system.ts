@@ -1,22 +1,52 @@
 import type { MissionDefinition } from "@/features/ferro-core/types";
 
+/** Sealed automatically once every other mission in the chain is complete. */
+export const RECOGNITION_MISSION_ID = "recognize-signal";
+
+/**
+ * Opening the window of a module completes its mission, no matter how it was opened
+ * (desktop icon, dock, terminal, shortcut) — see `useMissionTriggers`.
+ */
+export const windowMissions: Record<string, string> = {
+  projects: "discover-projects",
+  resume: "read-resume",
+  timeline: "explore-timeline",
+  skills: "discover-skills",
+};
+
+/**
+ * The signal chain, in the order it is walked. The signal map (signal-map.tsx) lays out
+ * one node per mission id, so adding or renaming a mission here means updating that too.
+ * Modules that are not part of the chain yet (studio, discography, ...) only appear as
+ * `unlocksModule` so their desktop icons keep surfacing.
+ */
 export const missionDefinitions: MissionDefinition[] = [
   {
+    id: "boot-system",
+    title: { es: "Arrancar el sistema", en: "Boot the system" },
+    description: {
+      es: "Completa la secuencia de arranque de FERRO.OS.",
+      en: "Finish the FERRO.OS boot sequence.",
+    },
+    reward: 3,
+    prerequisite: null,
+  },
+  {
     id: "explore-desktop",
-    title: { es: "Explora el escritorio", en: "Explore the desktop" },
+    title: { es: "Explorar el escritorio", en: "Explore the desktop" },
     description: {
       es: "Recorre la estación de trabajo y familiarízate con el entorno.",
       en: "Survey the workspace and understand the environment.",
     },
     reward: 5,
-    prerequisite: null,
+    prerequisite: "boot-system",
   },
   {
     id: "open-first-module",
-    title: { es: "Abre tu primer módulo", en: "Open your first module" },
+    title: { es: "Abrir el primer módulo", en: "Open your first module" },
     description: {
-      es: "Lanza un módulo desde el escritorio para comenzar el recorrido.",
-      en: "Launch a module from the desktop to begin the journey.",
+      es: "Lanza un módulo desde el escritorio o el dock para comenzar el recorrido.",
+      en: "Launch a module from the desktop or the dock to begin the journey.",
     },
     reward: 8,
     prerequisite: "explore-desktop",
@@ -24,99 +54,88 @@ export const missionDefinitions: MissionDefinition[] = [
   },
   {
     id: "discover-projects",
-    title: { es: "Descubre Proyectos", en: "Discover Projects" },
+    title: { es: "Abrir módulo de Proyectos", en: "Open the Projects module" },
     description: {
-      es: "Abre el módulo de Proyectos e inspecciona su contenido.",
-      en: "Open the Projects module and inspect its contents.",
+      es: "Abre el módulo de Proyectos y recorre el archivo.",
+      en: "Open the Projects module and browse the archive.",
     },
     reward: 7,
     prerequisite: "open-first-module",
     unlocksModule: "timeline",
   },
   {
-    id: "visit-studio",
-    title: { es: "Visita el Estudio", en: "Visit Studio" },
+    id: "inspect-project",
+    title: { es: "Inspeccionar un proyecto", en: "Inspect a project" },
     description: {
-      es: "Abre el módulo de Estudio e inspecciona su atmósfera.",
-      en: "Open the Studio module and inspect its atmosphere.",
+      es: "Abre la ficha de cualquier proyecto para ver su interior.",
+      en: "Open any project's file card to see inside it.",
     },
-    reward: 7,
+    reward: 8,
     prerequisite: "discover-projects",
     unlocksModule: "code-studio",
   },
   {
-    id: "discover-skills",
-    title: { es: "Descubre Habilidades", en: "Discover Skills" },
-    description: {
-      es: "Abre el módulo de Habilidades e inspecciona la capa de experiencia.",
-      en: "Open the Skills module and inspect the experience layer.",
-    },
-    reward: 6,
-    prerequisite: "visit-studio",
-    unlocksModule: "discography",
-  },
-  {
     id: "read-resume",
-    title: { es: "Lee el Currículum", en: "Read the Resume" },
+    title: { es: "Leer currículum", en: "Read the resume" },
     description: {
       es: "Abre el módulo de Currículum para conocer el camino del explorador.",
       en: "Open the Resume module to learn the explorer's path.",
     },
     reward: 6,
-    prerequisite: "discover-skills",
+    prerequisite: "inspect-project",
     unlocksModule: "equipment",
   },
   {
     id: "explore-timeline",
-    title: { es: "Explora la Línea de tiempo", en: "Explore Timeline" },
+    title: { es: "Ver la línea del tiempo", en: "View the timeline" },
     description: {
-      es: "Recorre el historial de versiones de la evolución del explorador.",
-      en: "Trace the version history of the explorer's evolution.",
+      es: "Abre la Línea de tiempo y recorre la evolución del explorador.",
+      en: "Open the Timeline and trace the explorer's evolution.",
     },
     reward: 5,
     prerequisite: "read-resume",
     unlocksModule: "audioPlayer",
   },
   {
-    id: "listen-discography",
-    title: { es: "Escucha la Discografía", en: "Listen to Discography" },
+    id: "discover-skills",
+    title: { es: "Calibrar skills", en: "Calibrate skills" },
     description: {
-      es: "Explora los lanzamientos musicales en el módulo de Discografía.",
-      en: "Browse the music releases in the Discography module.",
+      es: "Abre el módulo de Habilidades e inspecciona la capa de experiencia.",
+      en: "Open the Skills module and inspect the experience layer.",
     },
-    reward: 7,
+    reward: 6,
     prerequisite: "explore-timeline",
+    unlocksModule: "discography",
   },
   {
-    id: "visit-ai-lab",
-    title: { es: "Visita el Laboratorio de IA", en: "Visit AI Lab" },
+    id: "talk-to-system",
+    title: { es: "Hablarle al sistema", en: "Speak to the system" },
     description: {
-      es: "Accede al Laboratorio de IA oculto a través de la Terminal.",
-      en: "Access the hidden AI Lab through the Terminal.",
+      es: "Abre la Terminal y ejecuta un comando. Prueba con help.",
+      en: "Open the Terminal and run a command. Try help.",
+    },
+    reward: 8,
+    prerequisite: "discover-skills",
+  },
+  {
+    id: "leave-signal",
+    title: { es: "Dejar una señal", en: "Leave a signal" },
+    description: {
+      es: "Abre Señal desde el dock y envía un mensaje, o copia el correo.",
+      en: "Open Signal from the dock and send a message, or copy the address.",
     },
     reward: 10,
-    prerequisite: "listen-discography",
-    unlocksModule: "aiLab",
+    prerequisite: "talk-to-system",
   },
   {
-    id: "master-explorer",
-    title: { es: "Explorador Maestro", en: "Master Explorer" },
+    id: RECOGNITION_MISSION_ID,
+    title: { es: "Reconocer la señal", en: "Recognize the signal" },
     description: {
-      es: "Completa todas las misiones disponibles y alcanza el 75% de exploración.",
-      en: "Complete all available missions and reach 75% exploration.",
-    },
-    reward: 15,
-    prerequisite: "visit-ai-lab",
-  },
-  {
-    id: "full-exploration",
-    title: { es: "Exploración completa", en: "Full Exploration" },
-    description: {
-      es: "Desbloquea cada módulo y alcanza el 100% de exploración.",
-      en: "Unlock every module and reach 100% exploration.",
+      es: "Completa el resto de misiones para sellar la cadena.",
+      en: "Finish the remaining missions to seal the chain.",
     },
     reward: 20,
-    prerequisite: "master-explorer",
+    prerequisite: "leave-signal",
   },
 ];
 

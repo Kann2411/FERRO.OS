@@ -199,7 +199,7 @@ export function registerBuiltInCommands() {
         const opened = context.openWindow("aiLab");
 
         if (opened) {
-          context.completeMission("visit-ai-lab");
+          context.unlockModule("aiLab");
           return es
             ? "Desbloqueando el Laboratorio de IA... El laboratorio oculto se está abriendo."
             : "AI Lab unlocking... The hidden laboratory is now opening.";

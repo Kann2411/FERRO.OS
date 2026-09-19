@@ -10,7 +10,7 @@ import type {
   ExplorerProfile,
   MissionDefinition,
 } from "@/features/ferro-core/types";
-import { missionDefinitions } from "@/features/ferro-core/utils/mission-system";
+import { missionDefinitions, RECOGNITION_MISSION_ID } from "@/features/ferro-core/utils/mission-system";
 import { evaluateAchievements, getAchievementDefinition } from "@/features/ferro-core/utils/achievement-system";
 import { getDiscoveryProgressReward, updateProgress } from "@/features/ferro-core/utils/explorer-progress";
 import { getHiddenFileDefinition } from "@/features/hidden-files/utils/hidden-files";
@@ -31,7 +31,7 @@ const defaultProfile: ExplorerProfile = {
   progress: 0,
   modulesDiscovered: 0,
   discoveredModules: [],
-  unlockedModules: ["projects", "resume", "skills", "terminal"],
+  unlockedModules: ["projects", "resume", "skills", "terminal", "signal"],
   discoveredHiddenFiles: [],
   achievements: [],
   firstVisit: null,
@@ -42,6 +42,29 @@ const defaultProfile: ExplorerProfile = {
   explorationSeconds: 0,
   lastSavedAt: null,
 };
+
+function isChainReadyToSeal(missionProgress: Record<string, boolean>) {
+  return missionDefinitions
+    .filter((mission) => mission.id !== RECOGNITION_MISSION_ID)
+    .every((mission) => missionProgress[mission.id]);
+}
+
+/**
+ * Brings a saved profile in line with the current mission chain: drops progress for missions
+ * that no longer exist (they would inflate the completed count) and keeps the always-available
+ * modules unlocked (profiles saved before a module existed don't list it).
+ */
+function normalizeProfile(profile: ExplorerProfile): ExplorerProfile {
+  const knownMissionIds = new Set(missionDefinitions.map((mission) => mission.id));
+
+  return {
+    ...profile,
+    missionProgress: Object.fromEntries(
+      Object.entries(profile.missionProgress ?? {}).filter(([id]) => knownMissionIds.has(id))
+    ),
+    unlockedModules: Array.from(new Set([...defaultProfile.unlockedModules, ...(profile.unlockedModules ?? [])])),
+  };
+}
 
 function readLegacyProfile(): Partial<ExplorerProfile> | null {
   if (typeof window === "undefined") {
@@ -423,6 +446,11 @@ export const useFerroCoreStore = create<FerroCoreState>()(
             return;
           }
 
+          // The last mission can't be completed directly — it seals itself once every other one is done.
+          if (missionId === RECOGNITION_MISSION_ID && !isChainReadyToSeal(current.missionProgress)) {
+            return;
+          }
+
           set((state) => ({
             history: addEntry(state.history, {
               id: generateUUID(),
@@ -481,8 +509,21 @@ export const useFerroCoreStore = create<FerroCoreState>()(
 
           checkDerivedEffects();
 
-          if (missionId === "full-exploration") {
+          if (missionId === RECOGNITION_MISSION_ID) {
+            get().awardAchievement("signal-recognized");
             set({ recognizedOpen: true });
+            return;
+          }
+
+          get().pushNotification({
+            id: `mission-${missionId}`,
+            type: "mission",
+            title: bi("Misión completada", "Mission completed"),
+            body: missionDef.title,
+          });
+
+          if (isChainReadyToSeal(get().explorerProfile.missionProgress)) {
+            queueMicrotask(() => get().completeMission(RECOGNITION_MISSION_ID));
           }
         },
 
@@ -570,12 +611,16 @@ export const useFerroCoreStore = create<FerroCoreState>()(
       merge: (persisted, current) => {
         const persistedState = persisted as Partial<FerroCoreState> | undefined;
         if (persistedState?.explorerProfile) {
-          return { ...current, ...persistedState };
+          return {
+            ...current,
+            ...persistedState,
+            explorerProfile: normalizeProfile({ ...defaultProfile, ...persistedState.explorerProfile }),
+          };
         }
 
         const legacyProfile = readLegacyProfile();
         return legacyProfile
-          ? { ...current, explorerProfile: { ...current.explorerProfile, ...legacyProfile } }
+          ? { ...current, explorerProfile: normalizeProfile({ ...current.explorerProfile, ...legacyProfile }) }
           : current;
       },
     }

@@ -1,7 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { EmptyState } from "@/components/ui/empty-state";
+import { useFerroCore } from "@/features/ferro-core/context/ferro-core-context";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { useT, useUi } from "@/hooks/use-lang";
 import type { Bilingual } from "@/lib/i18n/types";
@@ -48,9 +50,63 @@ const projects: ProjectCardData[] = [
 ];
 
 export function ProjectsModule() {
+  const { completeMission } = useFerroCore();
   const prefersReducedMotion = useReducedMotion();
   const t = useT();
   const tUi = useUi();
+  const [inspected, setInspected] = useState<ProjectCardData | null>(null);
+
+  const handleInspect = (project: ProjectCardData) => {
+    setInspected(project);
+    completeMission("inspect-project");
+  };
+
+  if (inspected) {
+    return (
+      <motion.div
+        initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: prefersReducedMotion ? 0 : 0.25 }}
+        className="flex h-full flex-col gap-4 overflow-auto"
+      >
+        <button
+          type="button"
+          onClick={() => setInspected(null)}
+          className="self-start rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-medium text-secondary transition hover:border-primary/40 hover:text-white"
+        >
+          ← {tUi("backToProjects")}
+        </button>
+
+        <div>
+          <p className="text-[10px] uppercase tracking-[0.32em] text-muted">{tUi("projectFileKicker")}</p>
+          <div className="mt-1 flex flex-wrap items-center justify-between gap-3">
+            <h2 className="text-xl font-semibold text-white">{inspected.title}</h2>
+            <span className="rounded-full border border-primary/20 bg-primary/10 px-2.5 py-1 text-[10px] uppercase tracking-[0.28em] text-primary">
+              {t(inspected.status)}
+            </span>
+          </div>
+        </div>
+
+        <p className="text-sm leading-7 text-secondary">{t(inspected.summary)}</p>
+
+        <div className="rounded-2xl border border-white/10 bg-white/5 p-3 text-sm text-secondary">
+          <span className="text-[10px] uppercase tracking-[0.28em] text-muted">{tUi("impact")}</span>
+          <p className="mt-2 text-white">{t(inspected.impact)}</p>
+        </div>
+
+        <div className="rounded-2xl border border-white/10 bg-white/5 p-3 text-sm text-secondary">
+          <span className="text-[10px] uppercase tracking-[0.28em] text-muted">{tUi("projectStack")}</span>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {inspected.stack.map((tech) => (
+              <span key={tech} className="rounded-full border border-white/10 bg-black/20 px-2.5 py-1 text-[11px] text-secondary">
+                {tech}
+              </span>
+            ))}
+          </div>
+        </div>
+      </motion.div>
+    );
+  }
 
   return (
     <div className="flex h-full flex-col gap-4 overflow-auto">
@@ -101,6 +157,14 @@ export function ProjectsModule() {
                 <span className="text-[10px] uppercase tracking-[0.28em] text-muted">{tUi("impact")}</span>
                 <p className="mt-2 text-white">{t(project.impact)}</p>
               </div>
+
+              <button
+                type="button"
+                onClick={() => handleInspect(project)}
+                className="mt-4 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-medium text-secondary transition hover:border-primary/40 hover:text-white"
+              >
+                {tUi("inspectProject")} →
+              </button>
             </motion.article>
           ))}
         </div>

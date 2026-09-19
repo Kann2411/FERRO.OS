@@ -14,16 +14,10 @@ export const ui = {
     es: "¿Reiniciar todo el flujo de exploración y volver a cero?",
     en: "Reset the entire workspace flow and return to zero?",
   },
-  missionHintLabel: { es: "Misión", en: "Mission" },
-  missionHintText: {
-    es: "Explora el escritorio, desbloquea las señales ocultas y comienza a dar forma al sistema operativo.",
-    en: "Explore the desktop, unlock the hidden signals, and begin shaping the operating system.",
-  },
   desktopApplications: { es: "Aplicaciones del escritorio", en: "Desktop applications" },
   explorerInformation: { es: "Información del explorador", en: "Explorer information" },
   applicationDock: { es: "Dock de aplicaciones", en: "Application dock" },
   mobileApplicationDock: { es: "Dock de aplicaciones móvil", en: "Mobile application dock" },
-  currentMissionHint: { es: "Pista de la misión actual", en: "Current mission hint" },
   openSignalMap: { es: "Abrir mapa de señal", en: "Open signal map" },
   newlyUnlocked: { es: "Recién desbloqueado", en: "Newly unlocked" },
 
@@ -109,10 +103,8 @@ export const ui = {
     es: "Primera visita • memoria local activada",
     en: "First visit • local memory enabled",
   },
-  systemState: { es: "Estado del sistema", en: "System state" },
   welcomeDialogLabel: { es: "Bienvenido a FERRO.OS", en: "Welcome to FERRO.OS" },
   beginExploringAria: { es: "Comenzar a explorar FERRO.OS", en: "Begin exploring FERRO.OS" },
-  systemStateInfoAria: { es: "Información del estado del sistema", en: "System state information" },
 
   // Boot screen
   bootLine1: { es: "FERRO SYSTEMS INC.", en: "FERRO SYSTEMS INC." },
@@ -230,18 +222,43 @@ export const ui = {
 
   // Recognized modal (final close-out)
   recognizedDialogLabel: { es: "Señal reconocida", en: "Signal recognized" },
-  recognizedKicker: { es: "Cadena completa", en: "Chain complete" },
+  recognizedKicker: { es: "FERRO.OS", en: "FERRO.OS" },
   recognizedHeadline: { es: "Señal reconocida", en: "Signal recognized" },
   recognizedBody: {
-    es: "FERRO CORE registró cada señal de la cadena de exploración. El sistema completo ha sido recorrido, de principio a fin.",
-    en: "FERRO CORE has logged every signal in the exploration chain. The full system has been traced, start to finish.",
+    es: "Recorriste el escritorio, abriste los módulos y sellaste la cadena. El sistema te nombra explorador.",
+    en: "You walked the desktop, opened the modules and sealed the chain. The system names you explorer.",
   },
-  recognizedMissionsLabel: { es: "Misiones completadas", en: "Missions completed" },
-  recognizedAchievementsLabel: { es: "Logros desbloqueados", en: "Achievements unlocked" },
-  recognizedModulesLabel: { es: "Módulos descubiertos", en: "Modules discovered" },
-  recognizedTimeLabel: { es: "Tiempo total explorado", en: "Total time explored" },
-  returnToWorkspace: { es: "Volver a la estación", en: "Return to workspace" },
-  viewSignalMapAgain: { es: "Ver mapa de señal", en: "View signal map" },
+  recognizedMissionsLabel: { es: "Misiones", en: "Missions" },
+  recognizedAchievementsLabel: { es: "Logros", en: "Achievements" },
+  recognizedContinue: { es: "Seguir en el workspace", en: "Stay in the workspace" },
+
+  // Projects module — inspecting a project
+  inspectProject: { es: "Inspeccionar", en: "Inspect" },
+  backToProjects: { es: "Volver a proyectos", en: "Back to projects" },
+  projectFileKicker: { es: "Ficha del proyecto", en: "Project file" },
+  projectStack: { es: "Stack", en: "Stack" },
+  projectStatus: { es: "Estado", en: "Status" },
+
+  // Signal module (contact)
+  signalChannelKicker: { es: "Canal", en: "Channel" },
+  signalTitle: { es: "Dejar una señal", en: "Leave a signal" },
+  signalAvailability: {
+    es: "Disponible para colaboraciones seleccionadas.",
+    en: "Available for selected collaborations.",
+  },
+  signalNamePlaceholder: { es: "Nombre", en: "Name" },
+  signalEmailPlaceholder: { es: "Tu correo", en: "Your email" },
+  signalMessagePlaceholder: { es: "Mensaje", en: "Message" },
+  signalSend: { es: "Enviar", en: "Send" },
+  signalCopied: { es: "Copiado", en: "Copied" },
+  signalCopyEmailAria: { es: "Copiar el correo de contacto", en: "Copy the contact email" },
+  signalQueuedKicker: { es: "Buffer", en: "Buffer" },
+  signalQueuedTitle: { es: "Señal en cola", en: "Signal queued" },
+  signalQueuedBody: {
+    es: "Tu cliente de correo debería abrirse. Si no, escribe a",
+    en: "Your mail client should open. If not, write to",
+  },
+  signalWriteAnother: { es: "Escribir otra", en: "Write another" },
 } as const satisfies Record<string, Bilingual>;
 
 export type UiKey = keyof typeof ui;
@@ -257,6 +274,7 @@ export const windowTitles: Record<string, Bilingual> = {
   skills: { es: "Habilidades", en: "Skills" },
   timeline: { es: "Línea de tiempo", en: "Timeline" },
   terminal: { es: "Terminal", en: "Terminal" },
+  signal: { es: "Señal", en: "Signal" },
   explorer: { es: "Explorador", en: "Explorer" },
   settings: { es: "Ajustes", en: "Settings" },
   aiLab: { es: "Laboratorio de IA", en: "AI Lab" },

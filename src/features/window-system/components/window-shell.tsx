@@ -16,6 +16,7 @@ import { DiscographyModule } from "@/features/discography/components/discography
 import { AudioPlayerModule } from "@/features/audio-player/components/audio-player-module";
 import { EquipmentModule } from "@/features/equipment/components/equipment-module";
 import { TerminalModule } from "@/features/terminal/components/terminal-module";
+import { SignalModule } from "@/features/signal/components/signal-module";
 import { SettingsModule } from "@/features/settings/components/settings-module";
 import type { WindowInstance } from "@/features/window-system/types";
 import { clamp, getViewportSafePosition } from "@/features/window-system/utils";
@@ -290,6 +291,8 @@ export function WindowShell({ window, onClose, onFocus, onBringToFront }: Window
               <EquipmentModule />
             ) : window.id === "terminal" ? (
               <TerminalModule />
+            ) : window.id === "signal" ? (
+              <SignalModule />
             ) : window.id === "settings" ? (
               <SettingsModule />
             ) : window.id === "aiLab" ? (

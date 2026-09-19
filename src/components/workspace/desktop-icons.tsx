@@ -24,7 +24,7 @@ export function DesktopIcons() {
   const tUi = useUi();
 
   const unlockedItems = launcherItems
-    .filter((item) => explorerProfile.unlockedModules.includes(item.windowId))
+    .filter((item) => !item.dockOnly && explorerProfile.unlockedModules.includes(item.windowId))
     .map((item) => {
       const definition = resolveWindowDefinition(item.windowId, lang);
       return definition ? { ...item, label: definition.title, icon: definition.icon, description: t(item.description) } : null;
@@ -61,12 +61,10 @@ export function DesktopIcons() {
     }
 
     if (isFirstModuleOpen) {
-      completeMission("open-first-module");
       advanceProgress(4);
       registerDiscovery(windowId);
 
       if (windowId === "projects") {
-        completeMission("discover-projects");
         awardAchievement("projects-discovered");
         pushMessage({
           id: "projects-discovered",

@@ -6,6 +6,7 @@ export interface TerminalCommandContext {
   explorerProfile: FerroCoreContextValue["explorerProfile"];
   activeMission: FerroCoreContextValue["activeMission"];
   completeMission: (missionId: string) => void;
+  unlockModule: (moduleId: string) => void;
   registerHiddenDiscovery: (fileId: string) => boolean;
   lang: Lang;
 }

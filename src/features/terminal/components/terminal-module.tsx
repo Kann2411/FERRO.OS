@@ -26,7 +26,7 @@ const BOOT_ENTRIES_EN: TerminalEntry[] = [
 ];
 
 export function TerminalModule() {
-  const { explorerProfile, activeMission, completeMission, advanceProgress, registerDiscovery, registerHiddenDiscovery } = useFerroCore();
+  const { explorerProfile, activeMission, completeMission, unlockModule, advanceProgress, registerDiscovery, registerHiddenDiscovery } = useFerroCore();
   const { openWindow, focusWindow, bringToFront } = useWindowContext();
   const { playSound } = useAudio();
   const lang = useLang();
@@ -62,7 +62,6 @@ export function TerminalModule() {
       }
 
       if (!explorerProfile.discoveredModules.includes(windowId)) {
-        completeMission("open-first-module");
         registerDiscovery(windowId);
         advanceProgress(2);
       }
@@ -74,7 +73,8 @@ export function TerminalModule() {
     },
     registerHiddenDiscovery,
     completeMission,
-  }), [activeMission, advanceProgress, bringToFront, completeMission, explorerProfile, focusWindow, lang, openWindow, registerDiscovery, registerHiddenDiscovery]);
+    unlockModule,
+  }), [activeMission, advanceProgress, bringToFront, completeMission, explorerProfile, focusWindow, lang, openWindow, registerDiscovery, registerHiddenDiscovery, unlockModule]);
 
   useEffect(() => {
     if (!inputValue.trim()) {
@@ -122,6 +122,8 @@ export function TerminalModule() {
 
     if (UNRECOGNIZED_COMMAND_PREFIXES.some((prefix) => response.startsWith(prefix))) {
       playSound("terminal", "error");
+    } else {
+      completeMission("talk-to-system");
     }
 
     setInputValue("");
