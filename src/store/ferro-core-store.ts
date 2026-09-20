@@ -10,9 +10,8 @@ import type {
   ExplorerProfile,
   MissionDefinition,
 } from "@/features/ferro-core/types";
-import { missionDefinitions, RECOGNITION_MISSION_ID } from "@/features/ferro-core/utils/mission-system";
+import { getMissionsProgress, missionDefinitions, RECOGNITION_MISSION_ID } from "@/features/ferro-core/utils/mission-system";
 import { evaluateAchievements, getAchievementDefinition } from "@/features/ferro-core/utils/achievement-system";
-import { getDiscoveryProgressReward, updateProgress } from "@/features/ferro-core/utils/explorer-progress";
 import { getHiddenFileDefinition } from "@/features/hidden-files/utils/hidden-files";
 import { useWallpaperStore } from "@/store/wallpaper-store";
 import { generateUUID } from "@/lib/uuid";
@@ -51,17 +50,21 @@ function isChainReadyToSeal(missionProgress: Record<string, boolean>) {
 
 /**
  * Brings a saved profile in line with the current mission chain: drops progress for missions
- * that no longer exist (they would inflate the completed count) and keeps the always-available
- * modules unlocked (profiles saved before a module existed don't list it).
+ * that no longer exist (they would inflate the completed count), recomputes the percentage from
+ * the missions alone, and keeps the always-available modules unlocked (profiles saved before a
+ * module existed don't list it).
  */
 function normalizeProfile(profile: ExplorerProfile): ExplorerProfile {
   const knownMissionIds = new Set(missionDefinitions.map((mission) => mission.id));
+  const missionProgress = Object.fromEntries(
+    Object.entries(profile.missionProgress ?? {}).filter(([id]) => knownMissionIds.has(id))
+  );
 
   return {
     ...profile,
-    missionProgress: Object.fromEntries(
-      Object.entries(profile.missionProgress ?? {}).filter(([id]) => knownMissionIds.has(id))
-    ),
+    missionProgress,
+    // Saved profiles may carry progress earned from module discoveries — only missions count now.
+    progress: getMissionsProgress(missionProgress),
     unlockedModules: Array.from(new Set([...defaultProfile.unlockedModules, ...(profile.unlockedModules ?? [])])),
   };
 }
@@ -107,7 +110,6 @@ interface FerroCoreState {
   initializeSession: () => void;
   tick: () => void;
   setExplorerName: (name: string) => void;
-  advanceProgress: (amount: number) => void;
   registerDiscovery: (moduleId?: string) => void;
   registerHiddenDiscovery: (fileId: string) => boolean;
   awardAchievement: (achievement: string) => void;
@@ -262,39 +264,12 @@ export const useFerroCoreStore = create<FerroCoreState>()(
           set((current) => ({ explorerProfile: { ...current.explorerProfile, name } }));
         },
 
-        advanceProgress: (amount) => {
-          if (amount > 0) {
-            set((current) => ({
-              history: addEntry(current.history, {
-                id: generateUUID(),
-                type: "progress",
-                label: bi("Actualización de progreso", "Progress update"),
-                detail: bi(
-                  `La exploración avanzó un ${amount}%`,
-                  `Exploration advanced by ${amount}%`
-                ),
-                timestamp: new Date().toISOString(),
-              }),
-            }));
-          }
-
-          set((current) => ({
-            explorerProfile: {
-              ...current.explorerProfile,
-              progress: updateProgress(current.explorerProfile.progress, amount),
-            },
-          }));
-
-          checkDerivedEffects();
-        },
-
         registerDiscovery: (moduleId) => {
           const current = get().explorerProfile;
           if (moduleId && current.discoveredModules.includes(moduleId)) {
             return;
           }
 
-          const reward = getDiscoveryProgressReward(moduleId);
           const discoveryLabel = moduleId ? `${moduleId} discovered` : "New system discovery";
 
           set((state) => ({
@@ -327,7 +302,6 @@ export const useFerroCoreStore = create<FerroCoreState>()(
                 ...state.explorerProfile,
                 discoveredModules: nextDiscoveredModules,
                 modulesDiscovered: nextDiscoveredModules.length,
-                progress: updateProgress(state.explorerProfile.progress, reward),
               },
             };
           });
@@ -341,7 +315,6 @@ export const useFerroCoreStore = create<FerroCoreState>()(
           }
 
           const fileDefinition = getHiddenFileDefinition(fileId);
-          const reward = fileDefinition?.reward ?? 3;
           const discoveryLabel = `${fileId} uncovered`;
           const historyLabel = fileDefinition?.label ?? bi(fileId, fileId);
 
@@ -374,7 +347,6 @@ export const useFerroCoreStore = create<FerroCoreState>()(
               explorerProfile: {
                 ...state.explorerProfile,
                 discoveredHiddenFiles: [...state.explorerProfile.discoveredHiddenFiles, fileId],
-                progress: updateProgress(state.explorerProfile.progress, reward),
               },
             };
           });
@@ -502,7 +474,7 @@ export const useFerroCoreStore = create<FerroCoreState>()(
                 ...state.explorerProfile,
                 missionProgress: nextMissionProgress,
                 unlockedModules: nextUnlockedModules,
-                progress: Math.min(100, state.explorerProfile.progress + missionDef.reward),
+                progress: getMissionsProgress(nextMissionProgress),
               },
             };
           });

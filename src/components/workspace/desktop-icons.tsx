@@ -15,7 +15,7 @@ import { launcherItems } from "@/components/workspace/launcher-items";
 export function DesktopIcons() {
   const { openWindow, focusWindow, bringToFront } = useWindowContext();
   const { playSound } = useAudio();
-  const { explorerProfile, completeMission, advanceProgress, registerDiscovery, registerHiddenDiscovery, awardAchievement, pushMessage, pushNotification } = useFerroCore();
+  const { explorerProfile, completeMission, registerDiscovery, registerHiddenDiscovery, awardAchievement, pushMessage, pushNotification } = useFerroCore();
   const [recentOpens, setRecentOpens] = useState<string[]>([]);
   const prefersHighContrast = useHighContrast();
   const prefersReducedMotion = useReducedMotion();
@@ -61,7 +61,6 @@ export function DesktopIcons() {
     }
 
     if (isFirstModuleOpen) {
-      advanceProgress(4);
       registerDiscovery(windowId);
 
       if (windowId === "projects") {

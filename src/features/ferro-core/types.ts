@@ -73,7 +73,6 @@ export interface FerroCoreContextValue {
   recognizedOpen: boolean;
   setRecognizedOpen: (open: boolean) => void;
   setExplorerName: (name: string) => void;
-  advanceProgress: (amount: number) => void;
   registerDiscovery: (moduleId?: string) => void;
   awardAchievement: (achievement: string) => void;
   recordVisit: () => void;

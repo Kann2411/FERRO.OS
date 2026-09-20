@@ -28,7 +28,7 @@ export const missionDefinitions: MissionDefinition[] = [
       es: "Completa la secuencia de arranque de FERRO.OS.",
       en: "Finish the FERRO.OS boot sequence.",
     },
-    reward: 3,
+    reward: 5,
     prerequisite: null,
   },
   {
@@ -38,7 +38,7 @@ export const missionDefinitions: MissionDefinition[] = [
       es: "Recorre la estación de trabajo y familiarízate con el entorno.",
       en: "Survey the workspace and understand the environment.",
     },
-    reward: 5,
+    reward: 6,
     prerequisite: "boot-system",
   },
   {
@@ -59,7 +59,7 @@ export const missionDefinitions: MissionDefinition[] = [
       es: "Abre el módulo de Proyectos y recorre el archivo.",
       en: "Open the Projects module and browse the archive.",
     },
-    reward: 7,
+    reward: 8,
     prerequisite: "open-first-module",
     unlocksModule: "timeline",
   },
@@ -70,7 +70,7 @@ export const missionDefinitions: MissionDefinition[] = [
       es: "Abre la ficha de cualquier proyecto para ver su interior.",
       en: "Open any project's file card to see inside it.",
     },
-    reward: 8,
+    reward: 10,
     prerequisite: "discover-projects",
     unlocksModule: "code-studio",
   },
@@ -81,7 +81,7 @@ export const missionDefinitions: MissionDefinition[] = [
       es: "Abre el módulo de Currículum para conocer el camino del explorador.",
       en: "Open the Resume module to learn the explorer's path.",
     },
-    reward: 6,
+    reward: 8,
     prerequisite: "inspect-project",
     unlocksModule: "equipment",
   },
@@ -92,7 +92,7 @@ export const missionDefinitions: MissionDefinition[] = [
       es: "Abre la Línea de tiempo y recorre la evolución del explorador.",
       en: "Open the Timeline and trace the explorer's evolution.",
     },
-    reward: 5,
+    reward: 8,
     prerequisite: "read-resume",
     unlocksModule: "audioPlayer",
   },
@@ -103,7 +103,7 @@ export const missionDefinitions: MissionDefinition[] = [
       es: "Abre el módulo de Habilidades e inspecciona la capa de experiencia.",
       en: "Open the Skills module and inspect the experience layer.",
     },
-    reward: 6,
+    reward: 8,
     prerequisite: "explore-timeline",
     unlocksModule: "discography",
   },
@@ -114,7 +114,7 @@ export const missionDefinitions: MissionDefinition[] = [
       es: "Abre la Terminal y ejecuta un comando. Prueba con help.",
       en: "Open the Terminal and run a command. Try help.",
     },
-    reward: 8,
+    reward: 10,
     prerequisite: "discover-skills",
   },
   {
@@ -124,7 +124,7 @@ export const missionDefinitions: MissionDefinition[] = [
       es: "Abre Señal desde el dock y envía un mensaje, o copia el correo.",
       en: "Open Signal from the dock and send a message, or copy the address.",
     },
-    reward: 10,
+    reward: 12,
     prerequisite: "talk-to-system",
   },
   {
@@ -134,13 +134,25 @@ export const missionDefinitions: MissionDefinition[] = [
       es: "Completa el resto de misiones para sellar la cadena.",
       en: "Finish the remaining missions to seal the chain.",
     },
-    reward: 20,
+    reward: 17,
     prerequisite: "leave-signal",
   },
 ];
 
 export function getActiveMission(missionProgress: Record<string, boolean>) {
   return missionDefinitions.find((mission) => !missionProgress[mission.id]) ?? null;
+}
+
+/**
+ * Exploration progress (0-100) is earned only by completing the missions of the signal chain —
+ * their rewards add up to exactly 100, so the last one seals it at 100%.
+ */
+export function getMissionsProgress(missionProgress: Record<string, boolean>) {
+  const total = missionDefinitions.reduce(
+    (sum, mission) => sum + (missionProgress[mission.id] ? mission.reward : 0),
+    0
+  );
+  return Math.min(100, total);
 }
 
 export function getMissionProgressValue(missionProgress: Record<string, boolean>) {

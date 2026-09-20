@@ -26,7 +26,7 @@ const BOOT_ENTRIES_EN: TerminalEntry[] = [
 ];
 
 export function TerminalModule() {
-  const { explorerProfile, activeMission, completeMission, unlockModule, advanceProgress, registerDiscovery, registerHiddenDiscovery } = useFerroCore();
+  const { explorerProfile, activeMission, completeMission, unlockModule, registerDiscovery, registerHiddenDiscovery } = useFerroCore();
   const { openWindow, focusWindow, bringToFront } = useWindowContext();
   const { playSound } = useAudio();
   const lang = useLang();
@@ -63,7 +63,6 @@ export function TerminalModule() {
 
       if (!explorerProfile.discoveredModules.includes(windowId)) {
         registerDiscovery(windowId);
-        advanceProgress(2);
       }
 
       openWindow(definition);
@@ -74,7 +73,7 @@ export function TerminalModule() {
     registerHiddenDiscovery,
     completeMission,
     unlockModule,
-  }), [activeMission, advanceProgress, bringToFront, completeMission, explorerProfile, focusWindow, lang, openWindow, registerDiscovery, registerHiddenDiscovery, unlockModule]);
+  }), [activeMission, bringToFront, completeMission, explorerProfile, focusWindow, lang, openWindow, registerDiscovery, registerHiddenDiscovery, unlockModule]);
 
   useEffect(() => {
     if (!inputValue.trim()) {

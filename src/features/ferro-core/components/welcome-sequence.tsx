@@ -5,7 +5,7 @@ import { useFerroCore } from "@/features/ferro-core/context/ferro-core-context";
 import { useUi } from "@/hooks/use-lang";
 
 export function WelcomeSequence() {
-  const { explorerProfile, initialized, coreName, logo, completeWelcome, recordVisit, advanceProgress } = useFerroCore();
+  const { explorerProfile, initialized, coreName, logo, completeWelcome, recordVisit } = useFerroCore();
   const tUi = useUi();
 
   if (!initialized || explorerProfile.welcomeCompleted) {
@@ -14,7 +14,6 @@ export function WelcomeSequence() {
 
   const handleBegin = () => {
     recordVisit();
-    advanceProgress(10);
     completeWelcome();
   };
 

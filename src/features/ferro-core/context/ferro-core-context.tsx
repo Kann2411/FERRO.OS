@@ -63,7 +63,6 @@ export function useFerroCore(): FerroCoreContextValue {
     recognizedOpen: state.recognizedOpen,
     setRecognizedOpen: state.setRecognizedOpen,
     setExplorerName: state.setExplorerName,
-    advanceProgress: state.advanceProgress,
     registerDiscovery: state.registerDiscovery,
     registerHiddenDiscovery: state.registerHiddenDiscovery,
     awardAchievement: state.awardAchievement,
