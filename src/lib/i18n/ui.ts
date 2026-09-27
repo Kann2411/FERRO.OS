@@ -238,6 +238,7 @@ export const ui = {
   projectFileKicker: { es: "Ficha del proyecto", en: "Project file" },
   projectStack: { es: "Stack", en: "Stack" },
   projectStatus: { es: "Estado", en: "Status" },
+  projectRole: { es: "Rol", en: "Role" },
 
   // Signal module (contact)
   signalChannelKicker: { es: "Canal", en: "Channel" },
