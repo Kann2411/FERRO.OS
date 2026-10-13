@@ -12,6 +12,8 @@ import type { Bilingual } from "@/lib/i18n/types";
 interface ProjectCardData {
   title: string;
   image: string;
+  /** Mobile app screenshots are portrait — shown uncropped instead of being cover-cropped into a 16:9 box. */
+  imageOrientation?: "landscape" | "portrait";
   role: Bilingual;
   summary: Bilingual;
   stack: string[];
@@ -22,7 +24,8 @@ interface ProjectCardData {
 /**
  * Real project history, ordered with FERRO.OS and the three most significant projects first
  * (per the explorer's own ranking), followed by earlier work and freelance restaurant sites.
- * Images are placeholders from /public/images/ejemplo*.jpg until real screenshots are supplied.
+ * Images are real screenshots where supplied; the rest fall back to /public/images/ejemplo*.jpg
+ * placeholders until their own screenshots are supplied.
  */
 const projects: ProjectCardData[] = [
   {
@@ -42,7 +45,7 @@ const projects: ProjectCardData[] = [
   },
   {
     title: "Royal Games Casino",
-    image: "/images/ejemplo3.jpg",
+    image: "/images/royal-games-casino.png",
     role: { es: "Arquitectura backend", en: "Backend architecture" },
     summary: {
       es: "Plataforma de casino online. Diseñé la arquitectura del backend en NestJS (autenticación con JWT, WebSockets para juego en tiempo real y pagos con MercadoPago y PayPal) junto al cliente en React.",
@@ -56,8 +59,8 @@ const projects: ProjectCardData[] = [
     },
   },
   {
-    title: "El Galpón de José",
-    image: "/images/ejemplo1.jpg",
+    title: "FitZone",
+    image: "/images/fitzone.png",
     role: { es: "Backend, en equipo", en: "Backend, in a team" },
     summary: {
       es: "Plataforma de gestión para un gimnasio: membresías y pagos con MercadoPago. Como backend del equipo, implementé autenticación con JWT, middlewares de seguridad, corrección de bugs y el despliegue de backend y frontend.",
@@ -72,7 +75,7 @@ const projects: ProjectCardData[] = [
   },
   {
     title: "Jcov KTM",
-    image: "/images/ejemplo4.jpg",
+    image: "/images/jcov-ktm.png",
     role: { es: "Full stack (solo)", en: "Full stack (solo)" },
     summary: {
       es: "Sitio web para el productor musical Jcov KTM, con una identidad visual propia para presentar su música y trabajo.",
@@ -87,7 +90,8 @@ const projects: ProjectCardData[] = [
   },
   {
     title: "HabitForge",
-    image: "/images/ejemplo1.jpg",
+    image: "/images/habitforge.png",
+    imageOrientation: "portrait",
     role: { es: "Full stack (solo)", en: "Full stack (solo)" },
     summary: {
       es: "Aplicación móvil para Android, empaquetada con Capacitor, para forjar buenos hábitos: seguimiento diario y funcionamiento offline mediante un service worker.",
@@ -102,7 +106,7 @@ const projects: ProjectCardData[] = [
   },
   {
     title: "Las Veganas",
-    image: "/images/ejemplo2.jpg",
+    image: "/images/las-veganas.png",
     role: { es: "Full stack (freelance)", en: "Full stack (freelance)" },
     summary: {
       es: "Sitio web para un restaurante vegano: menú, historia del local e información de contacto con un diseño cálido y responsive.",
@@ -117,7 +121,7 @@ const projects: ProjectCardData[] = [
   },
   {
     title: "BiFTEK",
-    image: "/images/ejemplo4.jpg",
+    image: "/images/biftek.png",
     role: { es: "Full stack (freelance)", en: "Full stack (freelance)" },
     summary: {
       es: "Sitio web para una parrilla, con navegación por secciones de menú y una estética oscura acorde a la marca.",
@@ -132,7 +136,7 @@ const projects: ProjectCardData[] = [
   },
   {
     title: "Macchiato Caffé",
-    image: "/images/ejemplo2.jpg",
+    image: "/images/macchiato-caffe.png",
     role: { es: "Full stack (freelance)", en: "Full stack (freelance)" },
     summary: {
       es: "Sitio web para una cafetería y pastelería de estilo europeo: menú visual, ambientación editorial e identidad cálida. Uno de varios sitios de restaurantes hechos como freelance.",
@@ -175,13 +179,17 @@ export function ProjectsModule() {
           ← {tUi("backToProjects")}
         </button>
 
-        <div className="relative aspect-video w-full overflow-hidden rounded-2xl border border-white/10 bg-black/40">
+        <div
+          className={`relative w-full overflow-hidden rounded-2xl border border-white/10 bg-black/40 ${
+            inspected.imageOrientation === "portrait" ? "aspect-3/4 max-w-xs mx-auto" : "aspect-video"
+          }`}
+        >
           <Image
             src={inspected.image}
             alt={inspected.title}
             fill
             sizes="(min-width: 1024px) 640px, 100vw"
-            className="object-cover"
+            className={inspected.imageOrientation === "portrait" ? "object-contain" : "object-cover"}
             priority
           />
         </div>
@@ -246,13 +254,13 @@ export function ProjectsModule() {
               transition={{ delay: prefersReducedMotion ? 0 : index * 0.05, duration: prefersReducedMotion ? 0 : 0.25 }}
               className="overflow-hidden rounded-[22px] border border-white/10 bg-[#121212]/80 shadow-[0_20px_70px_rgba(0,0,0,0.22)]"
             >
-              <div className="relative aspect-video w-full">
+              <div className={`relative w-full ${project.imageOrientation === "portrait" ? "aspect-video bg-black/40" : "aspect-video"}`}>
                 <Image
                   src={project.image}
                   alt={project.title}
                   fill
                   sizes="(min-width: 1280px) 50vw, 100vw"
-                  className="object-cover"
+                  className={project.imageOrientation === "portrait" ? "object-contain" : "object-cover"}
                 />
               </div>
 
