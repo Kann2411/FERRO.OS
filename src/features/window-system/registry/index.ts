@@ -13,8 +13,8 @@ export const windowRegistry: Record<string, WindowDefinition> = {
     id: "projects",
     title: "Projects",
     icon: "⌘",
-    initialWidth: 560,
-    initialHeight: 380,
+    initialWidth: 640,
+    initialHeight: 520,
     defaultPosition: { x: 180, y: 120 },
   },
   studio: {

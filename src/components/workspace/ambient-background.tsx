@@ -19,8 +19,26 @@ export function AmbientBackground() {
       return;
     }
 
-    playSound("ambient", "drift");
-    return () => stopSound("ambient", "drift");
+    // Browsers block audio.play() with sound until the page has had a real user gesture, and that
+    // first attempt (on mount, before any click) always fails silently — so wait for the first
+    // pointerdown/keydown anywhere on the page instead of only trying once up front.
+    let started = false;
+    const start = () => {
+      if (started) {
+        return;
+      }
+      started = true;
+      playSound("ambient", "drift");
+    };
+
+    window.addEventListener("pointerdown", start);
+    window.addEventListener("keydown", start);
+
+    return () => {
+      window.removeEventListener("pointerdown", start);
+      window.removeEventListener("keydown", start);
+      stopSound("ambient", "drift");
+    };
   }, [enabled, playSound, stopSound]);
 
   const particles = [
