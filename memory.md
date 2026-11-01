@@ -16,9 +16,13 @@
   - Verificado: 0 matches de colores hardcoded en `src/`.
   - Merge resuelto con el remoto (18 commits de fases del usuario) tomando su versión como base y re-aplicando la migración.
 
+- [x] **Fix #2 — `@keyframes blink` faltante** (commit `a1516d8`)
+  - Añadido `@keyframes blink` (opacity 1↔0, 1s step-end) en `src/app/globals.css`.
+  - Referencia usada por el caret del terminal (`src/features/terminal/components/terminal-module.tsx`).
+
 ## Fixes pendientes
 
-- [ ] **Fix #2 — `@keyframes blink` faltante + tokens de diseño en `src/app/globals.css`.**
+- [ ] **Fix #3 — Próximo fix visual pendiente.**
 
 ## Contexto clave (no perder)
 
