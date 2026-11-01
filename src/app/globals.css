@@ -135,6 +135,16 @@ button:focus-visible {
   animation: signal-pulse 1.8s ease-in-out infinite;
 }
 
+/* Blinking caret used by the terminal input indicator */
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
 /* High Contrast Mode */
 @media (prefers-contrast: high) {
   :root {
