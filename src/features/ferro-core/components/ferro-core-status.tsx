@@ -12,31 +12,31 @@ export function FerroCoreStatus() {
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
-      className="rounded-3xl border border-white/10 bg-surface/80 p-5 shadow-[0_24px_80px_rgba(0,0,0,0.22)] backdrop-blur-xl"
+      className="rounded-3xl border border-border bg-surface/80 p-5 shadow-[0_24px_80px_rgba(0,0,0,0.22)] backdrop-blur-xl"
       aria-label={`FERRO CORE status: ${explorerProfile.name}, ${progress}% progress`}
     >
       <div className="flex items-center justify-between gap-4">
         <div>
           <p className="text-xs uppercase tracking-[0.32em] text-muted">Explorer</p>
-          <p className="mt-1 text-lg font-semibold text-white">{explorerProfile.name}</p>
+          <p className="mt-1 text-lg font-semibold text-foreground">{explorerProfile.name}</p>
         </div>
-        <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs uppercase text-muted" aria-label="Level 0">
+        <span className="rounded-full border border-border bg-foreground/5 px-3 py-1 text-xs uppercase text-muted" aria-label="Level 0">
           Level 0
         </span>
       </div>
 
-      <div className="mt-6 rounded-3xl bg-white/5 p-1" role="progressbar" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100} aria-label={`Progress: ${progress}%`}>
+      <div className="mt-6 rounded-3xl bg-foreground/5 p-1" role="progressbar" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100} aria-label={`Progress: ${progress}%`}>
         <div className="h-3 rounded-3xl bg-primary transition-all" style={{ width: `${progress}%` }} />
       </div>
 
       <div className="mt-4 grid grid-cols-2 gap-3 text-sm text-secondary">
         <div>
           <p className="text-xs uppercase tracking-[0.3em] text-muted">Progress</p>
-          <p className="mt-1 text-white">{progress}%</p>
+          <p className="mt-1 text-foreground">{progress}%</p>
         </div>
         <div>
           <p className="text-xs uppercase tracking-[0.3em] text-muted">Discovered</p>
-          <p className="mt-1 text-white">{explorerProfile.modulesDiscovered}</p>
+          <p className="mt-1 text-foreground">{explorerProfile.modulesDiscovered}</p>
         </div>
       </div>
     </motion.section>

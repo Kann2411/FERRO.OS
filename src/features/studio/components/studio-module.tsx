@@ -37,7 +37,7 @@ export function StudioModule() {
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-[10px] uppercase tracking-[0.32em] text-muted">Music studio</p>
-          <h2 className="mt-1 text-xl font-semibold text-white">Studio Core</h2>
+          <h2 className="mt-1 text-xl font-semibold text-foreground">Studio Core</h2>
         </div>
         <div className="rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs uppercase tracking-[0.28em] text-primary">
           Production environment
@@ -46,7 +46,7 @@ export function StudioModule() {
 
       <div className="rounded-3xl border border-primary/20 bg-primary/10 p-4 text-sm leading-8 text-secondary">
         <p className="text-[10px] uppercase tracking-[0.28em] text-primary">Studio atmosphere</p>
-        <p className="mt-2 text-white">
+        <p className="mt-2 text-foreground">
           Una experiencia inspirada en un estudio profesional: elegante, precisa y orientada a la creación.
         </p>
       </div>
@@ -58,13 +58,13 @@ export function StudioModule() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.05, duration: 0.22 }}
-            className="rounded-[22px] border border-white/10 bg-[#121212]/80 p-4"
+            className="rounded-[22px] border border-border bg-surface/80 p-4"
           >
-            <h3 className="text-base font-semibold text-white">{section.title}</h3>
+            <h3 className="text-base font-semibold text-foreground">{section.title}</h3>
             <p className="mt-3 text-sm leading-7 text-secondary">{section.description}</p>
             <div className="mt-4 flex flex-wrap gap-2">
               {section.tags.map((tag) => (
-                <span key={tag} className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] text-secondary">
+                <span key={tag} className="rounded-full border border-border bg-foreground/5 px-2.5 py-1 text-[11px] text-secondary">
                   {tag}
                 </span>
               ))}

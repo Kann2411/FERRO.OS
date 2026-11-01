@@ -43,9 +43,9 @@ const timelineItems: TimelineItem[] = [
 ];
 
 const typeStyles: Record<TimelineItem["type"], string> = {
-  Foundation: "border-white/10 bg-white/5 text-secondary",
+  Foundation: "border-border bg-foreground/5 text-secondary",
   Growth: "border-primary/20 bg-primary/10 text-primary",
-  Evolution: "border-white/10 bg-[#151515] text-secondary",
+  Evolution: "border-border bg-surface text-secondary",
   Current: "border-primary/30 bg-primary/10 text-primary",
 };
 
@@ -55,7 +55,7 @@ export function TimelineModule() {
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-[10px] uppercase tracking-[0.32em] text-muted">Professional evolution</p>
-          <h2 className="mt-1 text-xl font-semibold text-white">Operating system timeline</h2>
+          <h2 className="mt-1 text-xl font-semibold text-foreground">Operating system timeline</h2>
         </div>
         <div className="rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs uppercase tracking-[0.28em] text-primary">
           Vertical journey
@@ -63,7 +63,7 @@ export function TimelineModule() {
       </div>
 
       <div className="relative space-y-4">
-        <div className="absolute left-4 top-0 h-full w-px bg-white/10" />
+        <div className="absolute left-4 top-0 h-full w-px bg-foreground/10" />
 
         {timelineItems.map((item, index) => (
           <motion.div
@@ -78,9 +78,9 @@ export function TimelineModule() {
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <p className="text-[10px] uppercase tracking-[0.28em] text-muted">Version {item.version}</p>
-                  <h3 className="mt-1 text-base font-semibold text-white">{item.title}</h3>
+                  <h3 className="mt-1 text-base font-semibold text-foreground">{item.title}</h3>
                 </div>
-                <span className="rounded-full border border-white/10 bg-black/20 px-2.5 py-1 text-[10px] uppercase tracking-[0.28em] text-secondary">
+                <span className="rounded-full border border-border bg-background/20 px-2.5 py-1 text-[10px] uppercase tracking-[0.28em] text-secondary">
                   {item.type}
                 </span>
               </div>

@@ -36,7 +36,7 @@ function WorkspaceContent() {
       <AmbientBackground />
 
       <div className="relative z-10 flex min-h-screen flex-col pb-20 sm:pb-0">
-        <header role="banner" className="flex items-center justify-between border-b border-white/10 bg-black/20 px-3 py-2 backdrop-blur-xl sm:px-5 sm:py-3">
+        <header role="banner" className="flex items-center justify-between border-b border-border bg-background/20 px-3 py-2 backdrop-blur-xl sm:px-5 sm:py-3">
           <div className="flex items-center gap-2 sm:gap-3">
             <div className="h-2 w-2 rounded-full bg-primary sm:h-2.5 sm:w-2.5" aria-hidden="true" />
             <span className="text-xs font-medium uppercase tracking-[0.3em] text-secondary sm:text-sm">
@@ -73,7 +73,7 @@ function WorkspaceContent() {
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.35 }}
-                className="rounded-3xl border border-white/10 bg-surface/70 p-4 shadow-[0_20px_80px_rgba(0,0,0,0.25)] backdrop-blur-xl"
+                className="rounded-3xl border border-border bg-surface/70 p-4 shadow-[0_20px_80px_rgba(0,0,0,0.25)] backdrop-blur-xl"
                 role="status"
                 aria-label="Current mission hint"
               >

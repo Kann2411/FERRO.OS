@@ -26,7 +26,7 @@ export function StatusPanel() {
       initial={{ opacity: 0, x: 12 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.3 }}
-      className="rounded-full border border-white/10 bg-surface/70 px-3 py-2 text-sm text-secondary backdrop-blur-xl"
+      className="rounded-full border border-border bg-surface/70 px-3 py-2 text-sm text-secondary backdrop-blur-xl"
       role="status"
       aria-label={`Explorer progress: ${progress}%, ${missionCount} of ${totalMissions} missions completed, time explored: ${timeExplored}`}
     >

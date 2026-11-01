@@ -48,7 +48,7 @@ export function DiscographyModule() {
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-[10px] uppercase tracking-[0.32em] text-muted">Music catalog</p>
-          <h2 className="mt-1 text-xl font-semibold text-white">Discography</h2>
+          <h2 className="mt-1 text-xl font-semibold text-foreground">Discography</h2>
         </div>
         <div className="rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs uppercase tracking-[0.28em] text-primary">
           {releases.length} releases
@@ -69,15 +69,15 @@ export function DiscographyModule() {
               initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: prefersReducedMotion ? 0 : index * 0.05, duration: prefersReducedMotion ? 0 : 0.24 }}
-              className="rounded-[22px] border border-white/10 bg-[#121212]/80 p-4 shadow-[0_20px_70px_rgba(0,0,0,0.22)]"
+              className="rounded-[22px] border border-border bg-surface/80 p-4 shadow-[0_20px_70px_rgba(0,0,0,0.22)]"
             >
               <div className="flex items-start gap-3">
-                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-[18px] border border-white/10 bg-linear-to-br from-primary/20 via-white/10 to-primary/10 text-2xl text-primary">
+                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-[18px] border border-border bg-linear-to-br from-primary/20 via-foreground/10 to-primary/10 text-2xl text-primary">
                   {release.cover}
                 </div>
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
-                    <h3 className="text-base font-semibold text-white">{release.title}</h3>
+                    <h3 className="text-base font-semibold text-foreground">{release.title}</h3>
                     <span className="rounded-full border border-primary/20 bg-primary/10 px-2.5 py-1 text-[10px] uppercase tracking-[0.28em] text-primary">
                       {release.status}
                     </span>
@@ -87,15 +87,15 @@ export function DiscographyModule() {
               </div>
 
               <div className="mt-4 flex flex-wrap gap-2 text-xs uppercase tracking-[0.24em] text-muted">
-                <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1">{release.year}</span>
-                <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1">{release.genre}</span>
+                <span className="rounded-full border border-border bg-foreground/5 px-2.5 py-1">{release.year}</span>
+                <span className="rounded-full border border-border bg-foreground/5 px-2.5 py-1">{release.genre}</span>
               </div>
             </motion.article>
           ))}
         </div>
       )}
 
-      <div className="rounded-[22px] border border-white/10 bg-white/5 p-4 text-sm text-secondary">
+      <div className="rounded-[22px] border border-border bg-foreground/5 p-4 text-sm text-secondary">
         <p className="text-[10px] uppercase tracking-[0.28em] text-muted">Data ready</p>
         <p className="mt-2 leading-7">
           The module already follows a structure ready to consume release data from an API later without changing the interface.

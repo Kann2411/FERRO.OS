@@ -22,7 +22,7 @@ const tracks: TrackData[] = [
     artist: "Kristian Vale",
     album: "Midnight Pulse",
     duration: 214,
-    accent: "from-primary/30 via-white/10 to-primary/10",
+    accent: "from-primary/30 via-foreground/10 to-primary/10",
   },
   {
     id: 2,
@@ -30,7 +30,7 @@ const tracks: TrackData[] = [
     artist: "Kristian Vale",
     album: "Neon Drift",
     duration: 196,
-    accent: "from-cyan-500/20 via-white/10 to-cyan-400/10",
+    accent: "from-cyan-500/20 via-foreground/10 to-cyan-400/10",
   },
   {
     id: 3,
@@ -38,7 +38,7 @@ const tracks: TrackData[] = [
     artist: "Kristian Vale",
     album: "Velvet Circuit",
     duration: 238,
-    accent: "from-fuchsia-500/20 via-white/10 to-fuchsia-400/10",
+    accent: "from-fuchsia-500/20 via-foreground/10 to-fuchsia-400/10",
   },
 ];
 
@@ -173,7 +173,7 @@ export function AudioPlayerModule() {
         initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: prefersReducedMotion ? 0 : 0.22 }}
-        className="rounded-3xl border border-white/10 bg-[#121212]/80 p-4"
+        className="rounded-3xl border border-border bg-surface/80 p-4"
       >
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center">
           <div className={`flex h-24 w-24 shrink-0 items-center justify-center rounded-[22px] bg-linear-to-br ${currentTrack.accent} text-3xl text-primary`}>
@@ -182,12 +182,12 @@ export function AudioPlayerModule() {
 
           <div className="min-w-0 flex-1">
             <p className="text-[10px] uppercase tracking-[0.28em] text-muted">Now playing</p>
-            <h3 className="mt-2 text-lg font-semibold text-white">{currentTrack.title}</h3>
+            <h3 className="mt-2 text-lg font-semibold text-foreground">{currentTrack.title}</h3>
             <p className="mt-1 text-sm text-secondary">{currentTrack.artist} · {currentTrack.album}</p>
           </div>
         </div>
 
-        <div className="mt-4 rounded-[18px] border border-white/10 bg-white/5 p-4">
+        <div className="mt-4 rounded-[18px] border border-border bg-foreground/5 p-4">
           <div className="flex items-center justify-between text-xs uppercase tracking-[0.24em] text-muted">
             <span>{formattedTime.current}</span>
             <span>{formattedTime.total}</span>
@@ -199,7 +199,7 @@ export function AudioPlayerModule() {
             max={currentTrack.duration}
             value={progress}
             onChange={(event) => setProgress(Number(event.target.value))}
-            className="mt-3 h-2 w-full cursor-pointer appearance-none rounded-full bg-white/10 accent-primary"
+            className="mt-3 h-2 w-full cursor-pointer appearance-none rounded-full bg-foreground/10 accent-primary"
           />
         </div>
 
@@ -209,7 +209,7 @@ export function AudioPlayerModule() {
               type="button"
               aria-label="Previous track"
               onClick={handlePrevious}
-              className="rounded-full border border-white/10 bg-white/5 px-3 py-2 text-sm text-secondary transition hover:border-primary/40 hover:text-primary"
+              className="rounded-full border border-border bg-foreground/5 px-3 py-2 text-sm text-secondary transition hover:border-primary/40 hover:text-primary"
             >
               ⏮
             </button>
@@ -225,7 +225,7 @@ export function AudioPlayerModule() {
               type="button"
               aria-label="Next track"
               onClick={handleNext}
-              className="rounded-full border border-white/10 bg-white/5 px-3 py-2 text-sm text-secondary transition hover:border-primary/40 hover:text-primary"
+              className="rounded-full border border-border bg-foreground/5 px-3 py-2 text-sm text-secondary transition hover:border-primary/40 hover:text-primary"
             >
               ⏭
             </button>
@@ -240,7 +240,7 @@ export function AudioPlayerModule() {
               max="100"
               value={volume}
               onChange={(event) => setVolume(Number(event.target.value))}
-              className="h-2 flex-1 cursor-pointer appearance-none rounded-full bg-white/10 accent-primary"
+              className="h-2 flex-1 cursor-pointer appearance-none rounded-full bg-foreground/10 accent-primary"
             />
             <span>{volume}%</span>
           </div>
@@ -249,7 +249,7 @@ export function AudioPlayerModule() {
 
       <MusicVisualizer isPlaying={isPlaying} />
 
-      <div className="rounded-[22px] border border-white/10 bg-white/5 p-4">
+      <div className="rounded-[22px] border border-border bg-foreground/5 p-4">
         <p className="text-[10px] uppercase tracking-[0.28em] text-muted">Queue</p>
         <div className="mt-3 space-y-2">
           {tracks.map((track, index) => (
@@ -260,7 +260,7 @@ export function AudioPlayerModule() {
                 setCurrentTrackIndex(index);
                 setProgress(0);
               }}
-              className={`flex w-full items-center justify-between rounded-2xl border px-3 py-2 text-left text-sm transition ${index === currentTrackIndex ? "border-primary/30 bg-primary/10 text-white" : "border-white/10 bg-black/20 text-secondary hover:border-primary/30 hover:text-white"}`}
+              className={`flex w-full items-center justify-between rounded-2xl border px-3 py-2 text-left text-sm transition ${index === currentTrackIndex ? "border-primary/30 bg-primary/10 text-foreground" : "border-border bg-background/20 text-secondary hover:border-primary/30 hover:text-primary"}`}
             >
               <span>{track.title}</span>
               <span>{track.artist}</span>

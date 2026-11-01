@@ -14,7 +14,7 @@ export function AmbientBackground() {
         transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
       />
       <motion.div
-        className="absolute bottom-[-10%] right-[-10%] h-80 w-80 rounded-full bg-white/10 blur-3xl"
+        className="absolute bottom-[-10%] right-[-10%] h-80 w-80 rounded-full bg-foreground/10 blur-3xl"
         animate={prefersReducedMotion ? { x: 0, y: 0, scale: 1 } : { x: [0, -30, 0], y: [0, 20, 0], scale: [1, 1.04, 1] }}
         transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
       />

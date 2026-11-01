@@ -60,7 +60,7 @@ export function SkillsModule() {
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-[10px] uppercase tracking-[0.32em] text-muted">Technology stack</p>
-          <h2 className="mt-1 text-xl font-semibold text-white">Core capabilities</h2>
+          <h2 className="mt-1 text-xl font-semibold text-foreground">Core capabilities</h2>
         </div>
         <div className="rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs uppercase tracking-[0.28em] text-primary">
           {skillGroups.length} categories
@@ -74,11 +74,11 @@ export function SkillsModule() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.04, duration: 0.25 }}
-            className="rounded-[22px] border border-white/10 bg-[#121212]/80 p-4"
+            className="rounded-[22px] border border-border bg-surface/80 p-4"
           >
             <div className="flex items-start justify-between gap-3">
               <div>
-                <h3 className="text-base font-semibold text-white">{group.category}</h3>
+                <h3 className="text-base font-semibold text-foreground">{group.category}</h3>
                 <p className="mt-2 text-sm text-secondary">{group.experience}</p>
               </div>
               <span className="rounded-full border border-primary/20 bg-primary/10 px-2.5 py-1 text-[10px] uppercase tracking-[0.28em] text-primary">
@@ -88,7 +88,7 @@ export function SkillsModule() {
 
             <div className="mt-4 flex flex-wrap gap-2">
               {group.technologies.map((tech) => (
-                <span key={tech} className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] text-secondary">
+                <span key={tech} className="rounded-full border border-border bg-foreground/5 px-2.5 py-1 text-[11px] text-secondary">
                   {tech}
                 </span>
               ))}
@@ -97,7 +97,7 @@ export function SkillsModule() {
         ))}
       </div>
 
-      <div className="rounded-[22px] border border-white/10 bg-white/5 p-4 text-sm leading-7 text-secondary">
+      <div className="rounded-[22px] border border-border bg-foreground/5 p-4 text-sm leading-7 text-secondary">
         <p className="text-[10px] uppercase tracking-[0.28em] text-muted">Flexible data model</p>
         <p className="mt-2">
           This module is prepared to evolve into a richer API-driven skills matrix without changing the presentation layer.

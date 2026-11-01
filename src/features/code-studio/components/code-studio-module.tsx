@@ -44,7 +44,7 @@ export function CodeStudioModule() {
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-[10px] uppercase tracking-[0.32em] text-muted">Developer laboratory</p>
-          <h2 className="mt-1 text-xl font-semibold text-white">Code Studio</h2>
+          <h2 className="mt-1 text-xl font-semibold text-foreground">Code Studio</h2>
         </div>
         <div className="rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs uppercase tracking-[0.28em] text-primary">
           Immersive workspace
@@ -52,7 +52,7 @@ export function CodeStudioModule() {
       </div>
 
       <div className="grid gap-4 xl:grid-cols-[0.8fr_1.2fr]">
-        <div className="rounded-3xl border border-white/10 bg-[#121212]/80 p-4">
+        <div className="rounded-3xl border border-border bg-surface/80 p-4">
           <p className="text-[10px] uppercase tracking-[0.28em] text-muted">Studio metrics</p>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             {stats.map((stat, index) => (
@@ -61,10 +61,10 @@ export function CodeStudioModule() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.04, duration: 0.2 }}
-                className="rounded-[18px] border border-white/10 bg-white/5 p-3"
+                className="rounded-[18px] border border-border bg-foreground/5 p-3"
               >
                 <p className="text-[10px] uppercase tracking-[0.28em] text-muted">{stat.label}</p>
-                <p className="mt-2 text-sm font-medium text-white">{stat.value}</p>
+                <p className="mt-2 text-sm font-medium text-foreground">{stat.value}</p>
               </motion.div>
             ))}
           </div>
@@ -85,13 +85,13 @@ export function CodeStudioModule() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.05, duration: 0.2 }}
-            className="rounded-[22px] border border-white/10 bg-[#121212]/80 p-4"
+            className="rounded-[22px] border border-border bg-surface/80 p-4"
           >
-            <h3 className="text-base font-semibold text-white">{section.title}</h3>
+            <h3 className="text-base font-semibold text-foreground">{section.title}</h3>
             <p className="mt-3 text-sm leading-7 text-secondary">{section.body}</p>
             <div className="mt-4 flex flex-wrap gap-2">
               {section.tags.map((tag) => (
-                <span key={tag} className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] text-secondary">
+                <span key={tag} className="rounded-full border border-border bg-foreground/5 px-2.5 py-1 text-[11px] text-secondary">
                   {tag}
                 </span>
               ))}

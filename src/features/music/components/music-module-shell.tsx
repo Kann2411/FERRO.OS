@@ -24,7 +24,7 @@ export function MusicModuleShell({ eyebrow, title, badge, children }: MusicModul
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-[10px] uppercase tracking-[0.32em] text-muted">{eyebrow}</p>
-          <h2 className="mt-1 text-xl font-semibold text-white">{title}</h2>
+          <h2 className="mt-1 text-xl font-semibold text-foreground">{title}</h2>
         </div>
         {badge ? (
           <div className="rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs uppercase tracking-[0.28em] text-primary">

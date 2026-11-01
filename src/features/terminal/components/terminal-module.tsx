@@ -176,8 +176,8 @@ export function TerminalModule() {
   }, [history, historyIndex]);
 
   return (
-    <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#060606]/80 text-sm text-secondary shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
-      <div className="flex items-center justify-between border-b border-white/10 bg-black/20 px-3 py-2">
+    <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-background/80 text-sm text-secondary shadow-[inset_0_1px_0_rgb(255_255_255/0.04)]">
+      <div className="flex items-center justify-between border-b border-border bg-background/20 px-3 py-2">
         <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.28em] text-muted">
           <span className="h-2 w-2 rounded-full bg-primary" />
           <span>Terminal Session</span>
@@ -187,17 +187,17 @@ export function TerminalModule() {
 
       <div ref={outputRef} className="flex-1 space-y-2 overflow-y-auto px-4 py-4 font-mono">
         {entries.map((entry) => (
-          <div key={entry.id} className={entry.kind === "input" ? "text-white" : "text-secondary"}>
+          <div key={entry.id} className={entry.kind === "input" ? "text-foreground" : "text-secondary"}>
             {entry.text}
           </div>
         ))}
       </div>
 
-      <form onSubmit={handleSubmit} className="border-t border-white/10 bg-black/20 px-3 py-3">
+      <form onSubmit={handleSubmit} className="border-t border-border bg-background/20 px-3 py-3">
         <label htmlFor="terminal-input" className="sr-only">
           Terminal input
         </label>
-        <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-[#111111]/80 px-3 py-2">
+        <div className="flex items-center gap-2 rounded-2xl border border-border bg-background/80 px-3 py-2">
           <span className="text-primary">{prompt}</span>
           <div className="flex flex-1 flex-col">
             <input
@@ -208,7 +208,7 @@ export function TerminalModule() {
               autoComplete="off"
               spellCheck={false}
               placeholder="Type a command"
-              className="w-full bg-transparent text-sm text-white outline-none placeholder:text-muted"
+              className="w-full bg-transparent text-sm text-foreground outline-none placeholder:text-muted"
               autoFocus
             />
             {suggestion ? (

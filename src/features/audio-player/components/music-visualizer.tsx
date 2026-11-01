@@ -47,7 +47,7 @@ export function MusicVisualizer({ isPlaying }: MusicVisualizerProps) {
   }, [levels]);
 
   return (
-    <div className="rounded-[22px] border border-white/10 bg-black/20 p-4">
+    <div className="rounded-[22px] border border-border bg-background/20 p-4">
       <div className="flex items-center justify-between">
         <div>
           <p className="text-[10px] uppercase tracking-[0.28em] text-muted">Visualizer</p>
@@ -58,14 +58,14 @@ export function MusicVisualizer({ isPlaying }: MusicVisualizerProps) {
         </div>
       </div>
 
-      <div className="mt-4 rounded-[20px] border border-white/10 bg-linear-to-br from-primary/10 via-white/5 to-transparent p-4">
+      <div className="mt-4 rounded-[20px] border border-border bg-linear-to-br from-primary/10 via-foreground/5 to-transparent p-4">
         <div className="flex h-28 items-end justify-between gap-1">
           {levels.map((level, index) => (
             <motion.div
               key={`${index}-${level}`}
               animate={{ height: `${Math.max(12, level)}px` }}
               transition={{ duration: prefersReducedMotion ? 0 : 0.14, ease: "easeOut" }}
-              className="w-full max-w-2 rounded-full bg-linear-to-t from-primary via-white/80 to-primary/50"
+              className="w-full max-w-2 rounded-full bg-linear-to-t from-primary via-foreground/80 to-primary/50"
             />
           ))}
         </div>

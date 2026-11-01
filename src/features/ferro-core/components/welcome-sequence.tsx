@@ -32,7 +32,7 @@ export function WelcomeSequence() {
           animate={{ y: 0, opacity: 1, scale: 1 }}
           exit={{ y: 20, opacity: 0, scale: 0.98 }}
           transition={{ duration: 0.45, ease: "easeOut" }}
-          className="relative w-full max-w-3xl overflow-hidden rounded-[36px] border border-white/10 bg-[#111111]/95 p-8 shadow-[0_40px_140px_rgba(0,0,0,0.55)] sm:p-10"
+          className="relative w-full max-w-3xl overflow-hidden rounded-[36px] border border-border bg-background/95 p-8 shadow-[0_40px_140px_rgba(0,0,0,0.55)] sm:p-10"
         >
           <div className="absolute inset-0 bg-[linear-gradient(130deg,rgba(255,255,255,0.04),transparent_38%,rgba(217,4,41,0.14))]" />
 
@@ -43,14 +43,14 @@ export function WelcomeSequence() {
               </div>
               <div>
                 <p className="text-xs uppercase tracking-[0.38em] text-muted">Welcome</p>
-                <h1 className="mt-1 text-2xl font-semibold text-white sm:text-3xl">{coreName} awakened</h1>
+                <h1 className="mt-1 text-2xl font-semibold text-foreground sm:text-3xl">{coreName} awakened</h1>
               </div>
             </div>
 
             <div className="mt-8 grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
               <div>
                 <p className="text-sm uppercase tracking-[0.35em] text-primary">Cinematic introduction</p>
-                <h2 className="mt-3 text-4xl font-semibold text-white sm:text-5xl">
+                <h2 className="mt-3 text-4xl font-semibold text-foreground sm:text-5xl">
                   The system is ready to remember you.
                 </h2>
                 <p className="mt-5 max-w-2xl text-base leading-8 text-secondary">
@@ -62,31 +62,31 @@ export function WelcomeSequence() {
                   <button
                     type="button"
                     onClick={handleBegin}
-                    className="rounded-full border border-primary/40 bg-primary px-5 py-3 text-sm font-medium text-white transition hover:bg-primary/90"
+                    className="rounded-full border border-primary/40 bg-primary px-5 py-3 text-sm font-medium text-accent-foreground transition hover:bg-primary/90"
                     aria-label="Begin exploring FERRO.OS"
                   >
                     Begin exploration
                   </button>
-                  <div className="rounded-full border border-white/10 bg-white/5 px-4 py-3 text-sm text-secondary" aria-label="This is your first visit, local memory is enabled">
+                  <div className="rounded-full border border-border bg-foreground/5 px-4 py-3 text-sm text-secondary" aria-label="This is your first visit, local memory is enabled">
                     First visit • local memory enabled
                   </div>
                 </div>
               </div>
 
-              <div className="rounded-[28px] border border-white/10 bg-[#0b0b0b]/80 p-6" aria-label="System state information">
+              <div className="rounded-[28px] border border-border bg-background/80 p-6" aria-label="System state information">
                 <p className="text-xs uppercase tracking-[0.32em] text-muted">System state</p>
                 <div className="mt-5 space-y-4 text-sm text-secondary">
-                  <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+                  <div className="flex items-center justify-between rounded-2xl border border-border bg-foreground/5 px-4 py-3">
                     <span>Explorer</span>
-                    <span className="text-white">{explorerProfile.name}</span>
+                    <span className="text-foreground">{explorerProfile.name}</span>
                   </div>
-                  <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+                  <div className="flex items-center justify-between rounded-2xl border border-border bg-foreground/5 px-4 py-3">
                     <span>Progress</span>
-                    <span className="text-white">{explorerProfile.progress}%</span>
+                    <span className="text-foreground">{explorerProfile.progress}%</span>
                   </div>
-                  <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+                  <div className="flex items-center justify-between rounded-2xl border border-border bg-foreground/5 px-4 py-3">
                     <span>Modules</span>
-                    <span className="text-white">{explorerProfile.modulesDiscovered}</span>
+                    <span className="text-foreground">{explorerProfile.modulesDiscovered}</span>
                   </div>
                 </div>
               </div>

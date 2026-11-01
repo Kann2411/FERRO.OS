@@ -44,7 +44,7 @@ export function ProjectsModule() {
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-[10px] uppercase tracking-[0.32em] text-muted">Developer portfolio</p>
-          <h2 className="mt-1 text-xl font-semibold text-white">Selected systems</h2>
+          <h2 className="mt-1 text-xl font-semibold text-foreground">Selected systems</h2>
         </div>
         <div className="rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs uppercase tracking-[0.28em] text-primary">
           {projects.length} active
@@ -65,10 +65,10 @@ export function ProjectsModule() {
               initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: prefersReducedMotion ? 0 : index * 0.05, duration: prefersReducedMotion ? 0 : 0.25 }}
-              className="rounded-[22px] border border-white/10 bg-[#121212]/80 p-4 shadow-[0_20px_70px_rgba(0,0,0,0.22)]"
+              className="rounded-[22px] border border-border bg-surface/80 p-4 shadow-[0_20px_70px_rgba(0,0,0,0.22)]"
             >
               <div className="flex items-center justify-between gap-3">
-                <h3 className="text-base font-semibold text-white">{project.title}</h3>
+                <h3 className="text-base font-semibold text-foreground">{project.title}</h3>
                 <span className="rounded-full border border-primary/20 bg-primary/10 px-2.5 py-1 text-[10px] uppercase tracking-[0.28em] text-primary">
                   {project.status}
                 </span>
@@ -78,22 +78,22 @@ export function ProjectsModule() {
 
               <div className="mt-4 flex flex-wrap gap-2">
                 {project.stack.map((tech) => (
-                  <span key={tech} className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] text-secondary">
+                  <span key={tech} className="rounded-full border border-border bg-foreground/5 px-2.5 py-1 text-[11px] text-secondary">
                     {tech}
                   </span>
                 ))}
               </div>
 
-              <div className="mt-4 rounded-2xl border border-white/10 bg-white/5 p-3 text-sm text-secondary">
+              <div className="mt-4 rounded-2xl border border-border bg-foreground/5 p-3 text-sm text-secondary">
                 <span className="text-[10px] uppercase tracking-[0.28em] text-muted">Impact</span>
-                <p className="mt-2 text-white">{project.impact}</p>
+                <p className="mt-2 text-foreground">{project.impact}</p>
               </div>
             </motion.article>
           ))}
         </div>
       )}
 
-      <div className="rounded-[22px] border border-white/10 bg-white/5 p-4 text-sm text-secondary">
+      <div className="rounded-[22px] border border-border bg-foreground/5 p-4 text-sm text-secondary">
         <p className="text-[10px] uppercase tracking-[0.28em] text-muted">Future-ready</p>
         <p className="mt-2 leading-7">
           The structure is prepared to consume project data from an API in later phases without changing the module surface.

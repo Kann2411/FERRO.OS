@@ -98,7 +98,7 @@ export function WindowShell({ window, onClose, onFocus, onBringToFront }: Window
       initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, scale: 0.96 }}
       animate={isClosing ? { opacity: 0, scale: 0.96 } : { opacity: 1, scale: 1 }}
       transition={{ duration: prefersReducedMotion ? 0 : 0.18, ease: "easeOut" }}
-      className={`pointer-events-auto absolute z-10 overflow-hidden rounded-[18px] border bg-[#141414]/90 backdrop-blur-xl ${window.focused ? "border-primary/40" : "border-white/10"}`}
+      className={`pointer-events-auto absolute z-10 overflow-hidden rounded-[18px] border bg-surface/90 backdrop-blur-xl ${window.focused ? "border-primary/40" : "border-border"}`}
       role="dialog"
       aria-modal="true"
       aria-label={`${window.title} window`}
@@ -114,7 +114,7 @@ export function WindowShell({ window, onClose, onFocus, onBringToFront }: Window
       }}
     >
       <div
-        className="flex items-center justify-between border-b border-white/10 bg-black/20 px-3 py-2.5"
+        className="flex items-center justify-between border-b border-border bg-background/20 px-3 py-2.5"
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
@@ -123,7 +123,7 @@ export function WindowShell({ window, onClose, onFocus, onBringToFront }: Window
       >
         <div className="flex items-center gap-2">
           <span className="text-sm text-primary" aria-hidden="true">{window.icon}</span>
-          <span className="text-sm font-medium text-white">{window.title}</span>
+          <span className="text-sm font-medium text-foreground">{window.title}</span>
         </div>
         <button
           type="button"
@@ -136,13 +136,13 @@ export function WindowShell({ window, onClose, onFocus, onBringToFront }: Window
             event.stopPropagation();
             handleClose();
           }}
-          className="rounded-full border border-white/10 px-2 py-1 text-xs text-secondary transition hover:border-primary/40 hover:text-primary"
+          className="rounded-full border border-border px-2 py-1 text-xs text-secondary transition hover:border-primary/40 hover:text-primary"
         >
           <span aria-hidden="true">✕</span>
         </button>
       </div>
 
-      <div className="h-[calc(100%-44px)] bg-[#0d0d0d]/70 p-4 text-sm text-secondary" role="region" aria-label={`${window.title} content`}>
+      <div className="h-[calc(100%-44px)] bg-background/70 p-4 text-sm text-secondary" role="region" aria-label={`${window.title} content`}>
         {window.id === "projects" ? (
           <ProjectsModule />
         ) : window.id === "resume" ? (

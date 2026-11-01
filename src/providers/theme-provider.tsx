@@ -20,6 +20,13 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     root.style.setProperty("--success", tokens.success);
     root.style.setProperty("--warning", tokens.warning);
     root.style.setProperty("--error", tokens.error);
+    root.style.setProperty("--border", tokens.border);
+    root.style.setProperty("--border-strong", tokens.borderStrong);
+    root.style.setProperty("--surface-2", tokens.surface2);
+    root.style.setProperty("--surface-3", tokens.surface3);
+    root.style.setProperty("--subtle", tokens.subtle);
+    root.style.setProperty("--accent-foreground", tokens.accentForeground);
+    root.style.setProperty("--signal", tokens.signal);
   }, [mode]);
 
   return <>{children}</>;

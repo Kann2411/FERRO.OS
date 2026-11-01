@@ -5,7 +5,7 @@ import { useFerroCore } from "@/features/ferro-core/context/ferro-core-context";
 
 const notificationStyles: Record<string, string> = {
   success: "border-emerald-400/30 bg-emerald-500/10 text-secondary",
-  info: "border-white/10 bg-white/5 text-secondary",
+  info: "border-border bg-foreground/5 text-secondary",
   achievement: "border-primary/30 bg-primary/10 text-secondary",
   mission: "border-primary/30 bg-primary/10 text-secondary",
   warning: "border-amber-400/30 bg-amber-400/10 text-secondary",
@@ -34,14 +34,14 @@ export function CoreNotifications() {
           >
             <div className="flex items-start justify-between gap-3">
               <div>
-                <p className="text-sm font-medium text-white">{notification.title}</p>
+                <p className="text-sm font-medium text-foreground">{notification.title}</p>
                 <p className="mt-1 text-sm leading-6 text-secondary">{notification.body}</p>
               </div>
               <button
                 type="button"
                 aria-label={`Dismiss notification: ${notification.title}`}
                 onClick={() => dismissNotification(notification.id)}
-                className="text-sm text-secondary transition hover:text-white"
+                className="text-sm text-secondary transition hover:text-foreground"
               >
                 <span aria-hidden="true">×</span>
               </button>
