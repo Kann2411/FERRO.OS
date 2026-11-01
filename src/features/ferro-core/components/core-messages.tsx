@@ -1,7 +1,12 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import { createMotionProps, createTransition } from "@/features/animation-engine";
 import { useFerroCore } from "@/features/ferro-core/context/ferro-core-context";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
+import { useT, useUi } from "@/hooks/use-lang";
+import { panelVariants } from "@/components/ui/panel";
+import { cn } from "@/lib/cn";
 
 const messageStyles: Record<string, string> = {
   info: "border-border bg-foreground/5 text-secondary",
@@ -14,6 +19,9 @@ const messageStyles: Record<string, string> = {
 
 export function CoreMessages() {
   const { messages } = useFerroCore();
+  const prefersReducedMotion = useReducedMotion();
+  const t = useT();
+  const tUi = useUi();
 
   if (messages.length === 0) {
     return null;
@@ -21,20 +29,30 @@ export function CoreMessages() {
 
   return (
     <motion.section
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35, ease: "easeOut" }}
-      className="rounded-3xl border border-border bg-surface/90 p-4 shadow-[0_20px_80px_rgba(0,0,0,0.22)] backdrop-blur-xl"
-      aria-label="FERRO CORE messages"
+      {...createMotionProps("panel", { reducedMotion: prefersReducedMotion })}
+      className={cn(panelVariants({ tone: "surface", size: "md", elevated: true }))}
+      aria-label={tUi("ferroCoreMessages")}
     >
-      <p className="text-[10px] uppercase tracking-[0.32em] text-muted">FERRO CORE</p>
+      <p className="text-[10px] uppercase tracking-[0.32em] text-muted">{tUi("ferroCoreKicker")}</p>
       <div className="mt-3 space-y-2" role="log" aria-live="polite">
-        {messages.map((message) => (
-          <div key={message.id} className={`rounded-2xl border px-3 py-3 ${messageStyles[message.type]}`} role="article" aria-label={`${message.type} message: ${message.title}`}>
-            <p className="text-sm font-medium text-foreground">{message.title}</p>
-            <p className="mt-1 text-sm leading-6 text-secondary">{message.body}</p>
-          </div>
-        ))}
+        <AnimatePresence initial={false}>
+          {messages.map((message) => (
+            <motion.div
+              key={message.id}
+              layout
+              initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={createTransition("window", { reducedMotion: prefersReducedMotion })}
+              className={`rounded-2xl border px-3 py-3 ${messageStyles[message.type]}`}
+              role="article"
+              aria-label={`${message.type} message: ${t(message.title)}`}
+            >
+              <p className="text-sm font-medium text-foreground">{t(message.title)}</p>
+              <p className="mt-1 text-sm leading-6 text-secondary">{t(message.body)}</p>
+            </motion.div>
+          ))}
+        </AnimatePresence>
       </div>
     </motion.section>
   );

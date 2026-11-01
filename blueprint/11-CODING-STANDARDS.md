@@ -422,6 +422,8 @@ Infinite spinning
 
 Distracting effects
 
+All animations must be implemented using Motion for React, respecting the standards defined in the project documentation.
+
 ---
 
 # Colors

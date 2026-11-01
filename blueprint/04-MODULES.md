@@ -1,9 +1,9 @@
 ---
 Document: 04-MODULES
 Project: FERRO.OS
-Version: 1.0.0
+Version: 1.1.0
 Status: Active
-Last Updated: 2026-07-22
+Last Updated: 2026-09-15
 Author: Kristian Kamilo Ferrin
 ---
 
@@ -97,6 +97,17 @@ Unlocked through exploration.
 ---
 
 # Module List
+
+> **Implementation note (2026-09-15):** the per-module "Unlock Condition" and "Exploration
+> Reward" percentages below describe the original vision. The shipped system unifies
+> unlocking under a single ordered mission chain instead — see `06-GAMEPLAY.md`'s "Unlock
+> System" section for the real chain and its rewards (`missionDefinitions` in
+> `src/features/ferro-core/utils/mission-system.ts`). Two modules listed below were never
+> built as standalone windows: **Secret Vault**'s role is served by the hidden-files system
+> (`src/features/hidden-files/utils/hidden-files.ts` — discoverable notes with their own
+> unlock conditions, read through the terminal) rather than a dedicated window; **Visualizer**
+> is a component embedded inside Audio Player (`music-visualizer.tsx`), not its own module
+> in the window registry.
 
 ---
 

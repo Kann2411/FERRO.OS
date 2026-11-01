@@ -4,23 +4,24 @@
   --background: #090909;
   --surface: #141414;
   --surface-strong: #1f1f1f;
+  --surface-2: #17171a;
+  --surface-3: #1f1f24;
   --primary: #d90429;
   --text-primary: #f8f8f8;
   --text-secondary: #b5b5b5;
   --muted: #6f6f6f;
+  --subtle: #4a4a4f;
+  --signal: #3d9b84;
+  --signal-foreground: #e7faf4;
+  --border: rgb(248 248 248 / 0.1);
+  --border-strong: rgb(248 248 248 / 0.18);
   --success: #00c853;
   --warning: #ffb300;
   --error: #ff1744;
   --focus-ring: #d90429;
   --skip-bg: #141414;
   --skip-text: #f8f8f8;
-  --border: rgba(255, 255, 255, 0.1);
-  --border-strong: rgba(255, 255, 255, 0.18);
-  --surface-2: #1e1e1e;
-  --surface-3: #2a2a2a;
-  --subtle: #8a8a8a;
   --accent-foreground: #ffffff;
-  --signal: #00c853;
 }
 
 @theme inline {
@@ -28,22 +29,29 @@
   --color-foreground: var(--text-primary);
   --color-surface: var(--surface);
   --color-surface-strong: var(--surface-strong);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
   --color-primary: var(--primary);
   --color-secondary: var(--text-secondary);
   --color-muted: var(--muted);
+  --color-subtle: var(--subtle);
+  --color-signal: var(--signal);
+  --color-signal-foreground: var(--signal-foreground);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-error: var(--error);
   --color-focus-ring: var(--focus-ring);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --color-border: var(--border);
-  --color-border-strong: var(--border-strong);
-  --color-surface-2: var(--surface-2);
-  --color-surface-3: var(--surface-3);
-  --color-subtle: var(--subtle);
   --color-accent-foreground: var(--accent-foreground);
-  --color-signal: var(--signal);
+  --font-sans: var(--font-display-sans);
+  --font-mono: var(--font-display-mono);
+}
+
+@theme {
+  --shadow-window: 0 24px 80px rgb(0 0 0 / 0.45), 0 0 0 1px rgb(248 248 248 / 0.08);
+  --shadow-dock: 0 8px 32px rgb(0 0 0 / 0.45), 0 0 0 1px rgb(248 248 248 / 0.08);
+  --ease-out-smooth: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 * {
@@ -60,7 +68,7 @@ body {
   min-height: 100vh;
   background: var(--background);
   color: var(--text-primary);
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  font-family: var(--font-display-sans), ui-sans-serif, system-ui, Arial, Helvetica, sans-serif;
 }
 
 button {
@@ -109,6 +117,22 @@ button:focus-visible {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* Signal chain effects — pulsing "current step" marker used by mission HUD / signal map */
+@keyframes signal-pulse {
+  0%, 100% {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+.signal-dot {
+  animation: signal-pulse 1.8s ease-in-out infinite;
 }
 
 /* High Contrast Mode */

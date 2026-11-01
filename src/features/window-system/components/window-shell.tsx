@@ -2,20 +2,31 @@
 
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import { useAudio } from "@/features/audio-engine";
 import { useWindowContext } from "@/features/window-system/context/window-context";
 import { ProjectsModule } from "@/features/projects/components/projects-module";
 import { ResumeModule } from "@/features/resume/components/resume-module";
 import { SkillsModule } from "@/features/skills/components/skills-module";
 import { TimelineModule } from "@/features/timeline/components/timeline-module";
 import { CodeStudioModule } from "@/features/code-studio/components/code-studio-module";
+import { AiLabModule } from "@/features/ai-lab/components/ai-lab-module";
+import { DebugConsoleModule } from "@/features/debug-console/components/debug-console-module";
 import { StudioModule } from "@/features/studio/components/studio-module";
 import { DiscographyModule } from "@/features/discography/components/discography-module";
 import { AudioPlayerModule } from "@/features/audio-player/components/audio-player-module";
 import { EquipmentModule } from "@/features/equipment/components/equipment-module";
 import { TerminalModule } from "@/features/terminal/components/terminal-module";
+import { SignalModule } from "@/features/signal/components/signal-module";
+import { SettingsModule } from "@/features/settings/components/settings-module";
 import type { WindowInstance } from "@/features/window-system/types";
-import { getViewportSafePosition } from "@/features/window-system/utils";
+import { clamp, getViewportSafePosition } from "@/features/window-system/utils";
+import { createTransition } from "@/features/animation-engine";
+import { SkeletonCard, SkeletonList } from "@/components/ui/skeleton";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
+import { useLang } from "@/hooks/use-lang";
+
+const MIN_WINDOW_WIDTH = 320;
+const MIN_WINDOW_HEIGHT = 240;
 
 interface WindowShellProps {
   window: WindowInstance;
@@ -25,16 +36,32 @@ interface WindowShellProps {
 }
 
 export function WindowShell({ window, onClose, onFocus, onBringToFront }: WindowShellProps) {
-  const { updateWindowPosition } = useWindowContext();
+  const { updateWindowPosition, updateWindowSize, toggleWindowMinimize, toggleWindowMaximize } = useWindowContext();
+  const { playSound } = useAudio();
   const [dragOffset, setDragOffset] = useState<{ x: number; y: number } | null>(null);
+  const [resizeOrigin, setResizeOrigin] = useState<{ x: number; y: number; width: number; height: number } | null>(null);
   const [position, setPosition] = useState({ x: window.x, y: window.y });
   const [isClosing, setIsClosing] = useState(false);
+  const [isContentReady, setIsContentReady] = useState(false);
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prefersReducedMotion = useReducedMotion();
+  const lang = useLang();
+  const es = lang === "es";
+  const motionTransition = createTransition("window", { reducedMotion: prefersReducedMotion });
+
+  if (position.x !== window.x || position.y !== window.y) {
+    setPosition({ x: window.x, y: window.y });
+  }
 
   useEffect(() => {
-    setPosition({ x: window.x, y: window.y });
-  }, [window.x, window.y]);
+    const frame = globalThis.setTimeout(() => {
+      setIsContentReady(true);
+    }, 140);
+
+    return () => {
+      globalThis.clearTimeout(frame);
+    };
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -72,11 +99,39 @@ export function WindowShell({ window, onClose, onFocus, onBringToFront }: Window
     setDragOffset(null);
   };
 
+  const handleResizePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+    event.stopPropagation();
+    onFocus(window.id);
+    onBringToFront(window.id);
+
+    setResizeOrigin({ x: event.clientX, y: event.clientY, width: window.width, height: window.height });
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+
+  const handleResizePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (!resizeOrigin) {
+      return;
+    }
+
+    const maxWidth = Math.max(MIN_WINDOW_WIDTH, globalThis.innerWidth - position.x - 24);
+    const maxHeight = Math.max(MIN_WINDOW_HEIGHT, globalThis.innerHeight - position.y - 24);
+    const nextWidth = clamp(resizeOrigin.width + (event.clientX - resizeOrigin.x), MIN_WINDOW_WIDTH, maxWidth);
+    const nextHeight = clamp(resizeOrigin.height + (event.clientY - resizeOrigin.y), MIN_WINDOW_HEIGHT, maxHeight);
+
+    updateWindowSize(window.id, { width: nextWidth, height: nextHeight });
+  };
+
+  const handleResizePointerUp = (event: React.PointerEvent<HTMLDivElement>) => {
+    event.currentTarget.releasePointerCapture(event.pointerId);
+    setResizeOrigin(null);
+  };
+
   const handleClose = () => {
     if (isClosing) {
       return;
     }
 
+    playSound("ui", "close");
     setIsClosing(true);
 
     if (prefersReducedMotion) {
@@ -90,18 +145,28 @@ export function WindowShell({ window, onClose, onFocus, onBringToFront }: Window
 
     closeTimerRef.current = globalThis.setTimeout(() => {
       onClose(window.id);
-    }, 180);
+    }, Math.round((motionTransition.duration ?? 0) * 1000));
   };
 
   return (
     <motion.div
-      initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, scale: 0.96 }}
-      animate={isClosing ? { opacity: 0, scale: 0.96 } : { opacity: 1, scale: 1 }}
-      transition={{ duration: prefersReducedMotion ? 0 : 0.18, ease: "easeOut" }}
+      layout
+      initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, scale: 0.96, y: 10 }}
+      animate={
+        isClosing
+          ? { opacity: 0, scale: 0.94, y: 8 }
+          : {
+              opacity: 1,
+              scale: window.focused ? 1 : 0.995,
+              y: window.isMinimized ? 6 : 0,
+              height: window.isMinimized ? 44 : window.height,
+            }
+      }
+      transition={motionTransition}
       className={`pointer-events-auto absolute z-10 overflow-hidden rounded-[18px] border bg-surface/90 backdrop-blur-xl ${window.focused ? "border-primary/40" : "border-border"}`}
       role="dialog"
       aria-modal="true"
-      aria-label={`${window.title} window`}
+      aria-label={es ? `Ventana ${window.title}` : `${window.title} window`}
       style={{
         left: position.x,
         top: position.y,
@@ -119,54 +184,147 @@ export function WindowShell({ window, onClose, onFocus, onBringToFront }: Window
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         role="toolbar"
-        aria-label="Window controls"
+        aria-label={es ? "Controles de ventana" : "Window controls"}
       >
         <div className="flex items-center gap-2">
           <span className="text-sm text-primary" aria-hidden="true">{window.icon}</span>
           <span className="text-sm font-medium text-foreground">{window.title}</span>
         </div>
-        <button
-          type="button"
-          aria-label={`Close ${window.title} window`}
-          onPointerDown={(event) => {
-            event.stopPropagation();
-            event.preventDefault();
-          }}
-          onClick={(event) => {
-            event.stopPropagation();
-            handleClose();
-          }}
-          className="rounded-full border border-border px-2 py-1 text-xs text-secondary transition hover:border-primary/40 hover:text-primary"
-        >
-          <span aria-hidden="true">✕</span>
-        </button>
+        <div className="flex items-center gap-1.5">
+          <button
+            type="button"
+            aria-label={es ? `Minimizar ventana ${window.title}` : `Minimize ${window.title} window`}
+            onPointerDown={(event) => {
+              event.stopPropagation();
+              event.preventDefault();
+            }}
+            onPointerEnter={() => playSound("ui", "hover")}
+            onClick={(event) => {
+              event.stopPropagation();
+              toggleWindowMinimize(window.id);
+            }}
+            className="rounded-full border border-border px-2 py-1 text-xs text-secondary transition hover:border-primary/40 hover:text-primary"
+          >
+            <span aria-hidden="true">—</span>
+          </button>
+          <button
+            type="button"
+            aria-label={
+              es
+                ? window.isMaximized
+                  ? `Restaurar ventana ${window.title}`
+                  : `Maximizar ventana ${window.title}`
+                : window.isMaximized
+                  ? `Restore ${window.title} window`
+                  : `Maximize ${window.title} window`
+            }
+            onPointerDown={(event) => {
+              event.stopPropagation();
+              event.preventDefault();
+            }}
+            onPointerEnter={() => playSound("ui", "hover")}
+            onClick={(event) => {
+              event.stopPropagation();
+              toggleWindowMaximize(window.id);
+            }}
+            className="rounded-full border border-border px-2 py-1 text-xs text-secondary transition hover:border-primary/40 hover:text-primary"
+          >
+            <span aria-hidden="true">{window.isMaximized ? "▭" : "▢"}</span>
+          </button>
+          <button
+            type="button"
+            aria-label={es ? `Cerrar ventana ${window.title}` : `Close ${window.title} window`}
+            onPointerDown={(event) => {
+              event.stopPropagation();
+              event.preventDefault();
+            }}
+            onPointerEnter={() => playSound("ui", "hover")}
+            onClick={(event) => {
+              event.stopPropagation();
+              handleClose();
+            }}
+            className="rounded-full border border-border px-2 py-1 text-xs text-secondary transition hover:border-primary/40 hover:text-primary"
+          >
+            <span aria-hidden="true">✕</span>
+          </button>
+        </div>
       </div>
 
-      <div className="h-[calc(100%-44px)] bg-background/70 p-4 text-sm text-secondary" role="region" aria-label={`${window.title} content`}>
-        {window.id === "projects" ? (
-          <ProjectsModule />
-        ) : window.id === "resume" ? (
-          <ResumeModule />
-        ) : window.id === "skills" ? (
-          <SkillsModule />
-        ) : window.id === "timeline" ? (
-          <TimelineModule />
-        ) : window.id === "studio" ? (
-          <StudioModule />
-        ) : window.id === "discography" ? (
-          <DiscographyModule />
-        ) : window.id === "audioPlayer" ? (
-          <AudioPlayerModule />
-        ) : window.id === "equipment" ? (
-          <EquipmentModule />
-        ) : window.id === "terminal" ? (
-          <TerminalModule />
-        ) : window.id === "code-studio" ? (
-          <CodeStudioModule />
+      <div className="h-[calc(100%-44px)] bg-background/70 p-4 text-sm text-secondary" role="region" aria-label={es ? `Contenido de ${window.title}` : `${window.title} content`}>
+        {!isContentReady ? (
+          <motion.div
+            initial={{ opacity: 0.5 }}
+            animate={{ opacity: 1 }}
+            transition={createTransition("entrance", { reducedMotion: prefersReducedMotion })}
+            className="h-full"
+          >
+            <div className="mb-4 flex items-center justify-between">
+              <div className="h-4 w-24 rounded bg-foreground/10" />
+              <div className="h-4 w-16 rounded bg-foreground/10" />
+            </div>
+            <SkeletonCard className="mb-3" />
+            <SkeletonList count={2} />
+          </motion.div>
         ) : (
-          <p className="text-sm leading-7">{window.title} module placeholder. The window engine is now ready for future modules.</p>
+          <motion.div
+            key={window.id}
+            initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={createTransition("window", { reducedMotion: prefersReducedMotion })}
+            className="h-full"
+          >
+            {window.id === "projects" ? (
+              <ProjectsModule />
+            ) : window.id === "resume" ? (
+              <ResumeModule />
+            ) : window.id === "skills" ? (
+              <SkillsModule />
+            ) : window.id === "timeline" ? (
+              <TimelineModule />
+            ) : window.id === "studio" ? (
+              <StudioModule />
+            ) : window.id === "discography" ? (
+              <DiscographyModule />
+            ) : window.id === "audioPlayer" ? (
+              <AudioPlayerModule />
+            ) : window.id === "equipment" ? (
+              <EquipmentModule />
+            ) : window.id === "terminal" ? (
+              <TerminalModule />
+            ) : window.id === "signal" ? (
+              <SignalModule />
+            ) : window.id === "settings" ? (
+              <SettingsModule />
+            ) : window.id === "aiLab" ? (
+              <AiLabModule />
+            ) : window.id === "debugConsole" ? (
+              <DebugConsoleModule />
+            ) : window.id === "code-studio" ? (
+              <CodeStudioModule />
+            ) : (
+              <p className="text-sm leading-7">
+                {es
+                  ? `Marcador de posición del módulo ${window.title}. El motor de ventanas ya está listo para futuros módulos.`
+                  : `${window.title} module placeholder. The window engine is now ready for future modules.`}
+              </p>
+            )}
+          </motion.div>
         )}
       </div>
+
+      {!window.isMaximized && !window.isMinimized && (
+        <div
+          onPointerDown={handleResizePointerDown}
+          onPointerMove={handleResizePointerMove}
+          onPointerUp={handleResizePointerUp}
+          className="absolute bottom-0 right-0 z-10 h-4 w-4 cursor-nwse-resize touch-none rounded-tl-md transition hover:bg-foreground/10"
+          role="separator"
+          aria-label={es ? `Redimensionar ventana ${window.title}` : `Resize ${window.title} window`}
+          aria-orientation="horizontal"
+        >
+          <div className="absolute bottom-1 right-1 h-2 w-2 border-b-2 border-r-2 border-border-strong" aria-hidden="true" />
+        </div>
+      )}
     </motion.div>
   );
 }

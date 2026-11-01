@@ -1,9 +1,14 @@
 import type { FerroCoreContextValue } from "@/features/ferro-core/types";
+import type { Lang } from "@/lib/i18n/types";
 
 export interface TerminalCommandContext {
   openWindow: (windowId: string) => boolean;
   explorerProfile: FerroCoreContextValue["explorerProfile"];
   activeMission: FerroCoreContextValue["activeMission"];
+  completeMission: (missionId: string) => void;
+  unlockModule: (moduleId: string) => void;
+  registerHiddenDiscovery: (fileId: string) => boolean;
+  lang: Lang;
 }
 
 export type TerminalCommandHandler = (args: string[], context: TerminalCommandContext) => string;

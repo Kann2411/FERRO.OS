@@ -1,8 +1,12 @@
+import type { Bilingual } from "@/lib/i18n/types";
+
 export interface ExplorerProfile {
   name: string;
   progress: number;
   modulesDiscovered: number;
   discoveredModules: string[];
+  unlockedModules: string[];
+  discoveredHiddenFiles: string[];
   achievements: string[];
   firstVisit: string | null;
   lastVisit: string | null;
@@ -15,25 +19,40 @@ export interface ExplorerProfile {
 
 export interface MissionDefinition {
   id: string;
-  title: string;
-  description: string;
+  title: Bilingual;
+  description: Bilingual;
   reward: number;
   prerequisite: string | null;
-  targetModule?: string;
+  unlocksModule?: string;
 }
 
 export interface CoreMessage {
   id: string;
   type: "info" | "tip" | "lore" | "welcome" | "warning" | "achievement";
-  title: string;
-  body: string;
+  title: Bilingual;
+  body: Bilingual;
 }
 
 export interface CoreNotification {
   id: string;
   type: "success" | "info" | "achievement" | "mission" | "warning";
-  title: string;
-  body: string;
+  title: Bilingual;
+  body: Bilingual;
+}
+
+export interface DiscoveryRecord {
+  id: string;
+  label: string;
+  source: string;
+  timestamp: string;
+}
+
+export interface ExplorerHistoryEntry {
+  id: string;
+  type: "module" | "achievement" | "progress" | "mission" | "event";
+  label: Bilingual;
+  detail: Bilingual;
+  timestamp: string;
 }
 
 export interface FerroCoreContextValue {
@@ -46,17 +65,22 @@ export interface FerroCoreContextValue {
   completedMissions: string[];
   messages: CoreMessage[];
   notifications: CoreNotification[];
-  discoveries: Array<{ id: string; label: string; source: string; timestamp: string }>;
-  history: Array<{ id: string; type: "module" | "achievement" | "progress" | "mission" | "event"; label: string; detail: string; timestamp: string }>;
+  discoveries: DiscoveryRecord[];
+  history: ExplorerHistoryEntry[];
   activeMission: MissionDefinition | null;
+  mapOpen: boolean;
+  setMapOpen: (open: boolean) => void;
+  recognizedOpen: boolean;
+  setRecognizedOpen: (open: boolean) => void;
   setExplorerName: (name: string) => void;
-  advanceProgress: (amount: number) => void;
   registerDiscovery: (moduleId?: string) => void;
   awardAchievement: (achievement: string) => void;
   recordVisit: () => void;
   completeWelcome: () => void;
   completeMission: (missionId: string) => void;
   unlockMission: (missionId: string) => void;
+  unlockModule: (moduleId: string) => void;
+  registerHiddenDiscovery: (fileId: string) => boolean;
   resetFlow: () => void;
   pushMessage: (message: CoreMessage) => void;
   pushNotification: (notification: CoreNotification) => void;
