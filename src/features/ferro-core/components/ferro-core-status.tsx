@@ -10,6 +10,7 @@ export function FerroCoreStatus() {
   const { explorerProfile } = useFerroCore();
   const tUi = useUi();
   const progress = Math.round(explorerProfile.progress);
+  const level = Math.max(1, Math.min(9, Math.floor(progress / 25) + 1));
 
   return (
     <motion.section
@@ -24,8 +25,8 @@ export function FerroCoreStatus() {
           <p className="text-xs uppercase tracking-[0.32em] text-muted">{tUi("explorer")}</p>
           <p className="mt-1 text-lg font-semibold text-foreground">{explorerProfile.name}</p>
         </div>
-        <span className="rounded-full border border-border bg-foreground/5 px-3 py-1 text-xs uppercase text-muted" aria-label={`${tUi("level")} 0`}>
-          {tUi("level")} 0
+        <span className="rounded-full border border-border bg-foreground/5 px-3 py-1 text-xs uppercase text-muted" aria-label={`${tUi("level")} ${level}`}>
+          {tUi("level")} {level}
         </span>
       </div>
 

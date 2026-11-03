@@ -26,7 +26,12 @@
 
 ## Fixes pendientes
 
-- [ ] **Fix #4 — Próximo fix visual pendiente.**
+- [ ] **Fix #4 — Nivel "Level 0" hardcodeado** en `src/features/ferro-core/components/ferro-core-status.tsx`: usar el nivel calculado real.
+  - Estado: **EN PROGRESO** → resuelto en esta sesión (nivel calculado con `Math.floor(progress / 25) + 1`, mismo patrón que `explorer-profile-card.tsx`).
+
+- [ ] **Fix #5 — Posiciones iniciales de ventanas solapadas** en el window system.
+- [ ] **Fix #6 — Estado/ananimación de apertura de ventanas** no usado en el window system.
+- [ ] **Fix #7 — Bugs de lógica de exploración** en `ferro-core-context`.
 
 ## Contexto clave (no perder)
 
