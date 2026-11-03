@@ -23,7 +23,7 @@ export const windowRegistry: Record<string, WindowDefinition> = {
     icon: "♫",
     initialWidth: 540,
     initialHeight: 360,
-    defaultPosition: { x: 220, y: 140 },
+    defaultPosition: { x: 820, y: 140 },
   },
   discography: {
     id: "discography",
@@ -31,7 +31,7 @@ export const windowRegistry: Record<string, WindowDefinition> = {
     icon: "◈",
     initialWidth: 560,
     initialHeight: 380,
-    defaultPosition: { x: 260, y: 160 },
+    defaultPosition: { x: 180, y: 1000 },
   },
   audioPlayer: {
     id: "audioPlayer",
@@ -39,7 +39,7 @@ export const windowRegistry: Record<string, WindowDefinition> = {
     icon: "♪",
     initialWidth: 560,
     initialHeight: 420,
-    defaultPosition: { x: 300, y: 180 },
+    defaultPosition: { x: 820, y: 560 },
   },
   equipment: {
     id: "equipment",
@@ -47,7 +47,7 @@ export const windowRegistry: Record<string, WindowDefinition> = {
     icon: "⚙",
     initialWidth: 560,
     initialHeight: 400,
-    defaultPosition: { x: 320, y: 200 },
+    defaultPosition: { x: 820, y: 980 },
   },
   resume: {
     id: "resume",
@@ -55,7 +55,7 @@ export const windowRegistry: Record<string, WindowDefinition> = {
     icon: "◫",
     initialWidth: 500,
     initialHeight: 340,
-    defaultPosition: { x: 260, y: 160 },
+    defaultPosition: { x: 180, y: 1380 },
   },
   skills: {
     id: "skills",
@@ -63,7 +63,7 @@ export const windowRegistry: Record<string, WindowDefinition> = {
     icon: "◌",
     initialWidth: 540,
     initialHeight: 360,
-    defaultPosition: { x: 300, y: 180 },
+    defaultPosition: { x: 180, y: 1740 },
   },
   timeline: {
     id: "timeline",
@@ -71,7 +71,7 @@ export const windowRegistry: Record<string, WindowDefinition> = {
     icon: "⧉",
     initialWidth: 520,
     initialHeight: 340,
-    defaultPosition: { x: 340, y: 200 },
+    defaultPosition: { x: 820, y: 1680 },
   },
   terminal: {
     id: "terminal",
@@ -79,7 +79,7 @@ export const windowRegistry: Record<string, WindowDefinition> = {
     icon: ">",
     initialWidth: 520,
     initialHeight: 320,
-    defaultPosition: { x: 300, y: 200 },
+    defaultPosition: { x: 820, y: 3160 },
   },
   signal: {
     id: "signal",
@@ -87,7 +87,7 @@ export const windowRegistry: Record<string, WindowDefinition> = {
     icon: "✉︎",
     initialWidth: 480,
     initialHeight: 470,
-    defaultPosition: { x: 380, y: 140 },
+    defaultPosition: { x: 180, y: 2180 },
   },
   explorer: {
     id: "explorer",
@@ -95,7 +95,7 @@ export const windowRegistry: Record<string, WindowDefinition> = {
     icon: "◌",
     initialWidth: 480,
     initialHeight: 300,
-    defaultPosition: { x: 340, y: 220 },
+    defaultPosition: { x: 820, y: 2040 },
   },
   settings: {
     id: "settings",
@@ -103,7 +103,7 @@ export const windowRegistry: Record<string, WindowDefinition> = {
     icon: "◎",
     initialWidth: 640,
     initialHeight: 560,
-    defaultPosition: { x: 260, y: 100 },
+    defaultPosition: { x: 820, y: 2600 },
   },
   aiLab: {
     id: "aiLab",
@@ -111,7 +111,7 @@ export const windowRegistry: Record<string, WindowDefinition> = {
     icon: "◍",
     initialWidth: 520,
     initialHeight: 360,
-    defaultPosition: { x: 420, y: 260 },
+    defaultPosition: { x: 180, y: 3220 },
   },
   debugConsole: {
     id: "debugConsole",
@@ -119,7 +119,7 @@ export const windowRegistry: Record<string, WindowDefinition> = {
     icon: "⌗",
     initialWidth: 560,
     initialHeight: 380,
-    defaultPosition: { x: 420, y: 260 },
+    defaultPosition: { x: 820, y: 3580 },
   },
   "code-studio": {
     id: "code-studio",
@@ -127,6 +127,6 @@ export const windowRegistry: Record<string, WindowDefinition> = {
     icon: "⌬",
     initialWidth: 620,
     initialHeight: 420,
-    defaultPosition: { x: 360, y: 220 },
+    defaultPosition: { x: 180, y: 4040 },
   },
 };
