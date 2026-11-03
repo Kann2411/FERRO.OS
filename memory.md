@@ -45,7 +45,11 @@
 
 ## Tareas de implementación (fase actual)
 
-- [ ] **Task #1 — Layout general de la pantalla** (desktop shell, boot screen, wallpaper, dock, status bar).
+- [x] **Task #1 — Layout general de la pantalla** (commit `78846e2`)
+  - Shell reestructurado: raíz `h-dvh overflow-hidden` a pantalla completa, wrapper `h-full min-h-0 flex-col`, `main` como contenedor flexible (`lg:flex-row` con icons + panel explorador, columna en móvil).
+  - Dock movido fuera del flujo de `main` y renderizado tras el `WindowManager`; variante desktop ahora `fixed bottom-0 left-0 right-0 z-30` (sm:flex) y móvil `fixed bottom-0 z-50 sm:hidden` (ya no muerto por wrapper oculto).
+  - Boot screen (`fixed inset-0 z-80`), wallpaper ambiental (`absolute inset-0`) y status bar (header + StatusPanel) ya integrados en el shell.
+
 - [ ] **Task #2 — Ventana Projects**: contenido, estructura y diseño.
 - [ ] **Task #3 — Ventana Resume / Skills / Timeline / etc.** (una o varias por tandas).
 - [ ] **Task #4 — Terminal**: UI, comandos y animaciones.
