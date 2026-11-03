@@ -50,7 +50,10 @@
   - Dock movido fuera del flujo de `main` y renderizado tras el `WindowManager`; variante desktop ahora `fixed bottom-0 left-0 right-0 z-30` (sm:flex) y móvil `fixed bottom-0 z-50 sm:hidden` (ya no muerto por wrapper oculto).
   - Boot screen (`fixed inset-0 z-80`), wallpaper ambiental (`absolute inset-0`) y status bar (header + StatusPanel) ya integrados en el shell.
 
-- [ ] **Task #2 — Ventana Projects**: contenido, estructura y diseño.
+- [x] **Task #2 — Ventana Projects** (commit `1180c1c`)
+  - Solo cambios de layout/visual: grid de cards `sm:grid-cols-2 lg:grid-cols-3`, cards con `h-full` (alturas igualadas) y zoom de imagen al hover (`group-hover:scale-105`, 500ms).
+  - Contenido sin tocar (8 proyectos, copy, datos intactos).
+
 - [ ] **Task #3 — Ventana Resume / Skills / Timeline / etc.** (una o varias por tandas).
 - [ ] **Task #4 — Terminal**: UI, comandos y animaciones.
 - [ ] **Task #5 — Signal / Audio Player / Studio / Discography / AI Lab / Debug Console**.
