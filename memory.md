@@ -20,9 +20,13 @@
   - Añadido `@keyframes blink` (opacity 1↔0, 1s step-end) en `src/app/globals.css`.
   - Referencia usada por el caret del terminal (`src/features/terminal/components/terminal-module.tsx`).
 
+- [x] **Fix #3 — Keyframes y tokens de animación faltantes** (commit `41aefdf`)
+  - Añadidos `@keyframes` + utilidades: `boot-caret`, `toast-in`, `window-in`, `dock-pop` (+ `.boot-caret`, `.toast-in`, `.window-in`, `.dock-bounce`).
+  - Añadidos tokens `--shadow-border`, `--shadow-border-hover`, `--ring` en `@theme`.
+
 ## Fixes pendientes
 
-- [ ] **Fix #3 — Próximo fix visual pendiente.**
+- [ ] **Fix #4 — Próximo fix visual pendiente.**
 
 ## Contexto clave (no perder)
 
