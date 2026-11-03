@@ -306,7 +306,7 @@ export function ProjectsModule() {
           message={tUi("noProjectsMessage")}
         />
       ) : (
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {projects.map((project, index) => (
             <motion.button
               key={project.title}
@@ -316,7 +316,7 @@ export function ProjectsModule() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: prefersReducedMotion ? 0 : index * 0.05, duration: prefersReducedMotion ? 0 : 0.25 }}
               whileHover={prefersReducedMotion ? undefined : { y: -2 }}
-              className="group overflow-hidden rounded-2xl border border-border bg-surface/80 text-left shadow-[0_20px_70px_rgba(0,0,0,0.22)] transition hover:border-primary/40"
+              className="group h-full overflow-hidden rounded-2xl border border-border bg-surface/80 text-left shadow-[0_20px_70px_rgba(0,0,0,0.22)] transition hover:border-primary/40"
               aria-label={`${tUi("inspectProject")}: ${project.title}`}
             >
               <div className={`relative w-full min-h-28 aspect-video ${project.imageOrientation === "portrait" ? "bg-background/40" : ""}`}>
@@ -325,7 +325,7 @@ export function ProjectsModule() {
                   alt=""
                   fill
                   sizes="(min-width: 640px) 50vw, 100vw"
-                  className={project.imageOrientation === "portrait" ? "object-contain" : "object-cover"}
+                  className={project.imageOrientation === "portrait" ? "object-contain" : "object-cover transition-transform duration-500 group-hover:scale-105"}
                   priority={index === 0}
                 />
               </div>
