@@ -5,7 +5,7 @@ import { useAudio } from "@/features/audio-engine";
 import { useFerroCore } from "@/features/ferro-core/context/ferro-core-context";
 import { useWindowContext } from "@/features/window-system/context/window-context";
 import { resolveWindowDefinition } from "@/features/window-system/utils/open-module";
-import { executeCommand, getCommandDefinitions, registerBuiltInCommands, UNRECOGNIZED_COMMAND_PREFIXES, type TerminalCommandContext } from "@/features/terminal/utils/command-engine";
+import { executeCommand, getCommandDefinitions, parseCommand, registerBuiltInCommands, type TerminalCommandContext } from "@/features/terminal/utils/command-engine";
 import { generateUUID } from "@/lib/uuid";
 import { useLang } from "@/hooks/use-lang";
 
@@ -119,7 +119,10 @@ export function TerminalModule() {
       return nextEntries;
     });
 
-    if (UNRECOGNIZED_COMMAND_PREFIXES.some((prefix) => response.startsWith(prefix))) {
+    const { name } = parseCommand(command);
+    const isCommandRecognized = getCommandDefinitions().some((definition) => definition.name === name);
+
+    if (!isCommandRecognized) {
       playSound("terminal", "error");
     } else {
       completeMission("talk-to-system");

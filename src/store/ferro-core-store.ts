@@ -418,6 +418,11 @@ export const useFerroCoreStore = create<FerroCoreState>()(
             return;
           }
 
+          // The signal chain must be walked in order — never complete a mission out of sequence.
+          if (missionDef.prerequisite && !current.missionProgress[missionDef.prerequisite]) {
+            return;
+          }
+
           // The last mission can't be completed directly — it seals itself once every other one is done.
           if (missionId === RECOGNITION_MISSION_ID && !isChainReadyToSeal(current.missionProgress)) {
             return;
