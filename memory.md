@@ -34,13 +34,14 @@
   - `openWindow` ahora crea ventanas nuevas con `state: "opening"` (antes forzaba `"active"` aunque el default ya era `"opening"`).
   - `WindowShell` respeta `window.state === "opening"` para la animación inicial (`opacity/scale/y`), con fallback a sin animación si `prefersReducedMotion`.
 
+- [x] **Fix #7 — Bugs de lógica de exploración** (commit `08b4a19`)
+  - `completeMission` ahora valida el prerequisite de la cadena de misiones (no se puede saltar misiones).
+  - Terminal: `talk-to-system` solo se completa con comandos reconocidos (no con comandos desconocidos/vacíos).
+  - Escritorio: la misión `explore-desktop` ya no se completa por hover; se dispara al abrir ventanas (via `useMissionTriggers`).
+
 ## Fixes pendientes
 
-- [ ] **Fix #7 — Bugs de lógica de exploración** en `ferro-core-context`.
-
-- [ ] **Fix #5 — Posiciones iniciales de ventanas solapadas** en el window system.
-- [ ] **Fix #6 — Estado/ananimación de apertura de ventanas** no usado en el window system.
-- [ ] **Fix #7 — Bugs de lógica de exploración** en `ferro-core-context`.
+- (Ninguno — fase de fixes visuales completada; siguiente fase: implementación del diseño).
 
 ## Contexto clave (no perder)
 
