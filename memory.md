@@ -27,9 +27,11 @@
 - [x] **Fix #4 — Nivel "Level 0" hardcodeado** (commit `64f9861`)
   - Sustituido por nivel calculado: `Math.max(1, Math.min(9, Math.floor(progress / 25) + 1))`, mismo patrón que `explorer-profile-card.tsx`.
 
+- [x] **Fix #5 — Posiciones iniciales de ventanas solapadas** (commit `cd4096f`)
+  - Reescritas `defaultPosition` en `src/features/window-system/registry/index.ts` para eliminar solapamientos.
+
 ## Fixes pendientes
 
-- [ ] **Fix #5 — Posiciones iniciales de ventanas solapadas** en el window system.
 - [ ] **Fix #6 — Estado/ananimación de apertura de ventanas** no usado en el window system.
 - [ ] **Fix #7 — Bugs de lógica de exploración** en `ferro-core-context`.
 
