@@ -93,7 +93,7 @@ export function WindowProvider({ children }: { children: ReactNode }) {
 
       const nextZIndex = currentWindows.length + 1;
       const nextWindow = createWindowInstance(definition, nextZIndex);
-      return [...currentWindows, { ...nextWindow, focused: true, state: "active" }];
+      return [...currentWindows, { ...nextWindow, focused: true, state: "opening" }];
     });
 
     setActiveWindowId(definition.id);
