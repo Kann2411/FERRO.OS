@@ -5,8 +5,8 @@
 
 ## Estado general
 
-- **Fase actual:** Fixes visuales (antes de empezar la implementación).
-- **Dirección:** Completar los fixes visuales paso a paso, con push y revisión, antes de codificar.
+- **Fase actual:** Implementación (diseño visual corregido en fixes #1–#7, ya completados).
+- **Dirección:** Convertir los fixes visuales ya aplicados en código real de layout/componentes, una tarea a la vez.
 
 ## Fixes completados
 
@@ -42,6 +42,15 @@
 ## Fixes pendientes
 
 - (Ninguno — fase de fixes visuales completada; siguiente fase: implementación del diseño).
+
+## Tareas de implementación (fase actual)
+
+- [ ] **Task #1 — Layout general de la pantalla** (desktop shell, boot screen, wallpaper, dock, status bar).
+- [ ] **Task #2 — Ventana Projects**: contenido, estructura y diseño.
+- [ ] **Task #3 — Ventana Resume / Skills / Timeline / etc.** (una o varias por tandas).
+- [ ] **Task #4 — Terminal**: UI, comandos y animaciones.
+- [ ] **Task #5 — Signal / Audio Player / Studio / Discography / AI Lab / Debug Console**.
+- [ ] **Task #6 — Polish final**: responsive, accesibilidad, copy en/es.
 
 ## Contexto clave (no perder)
 
