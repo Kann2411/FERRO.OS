@@ -43,14 +43,14 @@ function WorkspaceContent() {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-background text-foreground lg:h-dvh">
+    <div className="relative h-dvh overflow-hidden bg-background text-foreground">
       <a href="#main-content" className="skip-link">
         Skip to main content
       </a>
 
       <AmbientBackground />
 
-      <div className="relative z-10 flex min-h-screen flex-col pb-20 sm:pb-0 lg:h-dvh">
+      <div className="relative z-10 flex h-full min-h-0 flex-col">
         <header role="banner" className="flex items-center justify-between border-b border-border bg-background/20 px-3 py-2 backdrop-blur-xl sm:px-5 sm:py-3">
           <div className="flex items-center gap-2 sm:gap-3">
             <div className="h-2 w-2 rounded-full bg-primary sm:h-2.5 sm:w-2.5" aria-hidden="true" />
@@ -81,29 +81,27 @@ function WorkspaceContent() {
           </div>
         </header>
 
-        <main id="main-content" role="main" className="flex-1 p-3 sm:p-6 lg:flex lg:min-h-0 lg:flex-col lg:px-8 lg:py-5">
-          <div className="flex h-full flex-col justify-between gap-4 sm:gap-6 lg:h-auto lg:min-h-0 lg:flex-1 lg:gap-4">
-            <div className="flex flex-col gap-4 lg:min-h-0 lg:flex-1 lg:flex-row lg:items-start lg:justify-between">
-              <section aria-label={tUi("desktopApplications")} className="w-full lg:w-auto">
-                <DesktopIcons />
-              </section>
-              <aside
-                aria-label={tUi("explorerInformation")}
-                className="w-full space-y-3 sm:max-w-85 lg:self-stretch lg:overflow-y-auto lg:overscroll-contain lg:pr-1 lg:[scrollbar-color:var(--border-strong)_transparent] lg:scrollbar-thin"
-              >
-                <ExplorerProfileCard />
-                <MissionBoard />
-                <CoreMessages />
-              </aside>
-            </div>
-            <div className="hidden justify-center sm:flex lg:shrink-0">
-              <nav aria-label={tUi("applicationDock")}>
-                <Dock />
-              </nav>
-            </div>
-          </div>
+        <main
+          id="main-content"
+          role="main"
+          className="flex min-h-0 flex-1 flex-col gap-4 p-3 sm:p-6 lg:flex-row lg:items-start lg:justify-between lg:gap-6 lg:px-8 lg:py-5"
+        >
+          <section aria-label={tUi("desktopApplications")} className="w-full lg:w-auto">
+            <DesktopIcons />
+          </section>
+          <aside
+            aria-label={tUi("explorerInformation")}
+            className="w-full space-y-3 sm:max-w-85 lg:self-stretch lg:overflow-y-auto lg:overscroll-contain lg:pr-1 lg:[scrollbar-color:var(--border-strong)_transparent] lg:scrollbar-thin"
+          >
+            <ExplorerProfileCard />
+            <MissionBoard />
+            <CoreMessages />
+          </aside>
         </main>
       </div>
+
+      <WindowManager />
+      <Dock />
 
       <button
         type="button"
@@ -117,7 +115,6 @@ function WorkspaceContent() {
         <span aria-hidden="true">⌖</span>
       </button>
 
-      <WindowManager />
       <CoreNotifications />
       <SignalMap />
       <RecognizedModal />
