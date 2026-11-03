@@ -51,6 +51,9 @@
 @theme {
   --shadow-window: 0 24px 80px rgb(0 0 0 / 0.45), 0 0 0 1px rgb(248 248 248 / 0.08);
   --shadow-dock: 0 8px 32px rgb(0 0 0 / 0.45), 0 0 0 1px rgb(248 248 248 / 0.08);
+  --shadow-border: 0 0 0 1px rgb(248 248 248 / 0.08);
+  --shadow-border-hover: 0 0 0 1px rgb(248 248 248 / 0.16);
+  --ring: #d90429;
   --ease-out-smooth: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -133,6 +136,73 @@ button:focus-visible {
 
 .signal-dot {
   animation: signal-pulse 1.8s ease-in-out infinite;
+}
+
+/* Boot sequence caret */
+@keyframes boot-caret {
+  0%,
+  45% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.boot-caret {
+  animation: boot-caret 1s steps(1) infinite;
+}
+
+/* Toast / notification enter */
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+    filter: blur(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+.toast-in {
+  animation: toast-in 250ms var(--ease-out-smooth) both;
+}
+
+/* Window enter */
+@keyframes window-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.window-in {
+  animation: window-in 250ms var(--ease-out-smooth) both;
+}
+
+/* Dock pop */
+@keyframes dock-pop {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  40% {
+    transform: translateY(-8px) scale(1.06);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+  }
+}
+
+.dock-bounce {
+  animation: dock-pop 420ms var(--ease-out-smooth);
 }
 
 /* Blinking caret used by the terminal input indicator */
