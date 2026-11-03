@@ -30,9 +30,12 @@
 - [x] **Fix #5 — Posiciones iniciales de ventanas solapadas** (commit `cd4096f`)
   - Reescritas `defaultPosition` en `src/features/window-system/registry/index.ts` para eliminar solapamientos.
 
+- [x] **Fix #6 — Estado/ananimación de apertura de ventanas** (commit `8af56ea`)
+  - `openWindow` ahora crea ventanas nuevas con `state: "opening"` (antes forzaba `"active"` aunque el default ya era `"opening"`).
+  - `WindowShell` respeta `window.state === "opening"` para la animación inicial (`opacity/scale/y`), con fallback a sin animación si `prefersReducedMotion`.
+
 ## Fixes pendientes
 
-- [ ] **Fix #6 — Estado/ananimación de apertura de ventanas** no usado en el window system.
 - [ ] **Fix #7 — Bugs de lógica de exploración** en `ferro-core-context`.
 
 - [ ] **Fix #5 — Posiciones iniciales de ventanas solapadas** en el window system.
