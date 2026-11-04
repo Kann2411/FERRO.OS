@@ -54,7 +54,7 @@ export const windowRegistry: Record<string, WindowDefinition> = {
     title: "Resume",
     icon: "◫",
     initialWidth: 500,
-    initialHeight: 340,
+    initialHeight: 700,
     defaultPosition: { x: 180, y: 1380 },
   },
   skills: {
