@@ -44,7 +44,7 @@ export function Dock() {
   return (
     <>
       {/* Desktop dock - floating signal button, fixed to the bottom of the viewport */}
-      <div className="fixed bottom-0 left-1/2 z-30 hidden -translate-x-1/2 sm:flex" role="toolbar" aria-label={tUi("applicationDock")}>
+      <div className="fixed bottom-4 left-1/2 z-30 hidden -translate-x-1/2 sm:flex" role="toolbar" aria-label={tUi("applicationDock")}>
         {unlockedApps.filter((app) => app.windowId === "signal").map((app) => (
           <motion.button
             key={app.windowId}
