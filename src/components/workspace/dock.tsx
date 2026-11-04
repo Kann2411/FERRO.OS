@@ -45,7 +45,7 @@ export function Dock() {
     <>
       {/* Desktop dock - fixed to the bottom of the viewport */}
       <div className={`fixed bottom-0 left-0 right-0 z-30 hidden items-center justify-center gap-3 rounded-full border bg-surface/70 px-3 py-3 shadow-[0_18px_60px_rgba(0,0,0,0.3)] backdrop-blur-xl sm:flex ${prefersHighContrast ? "border-border-strong" : "border-border"}`} role="toolbar" aria-label={tUi("applicationDock")}>
-        {unlockedApps.map((app) => (
+        {unlockedApps.filter((app) => app.windowId === "signal").map((app) => (
           <motion.button
             key={app.windowId}
             type="button"
