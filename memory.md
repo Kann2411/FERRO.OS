@@ -63,6 +63,9 @@
 - [x] **Dock — barra eliminada, solo botón Signal** (commit `b64fa94`)
   - Contenedor de la barra removido; solo queda el botón flotante redondo de Signal (wrapper invisible con `fixed bottom-0 left-1/2 z-30 hidden -translate-x-1/2 sm:flex`).
 
+- [x] **Dock — botón elevado** (commit `4de60bb`)
+  - Botón flotante de Signal: `bottom-0` → `bottom-4` (queda dentro de la pantalla, un poco más arriba del borde inferior).
+
 - [ ] **Task #3 — Ventana Resume / Skills / Timeline / etc.** (una o varias por tandas).
 - [ ] **Task #4 — Terminal**: UI, comandos y animaciones.
 - [ ] **Task #5 — Signal / Audio Player / Studio / Discography / AI Lab / Debug Console**.
