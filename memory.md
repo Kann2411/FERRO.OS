@@ -66,6 +66,10 @@
 - [x] **Dock — botón elevado** (commit `4de60bb`)
   - Botón flotante de Signal: `bottom-0` → `bottom-4` (queda dentro de la pantalla, un poco más arriba del borde inferior).
 
+- [x] **Fix #8 — Ventanas: off-screen al abrir / locura al abrir varias** (commit `9f555aa`)
+  - `openWindow` ahora aplica `getViewportSafePosition` al abrir (clamp a viewport → no se salen de pantalla).
+  - Revertido el Fix #6: `openWindow` vuelve a crear con `state: "active"` y `WindowShell` vuelve al `initial` estático (sin ramas por `window.state === "opening"`), restaurando el comportamiento anterior de apertura.
+
 - [ ] **Task #3 — Ventana Resume / Skills / Timeline / etc.** (una o varias por tandas).
 - [ ] **Task #4 — Terminal**: UI, comandos y animaciones.
 - [ ] **Task #5 — Signal / Audio Player / Studio / Discography / AI Lab / Debug Console**.
