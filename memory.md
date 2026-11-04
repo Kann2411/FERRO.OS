@@ -70,6 +70,10 @@
   - `openWindow` ahora aplica `getViewportSafePosition` al abrir (clamp a viewport → no se salen de pantalla).
   - Revertido el Fix #6: `openWindow` vuelve a crear con `state: "active"` y `WindowShell` vuelve al `initial` estático (sin ramas por `window.state === "opening"`), restaurando el comportamiento anterior de apertura.
 
+- [x] **Fix #9 — Módulos Curriculum (Resume) y Habilidades (Skills) no abren al hacer click** (resuelto vía Fix #8)
+  - Causa probable: posiciones default off-screen (`resume` y `skills` con `y` altos: 1380/1740) → ventana abierta pero fuera de pantalla.
+  - Resuelto con el clamp `getViewportSafePosition` en `openWindow` (Fix #8, commit `9f555aa`).
+
 - [ ] **Task #3 — Ventana Resume / Skills / Timeline / etc.** (una o varias por tandas).
 - [ ] **Task #4 — Terminal**: UI, comandos y animaciones.
 - [ ] **Task #5 — Signal / Audio Player / Studio / Discography / AI Lab / Debug Console**.
