@@ -15,6 +15,7 @@
 ## Tareas de implementación
 
 - [ ] **Task #3 — Módulo Curriculum (Ventana Resume): cambiar contenido** (en progreso).
+  - Último cambio: ventana Resume `initialHeight` 340 → 700 (contenido ~400px no cabía; ahora se ve completa al abrir).
 - [ ] **Task #4 — Terminal**: UI, comandos y animaciones.
 
 ## Contexto clave (no perder)
