@@ -151,13 +151,7 @@ export function WindowShell({ window, onClose, onFocus, onBringToFront }: Window
   return (
     <motion.div
       layout
-      initial={
-        prefersReducedMotion
-          ? { opacity: 1 }
-          : window.state === "opening"
-            ? { opacity: 0, scale: 0.96, y: 10 }
-            : { opacity: 1 }
-      }
+      initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, scale: 0.96, y: 10 }}
       animate={
         isClosing
           ? { opacity: 0, scale: 0.94, y: 8 }

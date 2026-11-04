@@ -3,6 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { useAudio } from "@/features/audio-engine";
 import type { WindowContextValue, WindowDefinition, WindowInstance } from "@/features/window-system/types";
+import { getViewportSafePosition } from "@/features/window-system/utils";
 
 const STORAGE_KEY = "ferro.os.window-state";
 
@@ -93,7 +94,8 @@ export function WindowProvider({ children }: { children: ReactNode }) {
 
       const nextZIndex = currentWindows.length + 1;
       const nextWindow = createWindowInstance(definition, nextZIndex);
-      return [...currentWindows, { ...nextWindow, focused: true, state: "opening" }];
+      const safePosition = getViewportSafePosition(nextWindow.x, nextWindow.y, nextWindow.width, nextWindow.height);
+      return [...currentWindows, { ...nextWindow, focused: true, state: "active", x: safePosition.x, y: safePosition.y }];
     });
 
     setActiveWindowId(definition.id);
