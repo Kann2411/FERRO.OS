@@ -87,8 +87,16 @@ export function WindowProvider({ children }: { children: ReactNode }) {
 
     setWindows((currentWindows) => {
       if (currentWindows.some((window) => window.id === definition.id)) {
+        const existing = currentWindows.find((window) => window.id === definition.id);
+        if (!existing) {
+          return currentWindows;
+        }
+
+        const safePosition = getViewportSafePosition(existing.x, existing.y, existing.width, existing.height);
         return currentWindows.map((window) =>
-          window.id === definition.id ? { ...window, focused: true, state: "active" } : window
+          window.id === definition.id
+            ? { ...window, focused: true, state: "active", x: safePosition.x, y: safePosition.y }
+            : window
         );
       }
 
