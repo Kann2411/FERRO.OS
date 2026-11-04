@@ -57,6 +57,9 @@
 - [x] **Dock — solo botón Signal** (commit `b2be98e`)
   - Barra del dock (#1) ahora muestra solo el botón de Signal (`unlockedApps.filter((app) => app.windowId === "signal")`). No se eliminó la barra, solo el botón.
 
+- [x] **Dock — tamaño ajustado** (commit `801ffb7`)
+  - Barra del dock desktop: `left-0 right-0` → `left-1/2 -translate-x-1/2 w-fit` (se ajusta al tamaño del botón contenido, centrado).
+
 - [ ] **Task #3 — Ventana Resume / Skills / Timeline / etc.** (una o varias por tandas).
 - [ ] **Task #4 — Terminal**: UI, comandos y animaciones.
 - [ ] **Task #5 — Signal / Audio Player / Studio / Discography / AI Lab / Debug Console**.
