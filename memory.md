@@ -60,6 +60,9 @@
 - [x] **Dock — tamaño ajustado** (commit `801ffb7`)
   - Barra del dock desktop: `left-0 right-0` → `left-1/2 -translate-x-1/2 w-fit` (se ajusta al tamaño del botón contenido, centrado).
 
+- [x] **Dock — barra eliminada, solo botón Signal** (commit `b64fa94`)
+  - Contenedor de la barra removido; solo queda el botón flotante redondo de Signal (wrapper invisible con `fixed bottom-0 left-1/2 z-30 hidden -translate-x-1/2 sm:flex`).
+
 - [ ] **Task #3 — Ventana Resume / Skills / Timeline / etc.** (una o varias por tandas).
 - [ ] **Task #4 — Terminal**: UI, comandos y animaciones.
 - [ ] **Task #5 — Signal / Audio Player / Studio / Discography / AI Lab / Debug Console**.
