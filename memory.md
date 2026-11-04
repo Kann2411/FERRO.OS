@@ -54,6 +54,9 @@
   - Solo cambios de layout/visual: grid de cards `sm:grid-cols-2 lg:grid-cols-3`, cards con `h-full` (alturas igualadas) y zoom de imagen al hover (`group-hover:scale-105`, 500ms).
   - Contenido sin tocar (8 proyectos, copy, datos intactos).
 
+- [x] **Dock — solo botón Signal** (commit `b2be98e`)
+  - Barra del dock (#1) ahora muestra solo el botón de Signal (`unlockedApps.filter((app) => app.windowId === "signal")`). No se eliminó la barra, solo el botón.
+
 - [ ] **Task #3 — Ventana Resume / Skills / Timeline / etc.** (una o varias por tandas).
 - [ ] **Task #4 — Terminal**: UI, comandos y animaciones.
 - [ ] **Task #5 — Signal / Audio Player / Studio / Discography / AI Lab / Debug Console**.
