@@ -74,6 +74,9 @@
   - Causa probable: posiciones default off-screen (`resume` y `skills` con `y` altos: 1380/1740) → ventana abierta pero fuera de pantalla.
   - Resuelto con el clamp `getViewportSafePosition` en `openWindow` (Fix #8, commit `9f555aa`).
 
+- [x] **Fix #10 — Reabrir ventana existente conservaba posición off-screen** (commit `3a3984e`)
+  - `openWindow` ahora clampa la posición también cuando la ventana ya existe (enfoca + clamp), no solo al crearla.
+
 - [ ] **Task #3 — Ventana Resume / Skills / Timeline / etc.** (una o varias por tandas).
 - [ ] **Task #4 — Terminal**: UI, comandos y animaciones.
 - [ ] **Task #5 — Signal / Audio Player / Studio / Discography / AI Lab / Debug Console**.
